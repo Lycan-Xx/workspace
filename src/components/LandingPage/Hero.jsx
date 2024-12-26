@@ -3,7 +3,7 @@ import { FaChevronDown } from "react-icons/fa";
 import { useNavigate } from "react-router-dom"; // Add this import
 import image1 from "../assets/image-1.jpg";
 
-const Hero = ({ language, setShowPlatform }) => { // Change selectedLanguage to language
+const Hero = ({ language, setShowPlatform, setPlatformInitialView }) => { // Change selectedLanguage to language
   const navigate = useNavigate(); // Add this hook
   
   // Function to scroll to the "Features" section
@@ -12,6 +12,11 @@ const Hero = ({ language, setShowPlatform }) => { // Change selectedLanguage to 
     if (featuresSection) {
       featuresSection.scrollIntoView({ behavior: "smooth" });
     }
+  };
+
+  const handleGetStarted = () => {
+    setPlatformInitialView("instant-payments");
+    setShowPlatform(true);
   };
 
   // Language-specific content
@@ -96,7 +101,7 @@ const Hero = ({ language, setShowPlatform }) => { // Change selectedLanguage to 
 		  <br />
 
           <button 
-            onClick={() => setShowPlatform(true)}
+            onClick={handleGetStarted}
             className="bg-orange-700 px-6 py-3 rounded-md text-lg font-medium hover:bg-orange-400 transition-all duration-300"
           >
             {buttonText[language]}

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useTransition, animated } from "@react-spring/web";
 import {
   MessageCircle,
@@ -26,8 +26,8 @@ import Airtime from "./Dashboard/Airtime";
 import Electricity from "./Dashboard/Electricity";
 import Cable from "./Dashboard/Cable";
 
-function App() {
-  const [currentView, setCurrentView] = useState("instant-payments");
+function App({ initialView = "instant-payments", onBack }) {
+  const [currentView, setCurrentView] = useState(initialView);
   const [selectedVendor, setSelectedVendor] = useState(null); // Track selected vendor
   const [searchQuery, setSearchQuery] = useState("");
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
@@ -110,8 +110,20 @@ function App() {
     }
   };
 
+  useEffect(() => {
+    setCurrentView(initialView);
+  }, [initialView]);
+
   return (
     <div className="min-h-screen flex flex-col relative">
+      {onBack && (
+        <button 
+          onClick={onBack}
+          className="absolute top-4 left-4 z-50 bg-orange-500 text-white px-4 py-2 rounded-md hover:bg-orange-600 transition-colors"
+        >
+          Back to Home
+        </button>
+      )}
       {/* Navbar */}
       {currentView !== "dashboard" &&
         currentView !== "instant-payment-business" &&
@@ -314,18 +326,8 @@ function App() {
   );
 }
 
-const PlatformApp = ({ onBack }) => {
-  return (
-    <div className="min-h-screen flex flex-col relative">
-      <button 
-        onClick={onBack}
-        className="absolute top-4 left-4 bg-orange-500 text-white px-4 py-2 rounded-md hover:bg-orange-600"
-      >
-        Back to Home
-      </button>
-      // ...existing platform content...
-    </div>
-  );
+const PlatformApp = ({ initialView, onBack }) => {
+  return <App initialView={initialView} onBack={onBack} />;
 };
 
-export default App;
+export default PlatformApp;

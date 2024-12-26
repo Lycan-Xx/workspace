@@ -1,9 +1,12 @@
 {
+	"homepage": "https://Lycan-Xx.github.io/workspace/",
 	"name": "evault-web",
 	"version": "0.1.0",
 	"private": true,
 	"dependencies": {
+		"@fortawesome/fontawesome-free": "^6.7.2",
 		"@fortawesome/free-brands-svg-icons": "^6.7.1",
+		"@fortawesome/free-solid-svg-icons": "^6.7.2",
 		"@fortawesome/react-fontawesome": "^0.2.2",
 		"@heroicons/react": "^1.0.6",
 		"@hookform/resolvers": "^3.9.1",
@@ -18,6 +21,7 @@
 		"@testing-library/user-event": "^13.5.0",
 		"classnames": "^2.5.1",
 		"cra-template": "1.2.0",
+		"es-abstract": "^1.23.7",
 		"framer-motion": "^11.15.0",
 		"lucide-react": "^0.468.0",
 		"react": "^18.3.1",

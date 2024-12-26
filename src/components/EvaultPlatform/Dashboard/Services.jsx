@@ -39,7 +39,8 @@ const Services = ({ services, onServiceClick }) => {
             onClick={() => onServiceClick(service.component)}
             className="flex flex-col items-center p-4 rounded-xl bg-white border border-gray-200 shadow-sm hover:shadow-lg hover:border-blue-500 transition-all duration-300"
           >
-            <service.icon className="w-10 h-10 text-blue-500 mb-3" />
+            {/* Render the icon directly */}
+            <div className="w-10 h-10 mb-3">{service.icon}</div>
             <h4 className="text-base font-semibold text-gray-800 text-center">
               {service.title}
             </h4>

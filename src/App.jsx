@@ -20,6 +20,7 @@ import PlatformApp from './components/EvaultPlatform/PlatformApp';
 const App = () => {
   const [language, setLanguage] = useState("English");
   const [showPlatform, setShowPlatform] = useState(false);
+  const [platformInitialView, setPlatformInitialView] = useState(null);
 
   // Scroll to the top on route change
   const ScrollToTop = () => {
@@ -30,20 +31,41 @@ const App = () => {
   };
 
   if (showPlatform) {
-    return <PlatformApp onBack={() => setShowPlatform(false)} />;
+    return (
+      <PlatformApp 
+        initialView={platformInitialView} 
+        onBack={() => {
+          setShowPlatform(false);
+          setPlatformInitialView(null);
+        }}
+      />
+    );
   }
 
   return (
     <Router>
       <ScrollToTop />
       <div className="App">
-        <Navbar language={language} setLanguage={setLanguage} />
+        <Navbar 
+          language={language} 
+          setLanguage={setLanguage}
+          setShowPlatform={setShowPlatform}
+          setPlatformInitialView={setPlatformInitialView}
+        />
         <Routes>
-          <Route path="/" element={
+          <Route path="*" element={
             <>
-              <Hero language={language} setShowPlatform={setShowPlatform} />
+              <Hero 
+                language={language} 
+                setShowPlatform={setShowPlatform}
+                setPlatformInitialView={setPlatformInitialView}
+              />
               <Features />
-              <About language={language} setShowPlatform={setShowPlatform} />
+              <About 
+                language={language} 
+                setShowPlatform={setShowPlatform}
+                setPlatformInitialView={setPlatformInitialView}
+              />
               <Mission language={language} />
               <Services />
               <Feedback />

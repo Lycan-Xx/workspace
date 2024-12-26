@@ -5,7 +5,7 @@ import { FaSignInAlt, FaUserPlus } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 import logo from "../../components/assets/evault_main_logo.png";
 
-const Navbar = ({ language, setLanguage }) => {
+const Navbar = ({ language, setLanguage, setShowPlatform, setPlatformInitialView }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
@@ -51,6 +51,11 @@ const Navbar = ({ language, setLanguage }) => {
     { title: "Utility Bills Payment", id: "utility" },
     { title: "Bulk SMS", id: "sms" }
   ];
+
+  const handlePlatformLaunch = (view) => {
+    setPlatformInitialView(view);
+    setShowPlatform(true);
+  };
 
 return (
 		<nav className="w-full z-50 bg-[#173264] bg-opacity-100 text-white px-4 py-3 md:px-10">
@@ -132,15 +137,21 @@ return (
 
 			{/* Sign-in/Sign-up Buttons */}
 			<div className="hidden md:flex space-x-4">
-				<button className="flex items-center bg-gray-600 px-6 py-3 rounded-md shadow-md hover:bg-blue-500 transition-all duration-300">
-					<FaSignInAlt className="mr-2" />
-					Sign In
-				</button>
-				<button className="flex items-center bg-orange-700 px-6 py-3 rounded-md shadow-md hover:bg-blue-400 transition-all duration-300">
-					<FaUserPlus className="mr-2" />
-					Sign Up
-				</button>
-			</div>
+					<button 
+						onClick={() => handlePlatformLaunch("sign-in")}
+						className="flex items-center bg-gray-600 px-6 py-3 rounded-md shadow-md hover:bg-blue-500 transition-all duration-300"
+					>
+						<FaSignInAlt className="mr-2" />
+						Sign In
+					</button>
+					<button 
+						onClick={() => handlePlatformLaunch("sign-up")}
+						className="flex items-center bg-orange-700 px-6 py-3 rounded-md shadow-md hover:bg-blue-400 transition-all duration-300"
+					>
+						<FaUserPlus className="mr-2" />
+						Sign Up
+					</button>
+				</div>
 
 			{/* Hamburger Menu */}
 			<button
@@ -190,12 +201,18 @@ return (
 						<Languages className="mr-2" />
 						{language}
 					</button>
-					<button className="block w-full bg-gray-600 px-6 py-2 rounded-xl shadow-md hover:bg-gray-700 transition-all duration-300">
-						Sign In
-					</button>
-					<button className="block w-full bg-orange-400 px-6 py-2 rounded-xl shadow-md hover:bg-orange-500 transition-all duration-300">
-						Sign Up
-					</button>
+						<button 
+							onClick={() => handlePlatformLaunch("sign-in")}
+							className="block w-full bg-gray-600 px-6 py-2 rounded-xl shadow-md hover:bg-gray-700 transition-all duration-300"
+						>
+							Sign In
+						</button>
+						<button 
+							onClick={() => handlePlatformLaunch("sign-up")}
+							className="block w-full bg-orange-400 px-6 py-2 rounded-xl shadow-md hover:bg-orange-500 transition-all duration-300"
+						>
+							Sign Up
+						</button>
 				</motion.div>
 			)}
 		</AnimatePresence>

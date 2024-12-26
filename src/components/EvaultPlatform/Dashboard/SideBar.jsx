@@ -1,17 +1,15 @@
 import React, { useState, useEffect } from "react";
-import {
-  User,
-  Briefcase,
-  DollarSign,
-  PieChart,
-  Settings,
-  LogOut,
-  Menu,
-  X,
-  Banknote,
-  Vault
-} from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import {
+  FaTachometerAlt,
+  FaLock,
+  FaWallet,
+  FaExchangeAlt,
+  FaCogs,
+  FaSignOutAlt,
+  FaBars,
+  FaTimes,
+} from "react-icons/fa";
 
 const Sidebar = ({ selectedTab, setSelectedTab, setIsSidebarCollapsed }) => {
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -31,13 +29,11 @@ const Sidebar = ({ selectedTab, setSelectedTab, setIsSidebarCollapsed }) => {
   }, []);
 
   const menuItems = [
-    { name: "Dashboard", icon: PieChart },
-	{ name: "Wallet Top Up", icon: Banknote },
-    { name: "Trade", icon: Briefcase },
-    { name: "Vault", icon: Vault },
-    { name: "Portfolio", icon: User },
-    { name: "Transfer", icon: DollarSign },
-    { name: "Settings", icon: Settings },
+    { name: "Dashboard", icon: <FaTachometerAlt color="#4CAF50" />, color: "#4CAF50" },
+    { name: "Vault", icon: <FaLock color="#FF9800" />, color: "#FF9800" },
+    { name: "Portfolio", icon: <FaWallet color="#2196F3" />, color: "#2196F3" },
+    { name: "Transfer", icon: <FaExchangeAlt color="#E91E63" />, color: "#E91E63" },
+    { name: "Settings", icon: <FaCogs color="#9C27B0" />, color: "#9C27B0" },
   ];
 
   const handleToggle = () => {
@@ -48,6 +44,7 @@ const Sidebar = ({ selectedTab, setSelectedTab, setIsSidebarCollapsed }) => {
 
   const SidebarContent = () => (
     <div className="flex flex-col h-full">
+      {/* Sidebar Header */}
       <div className="flex items-center justify-between p-4">
         {!isCollapsed && (
           <h2 className="text-2xl font-bold text-blue-600">eVault</h2>
@@ -57,11 +54,12 @@ const Sidebar = ({ selectedTab, setSelectedTab, setIsSidebarCollapsed }) => {
             onClick={handleToggle}
             className="text-blue-600 p-2 rounded-lg hover:bg-blue-50 transition-colors"
           >
-            <Menu size={24} />
+            <FaBars size={24} />
           </button>
         )}
       </div>
 
+      {/* User Profile Section */}
       <div className="flex-1 px-4">
         <div className="mb-8 text-center">
           <img
@@ -79,6 +77,7 @@ const Sidebar = ({ selectedTab, setSelectedTab, setIsSidebarCollapsed }) => {
           )}
         </div>
 
+        {/* Navigation Menu */}
         <nav className="space-y-2">
           {menuItems.map((item) => (
             <button
@@ -95,7 +94,7 @@ const Sidebar = ({ selectedTab, setSelectedTab, setIsSidebarCollapsed }) => {
                   : "text-gray-700 hover:bg-blue-50"
               }`}
             >
-              <item.icon size={20} />
+              <span className="text-xl">{item.icon}</span>
               {(!isCollapsed || isMobileMenuOpen) && (
                 <span className="ml-3">{item.name}</span>
               )}
@@ -104,13 +103,14 @@ const Sidebar = ({ selectedTab, setSelectedTab, setIsSidebarCollapsed }) => {
         </nav>
       </div>
 
+      {/* Logout Button */}
       <button
         onClick={() => console.log("Logout")}
         className={`mx-4 mb-4 flex items-center p-3 rounded-lg bg-red-600 text-white hover:bg-red-700 transition-colors ${
           isCollapsed ? "justify-center" : "justify-start"
         }`}
       >
-        <LogOut size={20} />
+        <FaSignOutAlt size={20} />
         {(!isCollapsed || isMobileMenuOpen) && <span className="ml-3">Logout</span>}
       </button>
     </div>
@@ -152,7 +152,7 @@ const Sidebar = ({ selectedTab, setSelectedTab, setIsSidebarCollapsed }) => {
                 onClick={() => setIsMobileMenuOpen(false)}
                 className="absolute top-4 right-4 p-2 text-gray-500 hover:text-gray-700"
               >
-                <X size={24} />
+                <FaTimes size={24} />
               </button>
               <SidebarContent />
             </motion.div>
@@ -166,7 +166,7 @@ const Sidebar = ({ selectedTab, setSelectedTab, setIsSidebarCollapsed }) => {
           onClick={() => setIsMobileMenuOpen(true)}
           className="fixed top-4 left-4 z-30 p-2 bg-white rounded-lg shadow-lg md:hidden"
         >
-          <Menu size={24} className="text-blue-600" />
+          <FaBars size={24} className="text-blue-600" />
         </button>
       )}
     </>

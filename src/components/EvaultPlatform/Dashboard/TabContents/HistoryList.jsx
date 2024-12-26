@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { History, Printer, Share2, X } from "lucide-react";
+import { History, Printer, Share2, X, ArrowDown, Plus, Minus } from "lucide-react";
 import clsx from "clsx";
 import transferHistoryData from "./transferHistories.json"; // Adjust path as needed
 
@@ -24,6 +24,10 @@ const HistoryList = () => {
     }
   };
 
+  const handleSaveToVault = () => {
+    alert("This transaction has been saved to your vault!");
+  };
+
   const loadMoreHistories = () => {
     setVisibleHistories((prev) => prev + 5);
   };
@@ -35,27 +39,47 @@ const HistoryList = () => {
       </h4>
 
       <ul className="space-y-4">
-        {transferHistoryData.slice(0, visibleHistories).map((history) => (
-          <li
-            key={history.id}
-            onClick={() => setSelectedTransaction(history)}
-            className="p-4 bg-blue-200 border border-blue-500 rounded-md shadow-sm hover:bg-blue-700 hover:text-white cursor-pointer transition duration-300"
-          >
-            <div className="flex justify-between items-center">
-              <span className="font-medium">{history.date}</span>
-              <span className="font-semibold">${history.amount}</span>
-            </div>
-            <p>To: {history.recipientName}</p>
-          </li>
-        ))}
+        {transferHistoryData.slice(0, visibleHistories).map((history) => {
+          const isIncoming = history.type === "incoming"; // Assuming type is "incoming" or "outgoing"
+          return (
+            <li
+              key={history.id}
+              onClick={() => setSelectedTransaction(history)}
+              className={clsx(
+                "p-4 border rounded-md shadow-sm cursor-pointer transition-all duration-100 hover:border-4",
+                isIncoming ? "border-green-500 hover:border-green-700" : "border-red-500 hover:border-red-700"
+              )}
+            >
+              <div className="flex justify-between items-center">
+                <div className="flex items-center space-x-2">
+                  {isIncoming ? (
+                    <Plus className="w-5 h-5 text-green-500" />
+                  ) : (
+                    <Minus className="w-5 h-5 text-red-500" />
+                  )}
+                  <span className="font-medium">{history.date}</span>
+                </div>
+                <span className="font-semibold">${history.amount.toFixed(2)}</span>
+              </div>
+              <div className="text-gray-700">
+                <p>
+                  <strong>Sender:</strong> {history.senderName}
+                </p>
+                <p>
+                  <strong>Reference:</strong> {history.referenceNumber}
+                </p>
+              </div>
+            </li>
+          );
+        })}
       </ul>
 
       {visibleHistories < transferHistoryData.length && (
         <button
           onClick={loadMoreHistories}
-		  className="w-full md:w-1/4 bg-green-500 text-white py-4 rounded-xl hover:bg-green-600 transition duration-300 whitespace-nowrap">
-        
-          Load More
+          className="flex items-center justify-center w-full md:w-1/4 bg-blue-500 text-white py-2 rounded-xl hover:bg-blue-600 transition duration-300 whitespace-nowrap"
+        >
+          More <ArrowDown className="w-5 h-5 ml-2" />
         </button>
       )}
 
@@ -72,10 +96,21 @@ const HistoryList = () => {
 
             <h4 className="text-xl font-bold text-center text-blue-600">Transaction Summary</h4>
             <div className="space-y-2 text-gray-700">
-              <p><strong>Sender:</strong> {selectedTransaction.senderName}</p>
-              <p><strong>Recipient:</strong> {selectedTransaction.recipientName}</p>
-              <p><strong>Amount:</strong> ${selectedTransaction.amount}</p>
-              <p><strong>Reference Number:</strong> {selectedTransaction.referenceNumber}</p>
+              <p>
+                <strong>Sender:</strong> {selectedTransaction.senderName}
+              </p>
+              <p>
+                <strong>Recipient:</strong> {selectedTransaction.recipientName}
+              </p>
+              <p>
+                <strong>Amount:</strong> ${selectedTransaction.amount.toFixed(2)}
+              </p>
+              <p>
+                <strong>Reference Number:</strong> {selectedTransaction.referenceNumber}
+              </p>
+              <p>
+                <strong>Date & Time:</strong> {selectedTransaction.date} at {selectedTransaction.time}
+              </p>
             </div>
 
             <div className="flex justify-center space-x-4 pt-4">
@@ -92,6 +127,12 @@ const HistoryList = () => {
               >
                 <Share2 className="w-5 h-5" />
                 <span>Share</span>
+              </button>
+              <button
+                onClick={handleSaveToVault}
+                className="flex items-center space-x-2 bg-gray-800 text-white px-4 py-2 rounded hover:bg-gray-900"
+              >
+                <span>Save to Vault</span>
               </button>
             </div>
           </div>

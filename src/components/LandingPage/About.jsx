@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { FaChevronDown, FaChevronUp, FaQuestionCircle, FaNetworkWired, FaMobileAlt, FaCreditCard } from 'react-icons/fa';
 import { useNavigate } from "react-router-dom"; // Add this import
 
-const About = ({ language, setShowPlatform }) => {
+const About = ({ language, setShowPlatform, setPlatformInitialView }) => {
   const [activeDropdown, setActiveDropdown] = useState(null);
   const navigate = useNavigate(); // Add this hook
 
@@ -87,6 +87,11 @@ const translations = {
     setActiveDropdown(activeDropdown === id ? null : id);
   };
 
+  const handleLearnMore = () => {
+    setPlatformInitialView("instant-payments");
+    setShowPlatform(true);
+  };
+
   return (
     <section id="about" className="bg-gray-100 py-16 px-6 md:px-12">
       <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-12 items-center">
@@ -108,7 +113,7 @@ const translations = {
               {translations[currentLanguage]?.description || translations.English.description}
             </p>
             <button 
-              onClick={() => setShowPlatform(true)}
+              onClick={handleLearnMore}
               className="mt-6 bg-orange-600 text-white px-6 py-3 rounded-lg shadow-md hover:bg-orange-700 transition-all text-lg"
             >
               {translations[currentLanguage]?.learnMore || translations.English.learnMore}
