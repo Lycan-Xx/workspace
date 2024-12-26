@@ -1,14 +1,29 @@
-import React from 'react'
+import React from 'react';
+import { ArrowLeft } from 'lucide-react';
 
-function TransferForm() {
+const TransferForm = ({ onBack }) => {
   return (
-	<div className='max-w-3xl mx-auto p-6 text-[6rem] text-gray-500'>
-		Coming soon !!!
-	</div>
-  )
-}
+    <div className="max-w-3xl mx-auto p-6">
+      {/* Back Button */}
+      <button
+        className="inline-flex items-center space-x-2 text-gray-600 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded-md p-1 mb-4"
+        aria-label="Go back"
+        onClick={onBack}
+      >
+        <ArrowLeft className="w-5 h-5" />
+        <span>Go to Dashboard</span>
+      </button>
+      <div className="text-[6rem] text-gray-500">
+        Coming soon !!!
+      </div>
+    </div>
+  );
+};
 
-export default TransferForm
+export default TransferForm;
+
+
+
 
 
 

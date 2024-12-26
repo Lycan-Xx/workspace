@@ -1,9 +1,43 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useSpring, animated } from "react-spring";
 
-const PaymentCards = ({ cardData }) => {
+const PaymentCards = () => {
+  // Card data moved here
+  const cardData = [
+    {
+      name: "Wema Bank",
+      balance: "₦92,500.98",
+      cardNumber: "**** **** **** 1234",
+      expiry: "05/26",
+      cardholder: "John Doe",
+    },
+    {
+      name: "Monie Point",
+      balance: "₦45,450.00",
+      cardNumber: "**** **** **** 5678",
+      expiry: "06/26",
+      cardholder: "Jane Doe",
+    },
+    {
+      name: "Zenith Bank",
+      balance: "₦334,540.00",
+      cardNumber: "**** **** **** 9101",
+      expiry: "07/26",
+      cardholder: "Alex Smith",
+    },
+  ];
+
   const [currentIndex, setCurrentIndex] = useState(0);
+
+  // Animation for the entire card section
+  const cardSpring = useSpring({
+    opacity: 1,
+    transform: "translateY(0px)",
+    from: { opacity: 0, transform: "translateY(30px)" },
+    config: { tension: 200, friction: 20 },
+  });
 
   const nextCard = () => {
     setCurrentIndex((prev) => (prev + 1) % cardData.length);
@@ -14,13 +48,26 @@ const PaymentCards = ({ cardData }) => {
   };
 
   return (
-    <div className="relative mb-6">
+    <animated.div style={cardSpring} className="relative mb-6">
       {/* Desktop View */}
       <div className="hidden md:grid md:grid-cols-3 gap-4">
         {cardData.map((card, index) => (
           <PaymentCard key={index} card={card} />
         ))}
       </div>
+
+	  <div>
+		<button>
+			<div className="mt-4 flex justify-center">
+				<button 
+					className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+					onClick={() => alert('Request Virtual Card')}
+				>
+					Request Virtual Card
+				</button>
+			</div>
+		</button>
+	  </div>
 
       {/* Mobile View with Carousel */}
       <div className="md:hidden relative">
@@ -66,7 +113,7 @@ const PaymentCards = ({ cardData }) => {
           ))}
         </div>
       </div>
-    </div>
+    </animated.div>
   );
 };
 
@@ -78,15 +125,15 @@ const PaymentCard = ({ card }) => {
       whileHover={{ scale: 1.02 }}
       transition={{ duration: 0.2 }}
     >
-      {/* Background Image */}
-      <div
-        className="absolute inset-0 bg-cover bg-center"
-        style={{
-          backgroundImage: `url('https://picsum.photos/400/250?random=${Math.random()}')`,
-        }}
-      />
+	{/* Background Image */}
+		<div
+		  className="absolute inset-0 bg-cover bg-center"
+		  style={{
+			backgroundImage: `url('https://picsum.photos/400/250')`,
+		  }}
+		/>
 
-      {/* Gradient Overlay */}
+		{/* Gradient Overlay */}
       <div className="absolute inset-0 bg-gradient-to-br from-black/60 to-black/40" />
 
       {/* Card Content */}

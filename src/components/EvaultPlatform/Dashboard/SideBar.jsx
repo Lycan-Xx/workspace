@@ -32,7 +32,6 @@ const Sidebar = ({ selectedTab, setSelectedTab, setIsSidebarCollapsed }) => {
     { name: "Dashboard", icon: <FaTachometerAlt color="#4CAF50" />, color: "#4CAF50" },
     { name: "Vault", icon: <FaLock color="#FF9800" />, color: "#FF9800" },
     { name: "Portfolio", icon: <FaWallet color="#2196F3" />, color: "#2196F3" },
-    { name: "Transfer", icon: <FaExchangeAlt color="#E91E63" />, color: "#E91E63" },
     { name: "Settings", icon: <FaCogs color="#9C27B0" />, color: "#9C27B0" },
   ];
 
