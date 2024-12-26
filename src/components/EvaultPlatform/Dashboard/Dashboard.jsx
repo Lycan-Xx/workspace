@@ -19,12 +19,25 @@ import DepositForm from "./TabContents/DepositForm";
 import TransferForm from "./TabContents/TransferForm";
 import HistoryList from "./TabContents/HistoryList";
 import { FaExchangeAlt, FaTachometerAlt, FaLock, FaWallet, FaCogs } from "react-icons/fa";
+import VirtualCardRequest from "./VirtualCardRequest";
 
 const Dashboard = () => {
   const [selectedTab, setSelectedTab] = useState("Dashboard");
   const [selectedService, setSelectedService] = useState(null);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [showTransferForm, setShowTransferForm] = useState(false);
+  const [showVirtualCardRequest, setShowVirtualCardRequest] = useState(false);
+
+  // Move card data state to Dashboard
+  const [cardData, setCardData] = useState([
+    {
+      name: "Monie Point",
+      balance: "₦45,450.00",
+      cardNumber: "**** **** **** 5678",
+      expiry: "06/26",
+      cardholder: "Jane Doe",
+    },
+  ]);
 
   const services = [
     {
@@ -73,7 +86,7 @@ const Dashboard = () => {
   ];
 
   const handleServiceClick = (service) => {
-    setSelectedService(service);
+    setSelectedService(service.component); // Change: Pass the component name
   };
 
   const handleBack = () => {
@@ -86,6 +99,16 @@ const Dashboard = () => {
 
   const handleBackClick = () => {
     setShowTransferForm(false);
+  };
+
+  const handleVirtualCardRequest = () => {
+    setShowVirtualCardRequest(true);
+  };
+
+  // Update handleAddCard function
+  const handleAddCard = (newCard) => {
+    setCardData(prevCards => [...prevCards, newCard]);
+    setShowVirtualCardRequest(false);
   };
 
   const renderSelectedService = () => {
@@ -145,9 +168,17 @@ const Dashboard = () => {
       return <TransferForm onBack={handleBackClick} />;
     }
 
+    if (selectedService) {
+      return renderSelectedService();
+    }
+
     return (
       <>
-        <PaymentCards />
+        <PaymentCards 
+          onRequestCard={handleVirtualCardRequest}
+          cards={cardData}
+          setCards={setCardData}
+        />
         <div className="border-xl bg-blue-600 rounded-xl p-0 my-4">
           <TabContent />
         </div>
@@ -198,6 +229,12 @@ const Dashboard = () => {
         <animated.div style={contentSpring}>
           {selectedTab !== "Dashboard" && renderTabContent()}
         </animated.div>
+        {showVirtualCardRequest && (
+          <VirtualCardRequest 
+            onClose={() => setShowVirtualCardRequest(false)}
+            addCard={handleAddCard}
+          />
+        )}
       </div>
     </div>
   );

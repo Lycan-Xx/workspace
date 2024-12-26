@@ -2,33 +2,9 @@ import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useSpring, animated } from "react-spring";
+import VirtualCardRequest from "./VirtualCardRequest";
 
-const PaymentCards = () => {
-  // Card data moved here
-  const cardData = [
-    {
-      name: "Wema Bank",
-      balance: "₦92,500.98",
-      cardNumber: "**** **** **** 1234",
-      expiry: "05/26",
-      cardholder: "John Doe",
-    },
-    {
-      name: "Monie Point",
-      balance: "₦45,450.00",
-      cardNumber: "**** **** **** 5678",
-      expiry: "06/26",
-      cardholder: "Jane Doe",
-    },
-    {
-      name: "Zenith Bank",
-      balance: "₦334,540.00",
-      cardNumber: "**** **** **** 9101",
-      expiry: "07/26",
-      cardholder: "Alex Smith",
-    },
-  ];
-
+const PaymentCards = ({ onRequestCard, cards, setCards }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   // Animation for the entire card section
@@ -40,36 +16,38 @@ const PaymentCards = () => {
   });
 
   const nextCard = () => {
-    setCurrentIndex((prev) => (prev + 1) % cardData.length);
+    setCurrentIndex((prev) => (prev + 1) % cards.length);
   };
 
   const prevCard = () => {
-    setCurrentIndex((prev) => (prev - 1 + cardData.length) % cardData.length);
+    setCurrentIndex((prev) => (prev - 1 + cards.length) % cards.length);
+  };
+
+  const addCard = (newCard) => {
+    setCards((prev) => [...prev, newCard]);
   };
 
   return (
     <animated.div style={cardSpring} className="relative mb-6">
-      {/* Desktop View */}
-      <div className="hidden md:grid md:grid-cols-3 gap-4">
-        {cardData.map((card, index) => (
-          <PaymentCard key={index} card={card} />
-        ))}
-      </div>
+	{/* Desktop View */}
+		<div className="hidden md:grid md:grid-cols-3 gap-4">
+		  {cards.map((card, index) => (
+			<PaymentCard key={index} card={card} />
+		  ))}
+		</div>
 
-	  <div>
-		<button>
-			<div className="mt-4 flex justify-center">
-				<button 
-					className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
-					onClick={() => alert('Request Virtual Card')}
-				>
-					Request Virtual Card
-				</button>
-			</div>
-		</button>
-	  </div>
+		{/* Request Virtual Card Button */}
+		<div className="mt-4 flex justify-end">
+		  <button
+			onClick={onRequestCard}
+			className="bg-blue-600 text-white px-8 py-2 rounded-lg hover:bg-blue-700 flex items-center gap-2"
+		  >
+			<i className="fas fa-credit-card"></i>
+			Request Virtual Card
+		  </button>
+		</div>
 
-      {/* Mobile View with Carousel */}
+		{/* Mobile View with Carousel */}
       <div className="md:hidden relative">
         <div className="overflow-hidden">
           <AnimatePresence mode="wait">
@@ -81,7 +59,7 @@ const PaymentCards = () => {
               transition={{ duration: 0.3 }}
               className="w-full"
             >
-              <PaymentCard card={cardData[currentIndex]} />
+              <PaymentCard card={cards[currentIndex]} />
             </motion.div>
           </AnimatePresence>
         </div>
@@ -102,7 +80,7 @@ const PaymentCards = () => {
 
         {/* Dots Indicator */}
         <div className="flex justify-center mt-4 space-x-2">
-          {cardData.map((_, index) => (
+          {cards.map((_, index) => (
             <button
               key={index}
               onClick={() => setCurrentIndex(index)}
@@ -125,15 +103,15 @@ const PaymentCard = ({ card }) => {
       whileHover={{ scale: 1.02 }}
       transition={{ duration: 0.2 }}
     >
-	{/* Background Image */}
-		<div
-		  className="absolute inset-0 bg-cover bg-center"
-		  style={{
-			backgroundImage: `url('https://picsum.photos/400/250')`,
-		  }}
-		/>
+      {/* Background Image */}
+      <div
+        className="absolute inset-0 bg-cover bg-center"
+        style={{
+          backgroundImage: `url('https://picsum.photos/400/250')`,
+        }}
+      />
 
-		{/* Gradient Overlay */}
+      {/* Gradient Overlay */}
       <div className="absolute inset-0 bg-gradient-to-br from-black/60 to-black/40" />
 
       {/* Card Content */}
