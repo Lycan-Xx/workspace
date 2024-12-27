@@ -48,7 +48,7 @@ export function Main() {
 					{/* Files Content */}
 					<Tabs.Content
 						value="files"
-						className="fade-in"
+						className="fade-in p-2"
 					>
 						<Files />
 					</Tabs.Content>
@@ -56,7 +56,7 @@ export function Main() {
 					{/* Passkeys Content */}
 					<Tabs.Content
 						value="passkeys"
-						className="fade-in"
+						className="fade-in p-2"
 					>
 						<Passkeys />
 					</Tabs.Content>

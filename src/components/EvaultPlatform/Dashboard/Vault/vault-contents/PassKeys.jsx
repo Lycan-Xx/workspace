@@ -1,26 +1,5 @@
 import React, { useState } from "react";
-import { Eye, EyeOff, Edit, Trash2, Key, Plus } from "lucide-react";
-import { Button } from "./ui/button.tsx";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "./ui/dialog.tsx";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "./ui/alert-dialog.tsx";
-import { Input } from "./ui/input.tsx";
-import { Label } from "./ui/label.tsx";
+import { Eye, EyeOff, Edit, Trash2, Plus, Lock, Key, Edit2 } from "lucide-react";
 
 export function Passkeys() {
   const [passkeys, setPasskeys] = useState([
@@ -90,151 +69,176 @@ export function Passkeys() {
   };
 
   return (
-    <div className="rounded-lg border bg-card text-card-foreground shadow-sm">
-      <div className="p-6">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-lg font-bold">Passkeys</h2>
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={() => setAddDialogOpen(true)}
-          >
-            <Plus className="h-5 w-5" />
-          </Button>
-        </div>
-
-        <div className="space-y-4">
-          {passkeys.map((passkey) => (
-            <div
-              key={passkey.id}
-              className="flex items-center justify-between p-4 bg-white rounded-lg border"
-            >
-              <div className="flex items-center gap-3">
-                <Key className="h-5 w-5 text-blue-500" />
-                <div>
-                  <h3 className="font-medium">{passkey.name}</h3>
-                  <p className="text-sm font-mono">
-                    {passkey.visible ? passkey.value : "••••••••"}
-                  </p>
-                </div>
-              </div>
-              <div className="flex gap-2">
-                <Button
-                  variant="outline"
-                  size="icon"
-                  onClick={() => togglePasskeyVisibility(passkey.id)}
-                >
-                  {passkey.visible ? (
-                    <EyeOff className="h-4 w-4" />
-                  ) : (
-                    <Eye className="h-4 w-4" />
-                  )}
-                </Button>
-                <Button
-                  variant="outline"
-                  size="icon"
-                  onClick={() => handleEdit(passkey.id)}
-                >
-                  <Edit className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant="outline"
-                  size="icon"
-                  onClick={() => handleDelete(passkey.id)}
-                >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
-              </div>
-            </div>
-          ))}
-        </div>
+    <div className="rounded-lg border bg-white shadow-sm p-4">
+      <div className="flex justify-end mb-4">
+        <button
+          onClick={() => setAddDialogOpen(true)}
+          className="px-4 py-2 border-2 border-blue-500 bg-blue-500 text-white rounded-lg flex items-center gap-2 hover:bg-blue-600 hover:border-blue-600 transition-colors"
+        >
+          <Plus size={16} />
+          Add Passkey
+        </button>
       </div>
 
-      {/* Edit Dialog */}
-      <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Edit Passkey</DialogTitle>
-            <DialogDescription>Update the passkey details below</DialogDescription>
-          </DialogHeader>
-          <div className="grid gap-4 py-4">
-            <div className="grid gap-2">
-              <Label htmlFor="passkey-name">Name</Label>
-              <Input
-                id="passkey-name"
-                value={editedName}
-                onChange={(e) => setEditedName(e.target.value)}
-              />
+      <div className="space-y-4">
+        {passkeys.map((passkey) => (
+          <div
+            key={passkey.id}
+            className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border hover:border-blue-500 transition-colors"
+          >
+            <div>
+              <h3 className="font-medium">{passkey.name}</h3>
+              <div className="flex items-center gap-2">
+                <input
+                  type={passkey.visible ? "text" : "password"}
+                  value={passkey.value}
+                  readOnly
+                  className="bg-transparent border-none focus:outline-none"
+                />
+              </div>
             </div>
-            <div className="grid gap-2">
-              <Label htmlFor="passkey-value">Value</Label>
-              <Input
-                id="passkey-value"
-                type="text"
-                value={editedValue}
-                onChange={(e) => setEditedValue(e.target.value)}
-              />
+            
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => togglePasskeyVisibility(passkey.id)}
+                className="p-2 border-2 border-gray-300 text-gray-500 rounded-lg hover:border-blue-500 hover:text-blue-500 transition-colors"
+              >
+                {passkey.visible ? <EyeOff size={16} /> : <Eye size={16} />}
+              </button>
+              <button
+                onClick={() => handleEdit(passkey.id)}
+                className="p-2 border-2 border-gray-300 text-blue-500 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-colors"
+              >
+                <Edit2 size={16} />
+              </button>
+              <button
+                onClick={() => handleDelete(passkey.id)}
+                className="p-2 border-2 border-gray-300 text-red-500 rounded-lg hover:border-red-500 hover:bg-red-50 transition-colors"
+              >
+                <Trash2 size={16} />
+              </button>
             </div>
           </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setEditDialogOpen(false)}>
-              Cancel
-            </Button>
-            <Button onClick={saveEdit}>Save</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+        ))}
+      </div>
 
       {/* Add Dialog */}
-      <Dialog open={addDialogOpen} onOpenChange={setAddDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Add Passkey</DialogTitle>
-            <DialogDescription>Enter the details for the new passkey</DialogDescription>
-          </DialogHeader>
-          <div className="grid gap-4 py-4">
-            <div className="grid gap-2">
-              <Label htmlFor="new-name">Name</Label>
-              <Input
-                id="new-name"
-                value={newName}
-                onChange={(e) => setNewName(e.target.value)}
-              />
+      {addDialogOpen && (
+        <div className="fixed inset-0 bg-black/50 flex justify-center items-center">
+          <div className="bg-white rounded-lg p-6 shadow-lg w-full max-w-sm">
+            <h3 className="text-lg font-bold mb-4">Add Passkey</h3>
+            <div className="space-y-4">
+              <div>
+                <label htmlFor="new-name" className="block font-medium">
+                  Name
+                </label>
+                <input
+                  id="new-name"
+                  className="w-full p-2 border rounded"
+                  value={newName}
+                  onChange={(e) => setNewName(e.target.value)}
+                />
+              </div>
+              <div>
+                <label htmlFor="new-value" className="block font-medium">
+                  Value
+                </label>
+                <input
+                  id="new-value"
+                  className="w-full p-2 border rounded"
+                  value={newValue}
+                  onChange={(e) => setNewValue(e.target.value)}
+                />
+              </div>
             </div>
-            <div className="grid gap-2">
-              <Label htmlFor="new-value">Value</Label>
-              <Input
-                id="new-value"
-                value={newValue}
-                onChange={(e) => setNewValue(e.target.value)}
-              />
+            <div className="mt-6 flex justify-end gap-2">
+              <button
+                className="p-2 bg-gray-200 rounded hover:bg-gray-300"
+                onClick={() => setAddDialogOpen(false)}
+              >
+                Cancel
+              </button>
+              <button
+                className="p-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                onClick={handleAdd}
+              >
+                Add
+              </button>
             </div>
           </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setAddDialogOpen(false)}>
-              Cancel
-            </Button>
-            <Button onClick={handleAdd}>Add</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+        </div>
+      )}
+
+      {/* Edit Dialog */}
+      {editDialogOpen && (
+        <div className="fixed inset-0 bg-black/50 flex justify-center items-center">
+          <div className="bg-white rounded-lg p-6 shadow-lg w-full max-w-sm">
+            <h3 className="text-lg font-bold mb-4">Edit Passkey</h3>
+            <div className="space-y-4">
+              <div>
+                <label htmlFor="edit-name" className="block font-medium">
+                  Name
+                </label>
+                <input
+                  id="edit-name"
+                  className="w-full p-2 border rounded"
+                  value={editedName}
+                  onChange={(e) => setEditedName(e.target.value)}
+                />
+              </div>
+              <div>
+                <label htmlFor="edit-value" className="block font-medium">
+                  Value
+                </label>
+                <input
+                  id="edit-value"
+                  className="w-full p-2 border rounded"
+                  value={editedValue}
+                  onChange={(e) => setEditedValue(e.target.value)}
+                />
+              </div>
+            </div>
+            <div className="mt-6 flex justify-end gap-2">
+              <button
+                className="p-2 bg-gray-200 rounded hover:bg-gray-300"
+                onClick={() => setEditDialogOpen(false)}
+              >
+                Cancel
+              </button>
+              <button
+                className="p-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                onClick={saveEdit}
+              >
+                Save
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Delete Dialog */}
-      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-            <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete the selected
-              passkey.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={confirmDelete}>Delete</AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      {deleteDialogOpen && (
+        <div className="fixed inset-0 bg-black/50 flex justify-center items-center">
+          <div className="bg-white rounded-lg p-6 shadow-lg w-full max-w-sm">
+            <h3 className="text-lg font-bold mb-4">Delete Passkey</h3>
+            <p>Are you sure you want to delete this passkey? This action cannot be undone.</p>
+            <div className="mt-6 flex justify-end gap-2">
+              <button
+                className="p-2 bg-gray-200 rounded hover:bg-gray-300"
+                onClick={() => setDeleteDialogOpen(false)}
+              >
+                Cancel
+              </button>
+              <button
+                className="p-2 bg-red-500 text-white rounded hover:bg-red-600"
+                onClick={confirmDelete}
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -1,285 +1,215 @@
 import React, { useState } from "react";
-import { Download, Share2, Trash2, FileText, Image, Plus } from "lucide-react";
-import { Button } from "./ui/button.tsx";
-import {
-	AlertDialog,
-	AlertDialogAction,
-	AlertDialogCancel,
-	AlertDialogContent,
-	AlertDialogDescription,
-	AlertDialogFooter,
-	AlertDialogHeader,
-	AlertDialogTitle,
-} from "./ui/alert-dialog.tsx";
-import {
-	Dialog,
-	DialogContent,
-	DialogDescription,
-	DialogFooter,
-	DialogHeader,
-	DialogTitle,
-} from "./ui/dialog.tsx";
-import { Input } from "./ui/input.tsx";
-import { Label } from "./ui/label.tsx";
+import { FileText, Image as ImageIcon, Download, Link, Trash, Plus } from "lucide-react";
 
 function Files() {
-	const [files, setFiles] = useState([
-		{
-			id: "1",
-			name: "Document.pdf",
-			type: "PDF",
-			size: "2.5 MB",
-			lastModified: "2024-03-20",
-			preview: "This is a preview of Document.pdf.",
-		},
-		{
-			id: "2",
-			name: "Image.jpg",
-			type: "Image",
-			size: "1.8 MB",
-			lastModified: "2024-03-19",
-			preview: "This is a preview of Image.jpg.",
-		},
-	]);
+  const [files, setFiles] = useState([
+    {
+      id: "1",
+      name: "Document.pdf",
+      type: "PDF",
+      size: "2.5 MB",
+      lastModified: "2024-03-20",
+      preview: "This is a preview of Document.pdf.",
+    },
+    {
+      id: "2",
+      name: "Image.jpg",
+      type: "Image",
+      size: "1.8 MB",
+      lastModified: "2024-03-19",
+      preview: "This is a preview of Image.jpg.",
+    },
+  ]);
 
-	const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-	const [shareDialogOpen, setShareDialogOpen] = useState(false);
-	const [selectedItem, setSelectedItem] = useState(null);
-	const [shareLink, setShareLink] = useState("");
-	const [previewFile, setPreviewFile] = useState(null);
-	const [addDialogOpen, setAddDialogOpen] = useState(false);
-	const [newFileName, setNewFileName] = useState("");
-	const [newFileType, setNewFileType] = useState("");
-	const [newFileSize, setNewFileSize] = useState("");
+  const [selectedItem, setSelectedItem] = useState(null);
+  const [dialogType, setDialogType] = useState(null);
+  const [shareLink, setShareLink] = useState("");
+  const [newFile, setNewFile] = useState(null);
 
-	// Delete file
-	const confirmDelete = () => {
-		setFiles((prevFiles) => prevFiles.filter((file) => file.id !== selectedItem));
-		setDeleteDialogOpen(false);
-		setSelectedItem(null);
-	};
+  const handleFileUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setFiles((prevFiles) => [
+        ...prevFiles,
+        {
+          id: Date.now().toString(),
+          name: file.name,
+          type: file.type.split("/")[0] || "Unknown",
+          size: `${(file.size / 1024 / 1024).toFixed(2)} MB`,
+          lastModified: new Date(file.lastModified).toISOString().split("T")[0],
+          preview: `This is a preview of ${file.name}.`,
+        },
+      ]);
+      setDialogType(null);
+    }
+  };
 
-	const handleDelete = (id) => {
-		setSelectedItem(id);
-		setDeleteDialogOpen(true);
-	};
+  const handleDelete = () => {
+    setFiles((prevFiles) => prevFiles.filter((file) => file.id !== selectedItem));
+    setDialogType(null);
+    setSelectedItem(null);
+  };
 
-	// Share file
-	const handleShare = (id) => {
-		setSelectedItem(id);
-		setShareLink(`https://example.com/share/${id}`);
-		setShareDialogOpen(true);
-	};
+  const handleShare = (id) => {
+    setSelectedItem(id);
+    setShareLink(`https://example.com/share/${id}`);
+    setDialogType("share");
+  };
 
-	// File icon
-	const getFileIcon = (type) => {
-		switch (type.toLowerCase()) {
-			case "image":
-				return <Image className="h-5 w-5 text-blue-500" />;
-			default:
-				return <FileText className="h-5 w-5 text-blue-500" />;
-		}
-	};
+  const handlePreview = (file) => {
+    setSelectedItem(file);
+    setDialogType("preview");
+  };
 
-	// Handle file preview
-	const handlePreview = (file) => {
-		setPreviewFile(file);
-	};
+  const getFileIcon = (type) => {
+    return type.toLowerCase() === "image" ? (
+      <ImageIcon className="text-blue-500" />
+    ) : (
+      <FileText className="text-blue-500" />
+    );
+  };
 
-	// Add new file
-	const handleAddFile = () => {
-		const newFile = {
-			id: Date.now().toString(),
-			name: newFileName,
-			type: newFileType || "Unknown",
-			size: newFileSize || "Unknown size",
-			lastModified: new Date().toISOString().split("T")[0],
-			preview: `This is a preview of ${newFileName}.`,
-		};
-		setFiles((prevFiles) => [...prevFiles, newFile]);
-		setAddDialogOpen(false);
-		setNewFileName("");
-		setNewFileType("");
-		setNewFileSize("");
-	};
+  return (
+    <div className="rounded-lg border bg-white shadow-sm p-4">
+      <div className="flex justify-end mb-4">
+        <button
+          className="px-4 py-2 border-2 border-blue-500 bg-blue-500 text-white rounded-lg flex items-center gap-2 hover:bg-blue-600 hover:border-blue-600 transition-colors"
+          onClick={() => setDialogType("add")}
+        >
+          <Plus size={16} />
+          Add File
+        </button>
+      </div>
 
-	return (
-		<div className="rounded-lg border bg-card text-card-foreground shadow-sm">
-			<div className="p-6">
-				<Button
-					variant="outline"
-					className="mb-4 flex items-center gap-2"
-					onClick={() => setAddDialogOpen(true)}
-				>
-					<Plus className="h-4 w-4" />
-					Add File
-				</Button>
-				<div className="space-y-4">
-					{files.map((file) => (
-						<div
-							key={file.id}
-							className="flex items-center justify-between p-4 bg-white rounded-lg border hover:shadow-md transition-shadow cursor-pointer"
-							onClick={() => handlePreview(file)}
-						>
-							<div className="flex items-center gap-3">
-								{getFileIcon(file.type)}
-								<div>
-									<h3 className="font-medium">{file.name}</h3>
-									<p className="text-sm text-muted-foreground">
-										{file.size} • {file.lastModified}
-									</p>
-								</div>
-							</div>
-							<div className="flex gap-2">
-								<Button
-									variant="outline"
-									size="icon"
-									onClick={(e) => {
-										e.stopPropagation();
-										alert(`Downloading file: ${file.name}`);
-									}}
-								>
-									<Download className="h-4 w-4" />
-								</Button>
-								<Button
-									variant="outline"
-									size="icon"
-									onClick={(e) => {
-										e.stopPropagation();
-										handleShare(file.id);
-									}}
-								>
-									<Share2 className="h-4 w-4" />
-								</Button>
-								<Button
-									variant="outline"
-									size="icon"
-									onClick={(e) => {
-										e.stopPropagation();
-										handleDelete(file.id);
-									}}
-								>
-									<Trash2 className="h-4 w-4" />
-								</Button>
-							</div>
-						</div>
-					))}
-				</div>
-			</div>
+      <div className="space-y-4">
+        {files.map((file) => (
+          <div
+            key={file.id}
+            className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border hover:border-blue-500 transition-colors"
+          >
+            <div className="flex items-center gap-3">
+              {getFileIcon(file.type)}
+              <div>
+                <h3 className="font-medium">{file.name}</h3>
+                <p className="text-sm text-gray-600">
+                  {file.size} • {file.lastModified}
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center gap-3">
+              <button
+                className="p-2 border-2 border-gray-300 text-gray-500 rounded-lg hover:border-blue-500 hover:text-blue-500 transition-colors"
+                onClick={() => alert(`Downloading ${file.name}`)}
+              >
+                <Download size={16} />
+              </button>
+              <button
+                className="p-2 border-2 border-gray-300 text-blue-500 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-colors"
+                onClick={() => handleShare(file.id)}
+              >
+                <Link size={16} />
+              </button>
+              <button
+                className="p-2 border-2 border-gray-300 text-red-500 rounded-lg hover:border-red-500 hover:bg-red-50 transition-colors"
+                onClick={() => {
+                  setSelectedItem(file.id);
+                  setDialogType("delete");
+                }}
+              >
+                <Trash size={16} />
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
 
-			{/* Add File Dialog */}
-			<Dialog open={addDialogOpen} onOpenChange={setAddDialogOpen}>
-				<DialogContent className="bg-white border border-gray-300 rounded-lg shadow-md">
-					<DialogHeader>
-						<DialogTitle>Add New File</DialogTitle>
-					</DialogHeader>
-					<div className="grid gap-4 py-4">
-						<div className="grid gap-2">
-							<Label htmlFor="file-name">File Name</Label>
-							<Input
-								id="file-name"
-								value={newFileName}
-								onChange={(e) => setNewFileName(e.target.value)}
-							/>
-						</div>
-						<div className="grid gap-2">
-							<Label htmlFor="file-type">File Type</Label>
-							<Input
-								id="file-type"
-								value={newFileType}
-								onChange={(e) => setNewFileType(e.target.value)}
-							/>
-						</div>
-						<div className="grid gap-2">
-							<Label htmlFor="file-size">File Size</Label>
-							<Input
-								id="file-size"
-								value={newFileSize}
-								onChange={(e) => setNewFileSize(e.target.value)}
-							/>
-						</div>
-					</div>
-					<DialogFooter>
-						<Button variant="outline" onClick={() => setAddDialogOpen(false)}>
-							Cancel
-						</Button>
-						<Button onClick={handleAddFile}>Add File</Button>
-					</DialogFooter>
-				</DialogContent>
-			</Dialog>
+      {/* Dialogs */}
+      {dialogType === "add" && (
+        <div className="fixed inset-0 bg-black/50 flex justify-center items-center">
+          <div className="bg-white rounded-lg p-6 shadow-lg w-full max-w-sm">
+            <h3 className="text-lg font-bold mb-4">Upload File</h3>
+            <input
+              type="file"
+              onChange={handleFileUpload}
+              className="w-full p-2 border rounded"
+            />
+            <div className="mt-6 flex justify-end gap-2">
+              <button
+                className="p-2 bg-gray-200 rounded hover:bg-gray-300"
+                onClick={() => setDialogType(null)}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
-			{/* File Preview Modal */}
-			{previewFile && (
-				<Dialog open={!!previewFile} onOpenChange={() => setPreviewFile(null)}>
-					<DialogContent className="bg-white border border-gray-300 rounded-lg shadow-md">
-						<DialogHeader>
-							<DialogTitle className="text-lg font-semibold text-gray-900">
-								{previewFile.name}
-							</DialogTitle>
-						</DialogHeader>
-						<DialogDescription className="text-gray-600">
-							<p>{previewFile.preview}</p>
-						</DialogDescription>
-						<DialogFooter>
-							<Button onClick={() => setPreviewFile(null)}>Close</Button>
-						</DialogFooter>
-					</DialogContent>
-				</Dialog>
-			)}
+      {dialogType === "delete" && (
+        <div className="fixed inset-0 bg-black/50 flex justify-center items-center">
+          <div className="bg-white rounded-lg p-6 shadow-lg w-full max-w-sm">
+            <h3 className="text-lg font-bold mb-4">Confirm Delete</h3>
+            <p>Are you sure you want to delete this file? This action cannot be undone.</p>
+            <div className="mt-6 flex justify-end gap-2">
+              <button
+                className="p-2 bg-gray-200 rounded hover:bg-gray-300"
+                onClick={() => setDialogType(null)}
+              >
+                Cancel
+              </button>
+              <button
+                className="p-2 bg-red-500 text-white rounded hover:bg-red-600"
+                onClick={handleDelete}
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
-			{/* Delete Confirmation Dialog */}
-			<AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-				<AlertDialogContent className="bg-white border border-gray-300 rounded-lg shadow-md">
-					<AlertDialogHeader>
-						<AlertDialogTitle className="text-lg font-semibold text-gray-900">
-							Are you sure?
-						</AlertDialogTitle>
-						<AlertDialogDescription className="text-gray-600">
-							This action cannot be undone. This will permanently delete the
-							selected file.
-						</AlertDialogDescription>
-					</AlertDialogHeader>
-					<AlertDialogFooter>
-						<AlertDialogCancel>Cancel</AlertDialogCancel>
-						<AlertDialogAction onClick={confirmDelete}>
-							Delete
-						</AlertDialogAction>
-					</AlertDialogFooter>
-				</AlertDialogContent>
-			</AlertDialog>
+      {dialogType === "share" && (
+        <div className="fixed inset-0 bg-black/50 flex justify-center items-center">
+          <div className="bg-white rounded-lg p-6 shadow-lg w-full max-w-sm">
+            <h3 className="text-lg font-bold mb-4">Share File</h3>
+            <p>Copy the link below to share the file:</p>
+            <input
+              type="text"
+              value={shareLink}
+              readOnly
+              onClick={(e) => e.target.select()}
+              className="w-full p-2 border rounded"
+            />
+            <div className="mt-6 flex justify-end">
+              <button
+                className="p-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                onClick={() => setDialogType(null)}
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
-			{/* Share Dialog */}
-			<Dialog open={shareDialogOpen} onOpenChange={setShareDialogOpen}>
-				<DialogContent className="bg-white border border-gray-300 rounded-lg shadow-md">
-					<DialogHeader>
-						<DialogTitle className="text-lg font-semibold text-gray-900">
-							Share File
-						</DialogTitle>
-						<DialogDescription className="text-gray-600">
-							Copy the link below to share this file
-						</DialogDescription>
-					</DialogHeader>
-					<div className="grid gap-4 py-4">
-						<div className="grid gap-2">
-							<Label htmlFor="share-link" className="text-sm font-medium">
-								Shareable Link
-							</Label>
-							<Input
-								id="share-link"
-								value={shareLink}
-								readOnly
-								className="border border-gray-300 rounded-lg px-3 py-2"
-								onClick={(e) => e.currentTarget.select()}
-							/>
-						</div>
-					</div>
-					<DialogFooter>
-						<Button onClick={() => setShareDialogOpen(false)}>Close</Button>
-					</DialogFooter>
-				</DialogContent>
-			</Dialog>
-		</div>
-	);
+      {dialogType === "preview" && selectedItem && (
+        <div className="fixed inset-0 bg-black/50 flex justify-center items-center">
+          <div className="bg-white rounded-lg p-6 shadow-lg w-full max-w-sm">
+            <h3 className="text-lg font-bold">{selectedItem.name}</h3>
+            <p>{selectedItem.preview}</p>
+            <div className="mt-6 flex justify-end">
+              <button
+                className="p-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                onClick={() => setDialogType(null)}
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
 }
 
 export default Files;
