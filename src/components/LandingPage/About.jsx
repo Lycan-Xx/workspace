@@ -1,15 +1,20 @@
-import React, { useState } from 'react';
-import { FaChevronDown, FaChevronUp, FaQuestionCircle, FaNetworkWired, FaMobileAlt, FaCreditCard } from 'react-icons/fa';
-import { useNavigate } from "react-router-dom"; // Add this import
+import React, { useState } from "react";
+import {
+  FaChevronDown,
+  FaChevronUp,
+  FaQuestionCircle,
+  FaNetworkWired,
+  FaMobileAlt,
+  FaCreditCard,
+} from "react-icons/fa";
+import clsx from "clsx";
 
 const About = ({ language, setShowPlatform, setPlatformInitialView }) => {
   const [activeDropdown, setActiveDropdown] = useState(null);
-  const navigate = useNavigate(); // Add this hook
 
-  // Add default language fallback
-  const currentLanguage = language || 'English';
+  const currentLanguage = language || "English";
 
-const translations = {
+  const translations = {
 	English: {
 		title: "About eVault",
 		description: (
@@ -54,32 +59,32 @@ const translations = {
       icon: <FaQuestionCircle />,
       question: "Getting Started",
       answer:
-        "Firstly, you need to create an account and sign in using your registered username & password.",
-      color: 'blue',
+        "Create an account and sign in with your username and password to access all services.",
+      color: "red",
     },
     {
       id: 2,
       icon: <FaNetworkWired />,
       question: "What We Offer",
       answer:
-        "We support airtime conversion for all major Nigerian networks, including MTN, Glo, Airtel, and 9Mobile. Our platform ensures quick and hassle-free conversion across these networks.",
-      color: 'green',
+        "We support airtime conversion for all major networks, ensuring hassle-free transactions.",
+      color: "green",
     },
     {
       id: 3,
       icon: <FaMobileAlt />,
       question: "Instant Delivery",
       answer:
-        "You can easily check your data balance directly through our platform. Simply log in to your account, navigate to the data services section, and view your current data balance in real-time.",
-      color: 'purple',
+        "Check your data balance directly through our platform in real-time.",
+      color: "blue",
     },
     {
       id: 4,
       icon: <FaCreditCard />,
       question: "Place Order",
       answer:
-        "Yes, we accept both recharge card pins and VTU (Virtual Top-Up) for airtime conversion. Our flexible platform supports multiple payment methods to provide you with convenient options.",
-      color: 'orange',
+        "We accept recharge card pins and VTU for flexible payment options.",
+      color: "orange",
     },
   ];
 
@@ -93,64 +98,75 @@ const translations = {
   };
 
   return (
-    <section id="about" className="bg-gray-100 py-16 px-6 md:px-12">
+    <section id="about" className="bg-white py-16 px-6 md:px-12">
       <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-12 items-center">
-        {/* Left Side - Image and Text */}
+        {/* Left Side */}
         <div className="relative">
-          <div
-            className="absolute inset-0 bg-cover bg-center filter blur-lg"
-            style={{
-              backgroundImage: `url('https://picsum.photos/600/400?random=3')`,
-            }}
-          ></div>
-          <div className="relative z-10 bg-white p-8 rounded-[3rem] shadow-xl">
-            <h2 className="text-4xl font-bold text-gray-800 mb-6">
-              <span className="text-orange-500">
-                {translations[currentLanguage]?.title || translations.English.title}
-              </span>
+          <div className="absolute inset-0 bg-cover bg-center filter blur-lg bg-blue-100"></div>
+          <div className="relative z-10 bg-white p-8 rounded-3xl border border-blue-600">
+            <h2 className="text-4xl font-bold mb-6">
+              {translations[currentLanguage]?.title ||
+                translations.English.title}
             </h2>
-            <p className="text-gray-600 text-lg leading-relaxed">
-              {translations[currentLanguage]?.description || translations.English.description}
+            <p className="text-gray-700 text-lg leading-relaxed">
+              {translations[currentLanguage]?.description ||
+                translations.English.description}
             </p>
-            <button 
+            <button
               onClick={handleLearnMore}
-              className="mt-6 bg-orange-600 text-white px-6 py-3 rounded-lg shadow-md hover:bg-orange-700 transition-all text-lg"
+              className="mt-6 bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-all text-lg"
             >
-              {translations[currentLanguage]?.learnMore || translations.English.learnMore}
+              {translations[currentLanguage]?.learnMore ||
+                translations.English.learnMore}
             </button>
           </div>
         </div>
 
-        {/* Right Side - FAQ Section */}
+        {/* Right Side */}
         <div className="space-y-6">
           {faqItems.map((item) => (
             <div
               key={item.id}
-              className="border border-gray-200 bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all"
+              className="border border-blue-200 bg-white rounded-2xl hover:shadow-xl transition-all"
             >
               <button
                 onClick={() => toggleDropdown(item.id)}
-                className={`w-full flex items-center justify-between p-4 my-4 text-left transition-all duration-300 ease-in-out rounded-2xl ${
-                  activeDropdown === item.id
-                    ? `bg-${item.color}-50 text-${item.color}-800`
-                    : 'bg-white text-gray-700'
-                }`}
+                className={clsx(
+                  "w-full flex items-center justify-between p-4 text-left transition-all rounded-2xl",
+                  {
+                    [`bg-${item.color}-50 text-${item.color}-800`]:
+                      activeDropdown === item.id,
+                    "bg-white text-gray-700": activeDropdown !== item.id,
+                  }
+                )}
+                aria-expanded={activeDropdown === item.id}
+                aria-controls={`faq-${item.id}`}
               >
                 <div className="flex items-center space-x-3">
-                  <span className={`text-${item.color}-500 text-2xl`}>{item.icon}</span>
+                  <span className={`text-${item.color}-500 text-2xl`}>
+                    {item.icon}
+                  </span>
                   <span className="font-medium text-lg">{item.question}</span>
                 </div>
-                <div className="transition-transform duration-300">
-                  {activeDropdown === item.id ? <FaChevronUp /> : <FaChevronDown />}
+                <div className="transition-transform">
+                  {activeDropdown === item.id ? (
+                    <FaChevronUp />
+                  ) : (
+                    <FaChevronDown />
+                  )}
                 </div>
               </button>
 
               <div
-                className={`overflow-hidden transition-all duration-300 ease-in-out ${
-                  activeDropdown === item.id ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
-                }`}
+                id={`faq-${item.id}`}
+                className={clsx(
+                  "overflow-hidden transition-all",
+                  activeDropdown === item.id
+                    ? "max-h-96 opacity-100"
+                    : "max-h-0 opacity-0"
+                )}
               >
-                <div className="p-4 border-t text-gray-600">{item.answer}</div>
+                <div className="p-4 border-t text-gray-700">{item.answer}</div>
               </div>
             </div>
           ))}

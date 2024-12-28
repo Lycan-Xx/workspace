@@ -8,7 +8,7 @@ const Mission = ({ language }) => {
       title: "Our Mission",
       description: `At eVault, we are not just providing financial services; we are transforming 
       the way financial management works for people and businesses. Join us in 
-      shaping a future where financial empowerment is accessible to all.`
+      shaping a future where financial empowerment is accessible to all.`,
     },
     Hausa: {
       title: "Manufarmu",
@@ -29,61 +29,93 @@ const Mission = ({ language }) => {
     },
   };
 
-  // Simplified animation variants
   const variants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { 
-      opacity: 1, 
-      y: 0,
-      transition: {
-        duration: 0.5
-      }
-    }
+    hidden: { opacity: 0 },
+    visible: { opacity: 1, transition: { duration: 0.3 } },
   };
 
   const currentTranslation = translations[language] || translations.English;
 
-return (
-	<section className="relative min-h-screen bg-[#000B5B] text-white px-6 py-16 md:py-24 border-4 border-orange-400 rounded-md">
-		{/* Background Title - Moved above and adjusted positioning */}
-		<div className="text-center mb-16">
-			<h2 className="text-6xl font-bold text-orange-400 transform">
-				Why you should choose eVault
-			</h2>
-		</div>
+  return (
+    <section className="bg-[#000B5B] text-white px-6 py-16 md:py-24">
+      <div className="text-center mb-16">
+        <h2 className="text-4xl md:text-6xl font-bold text-orange-400">
+          Why You Should Choose eVault
+        </h2>
+      </div>
 
-		<div className="max-w-7xl mx-auto md:flex md:items-center md:gap-12 relative mt-12">
-			{/* Image Section */}
-			<motion.div
-				initial="hidden"
-				animate="visible"
-				variants={variants}
-				className="w-full md:w-1/2 flex justify-center mb-12 md:mb-0" // Increased bottom margin
-			>
-				<img
-					src={imageSrc}
-					alt="Mission Visual"
-					className="w-96 h-auto rounded-lg shadow-xl hover:scale-105 transition-transform duration-300"
-				/>
-			</motion.div>
+      {/* 2x2 Grid for Cards */}
+      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
+        {/* Card 1 */}
+        <motion.div
+          initial="hidden"
+          animate="visible"
+          variants={variants}
+          className="flex flex-col items-center bg-white/10 backdrop-blur-sm p-6 rounded-lg border-2 border-orange-400 shadow-md"
+        >
+          <img
+            src={imageSrc}
+            alt="Smiling Visual"
+            className="w-full max-w-[300px] h-auto rounded-lg mb-6"
+          />
+          <h3 className="text-2xl font-semibold text-orange-400">
+            Financial Empowerment
+          </h3>
+          <p className="text-sm text-gray-300 text-center">
+            Transform the way financial management works with eVault.
+          </p>
+        </motion.div>
 
-			{/* Content Section - Added top margin */}
-			<motion.div
-				initial="hidden"
-				animate="visible"
-				variants={variants}
-				className="w-full md:w-1/2 text-center md:text-left space-y-6 bg-white/10 backdrop-blur-sm p-8 rounded-2xl border-2 border-orange-400/50 mt-8 md:mt-0"
-			>
-				<h2 className="text-4xl font-bold text-orange-400">
-					{currentTranslation.title}
-				</h2>
-				<p className="text-xl leading-relaxed">
-					{currentTranslation.description.trim()}
-				</p>
-			</motion.div>
-		</div>
-	</section>
-);
+        {/* Card 2 */}
+        <motion.div
+          initial="hidden"
+          animate="visible"
+          variants={variants}
+          className="flex flex-col items-center bg-white/10 backdrop-blur-sm p-6 rounded-lg border-2 border-orange-400 shadow-md"
+        >
+          <h3 className="text-2xl font-semibold text-orange-400 mb-4">
+            {currentTranslation.title}
+          </h3>
+          <p className="text-sm text-gray-300 text-center">
+            {currentTranslation.description.trim()}
+          </p>
+        </motion.div>
+
+        {/* Card 3 */}
+        <motion.div
+          initial="hidden"
+          animate="visible"
+          variants={variants}
+          className="flex flex-col items-center bg-white/10 backdrop-blur-sm p-6 rounded-lg border-2 border-orange-400 shadow-md"
+        >
+          <img
+            src="https://picsum.photos/200/300" // Placeholder image
+            alt="Innovation"
+            className="w-full max-w-[300px] h-auto rounded-lg mb-6"
+          />
+          <h3 className="text-2xl font-semibold text-orange-400">Innovation</h3>
+          <p className="text-sm text-gray-300 text-center">
+            Pioneering cutting-edge financial solutions for businesses.
+          </p>
+        </motion.div>
+
+        {/* Card 4 */}
+        <motion.div
+          initial="hidden"
+          animate="visible"
+          variants={variants}
+          className="flex flex-col items-center bg-white/10 backdrop-blur-sm p-6 rounded-lg border-2 border-orange-400 shadow-md"
+        >
+          <h3 className="text-2xl font-semibold text-orange-400 mb-4">
+            Customer Focus
+          </h3>
+          <p className="text-sm text-gray-300 text-center">
+            Empowering individuals and businesses with reliable services.
+          </p>
+        </motion.div>
+      </div>
+    </section>
+  );
 };
 
 export default Mission;

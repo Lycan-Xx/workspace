@@ -1,149 +1,150 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { FaQuoteLeft } from 'react-icons/fa';
-import { useInView } from 'react-intersection-observer'; // Ensure useInView is imported
+import React, { useState, useEffect, useRef } from "react";
+import { FaQuoteLeft } from "react-icons/fa";
+import { useInView } from "react-intersection-observer";
 
 const testimonials = [
-  {
-    name: 'Ahmad Ibrahim',
-    role: 'Suya spot owner',
-    text: "Evault's services have transformed our communication strategy. Highly recommended!",
-    image: "https://picsum.photos/200/200?random=3"
-  },
-  {
-    name: 'Emmanuel Dangana',
-    role: 'P.O.S Owner',
-    text: "Reliable, fast, and incredibly user-friendly. Evault exceeds expectations.",
-    image: "https://picsum.photos/200/200?random=4"
-  },
-  {
-    name: 'Faith Faraah',
-    role: 'Saloon owner',
-    text: "Seamless integration and exceptional customer support. Evault is our go-to provider.",
-    image: "https://picsum.photos/200/200?random=5"
-  }
+	{
+		name: 'Ahmad Ibrahim',
+		role: 'Suya spot owner',
+		text: "Evault's services have transformed our communication strategy. Highly recommended!",
+		image: "https://picsum.photos/200/200?random=3"
+	  },
+	  {
+		name: 'Emmanuel Dangana',
+		role: 'P.O.S Owner',
+		text: "Reliable, fast, and incredibly user-friendly. Evault exceeds expectations.",
+		image: "https://picsum.photos/200/200?random=4"
+	  },
+  // Add more testimonials as needed
 ];
 
 const Feedback = () => {
   const [currentTestimonial, setCurrentTestimonial] = useState(0);
-  const scrollContainerRef = useRef(null);
   const [count, setCount] = useState(0);
-  const { inView, ref } = useInView({ triggerOnce: true });
+  const [hasAnimated, setHasAnimated] = useState(false);
+  const scrollContainerRef = useRef(null);
+  const countRef = useRef(null);
+  const animationRef = useRef(null);
+  const { inView, ref } = useInView({ threshold: 0.5, triggerOnce: true });
+
+  const animateCount = (timestamp) => {
+    if (!countRef.current) {
+      countRef.current = timestamp;
+    }
+
+    const progress = timestamp - countRef.current;
+    const duration = 8000; // 2 seconds animation
+    const value = Math.min(Math.floor((progress / duration) * 100000), 100000);
+
+    setCount(value);
+
+    if (progress < duration) {
+      animationRef.current = requestAnimationFrame(animateCount);
+    } else {
+      setHasAnimated(true);
+    }
+  };
 
   useEffect(() => {
-    const scrollContainer = scrollContainerRef.current;
-    
-    const scrollToTestimonial = (index) => {
-      if (scrollContainer) {
-        scrollContainer.scrollTo({
-          left: index * scrollContainer.offsetWidth,
-          behavior: 'smooth'
-        });
+    if (inView && !hasAnimated) {
+      animationRef.current = requestAnimationFrame(animateCount);
+    }
+    return () => {
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current);
       }
     };
+  }, [inView, hasAnimated]);
 
+  useEffect(() => {
     const intervalId = setInterval(() => {
       const nextTestimonial = (currentTestimonial + 1) % testimonials.length;
       setCurrentTestimonial(nextTestimonial);
-      scrollToTestimonial(nextTestimonial);
+      scrollContainerRef.current?.scrollTo({
+        left: nextTestimonial * scrollContainerRef.current.offsetWidth,
+        behavior: "smooth",
+      });
     }, 5000);
-
-    scrollToTestimonial(currentTestimonial);
 
     return () => clearInterval(intervalId);
   }, [currentTestimonial]);
 
-  // Counting animation
-  useEffect(() => {
-    if (inView && count === 0) {
-      let start = 0;
-      const end = 100000;
-      const duration = 10000; // 10 seconds
-      const interval = 10; // Update every 10ms
-      const increment = end / (duration / interval);
-
-      const counter = setInterval(() => {
-        start += increment;
-        if (start >= end) {
-          setCount(end);
-          clearInterval(counter);
-        } else {
-          setCount(Math.ceil(start));
-        }
-      }, interval);
-    }
-  }, [inView, count]);
-
   return (
-    <div className="px-6 md:px-16 py-20 bg-[#000B5B] text-white">
-      <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center space-x-5">
-        {/* Left Side Text */}
-        <div className="md:w-1/3 mb-8 md:mb-0 md:mr-12">
-          <h2 className="text-4xl font-bold mb-4 text-white whitespace-nowrap">
-           <span className='text-orange-500'> Feedback</span> from
-            <br />
-            our customers
-          </h2>
-          <p className="text-gray-300 text-lg text-[1.2rem] font-sans">
-            Hear what our valued clients have to say about their experiences with our services.
-          </p>
+    <div className="px-6 md:px-16 py-20 bg-[#08448c] text-white">
+      <div className="max-w-7xl mx-auto space-y-12">
+		{/* Counting and Feedback Header */}
+		<div className="w-full text-center mb-12">
+			<h2 className="text-5xl font-bold">
+				<span className="text-orange-600">Feedback</span> from Our Users
+			</h2>
+			<p className="text-3xl text-gray-300 mt-4 max-w-2xl mx-auto">
+				Discover what our valued clients have to say about their
+				experiences with our platform.
+			</p>
+		</div>
+
+		{/* Feedback Section */}
+        <div className="flex flex-col md:flex-row items-center justify-between space-y-12 md:space-y-0">
+          {/* Left Text */}
+
+		  <div className="text-center space-y-6">
+          <div ref={ref} className="text-4xl font-bold">
+            {count.toLocaleString()}+ <span className="text-orange-500">Users</span>
+          </div>
+          <div className="text-2xl font-medium">
+            Trusted by individuals and businesses across Nigeria
+          </div>
         </div>
 
-		<div ref={ref} className="text-4xl font-bold mb-4 mx-4 text-white">
-            We have amassed over{' '}
-            <span className="text-orange-500">{count.toLocaleString()}+</span>
-			<br />
-			 Users and counting
-        </div>
-
-        {/* Right Side - Testimonials Container */}
-        <div className="md:w-2/3 w-full">
-          {/* Horizontal Scroll Container */}
-          <div 
-            ref={scrollContainerRef}
-            className="flex overflow-x-hidden scroll-smooth"
-            style={{ scrollSnapType: 'x mandatory' }}
-          >
-            {testimonials.map((testimonial, index) => (
-              <div 
-                key={index} 
-                className="flex-shrink-0 w-full md:w-full px-4"
-                style={{ scrollSnapAlign: 'center' }}
-              >
-                <div className="bg-[#001180] p-8 rounded-xl max-w-xl mx-auto">
-                  <FaQuoteLeft className="text-blue-500 text-3xl mb-4" />
-                  <p className="text-gray-300 text-lg mb-6 italic">
-                    {testimonial.text}
-                  </p>
-                  <div className="flex items-center">
-                    <img
-                      src={testimonial.image}
-                      alt={testimonial.name}
-                      className="w-16 h-16 rounded-full mr-4 object-cover"
-                    />
-                    <div>
-                      <h4 className="font-semibold text-xl">{testimonial.name}</h4>
-                      <p className="text-gray-400 text-sm">{testimonial.role}</p>
+          {/* Testimonials Carousel */}
+          <div className="md:w-2/3 w-full relative">
+            {/* Slider Container */}
+            <div
+              ref={scrollContainerRef}
+              className="flex overflow-x-hidden"
+              style={{ scrollSnapType: "x mandatory" }}
+            >
+              {testimonials.map((testimonial, index) => (
+                <div
+                  key={index}
+                  className="flex-shrink-0 w-full px-4"
+                  style={{ scrollSnapAlign: "center" }}
+                >
+                  <div className="bg-[#001E5A] p-6 rounded-lg shadow-lg flex flex-col items-center text-center w-[350px] h-[220px] mx-auto">
+                    <FaQuoteLeft className="text-orange-500 text-3xl mb-4" />
+                    <p className="text-gray-300 text-sm italic mb-4">
+                      "{testimonial.text}"
+                    </p>
+                    <div className="flex items-center space-x-3 mt-auto">
+                      <img
+                        src={testimonial.image}
+                        alt={testimonial.name}
+                        className="w-12 h-12 rounded-full object-cover"
+                      />
+                      <div>
+                        <h4 className="font-semibold text-sm">{testimonial.name}</h4>
+                        <p className="text-gray-400 text-xs">{testimonial.role}</p>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
 
-          {/* Dot Indicators */}
-          <div className="flex justify-center mt-8 space-x-3">
-            {testimonials.map((_, index) => (
-              <button
-                key={index}
-                onClick={() => setCurrentTestimonial(index)}
-                className={`
-                  w-3 h-3 rounded-full transition-all duration-300
-                  ${currentTestimonial === index 
-                    ? 'bg-blue-500 w-6' 
-                    : 'bg-blue-200'}
-                `}
-              />
-            ))}
+            {/* Dot Indicators */}
+            <div className="flex justify-center mt-6 space-x-3">
+              {testimonials.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => setCurrentTestimonial(index)}
+                  className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                    currentTestimonial === index
+                      ? "bg-orange-500 w-6"
+                      : "bg-gray-300"
+                  }`}
+                />
+              ))}
+            </div>
           </div>
         </div>
       </div>

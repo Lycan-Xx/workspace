@@ -16,6 +16,7 @@ import Footer from './components/LandingPage/Footer';
 import PrivacyPolicy from './components/LandingPage/Extras/PrivacyPolicy'; // Imported Privacy Policy
 import TermsAndConditions from './components/LandingPage/Extras/TermsAndConditions'; // Imported Terms & Conditions
 import PlatformApp from './components/EvaultPlatform/PlatformApp';
+import MobileApp from './components/LandingPage/MobileApp';
 
 const App = () => {
   const [language, setLanguage] = useState("English");
@@ -60,16 +61,16 @@ const App = () => {
                 setShowPlatform={setShowPlatform}
                 setPlatformInitialView={setPlatformInitialView}
               />
-              <Features />
               <About 
                 language={language} 
                 setShowPlatform={setShowPlatform}
                 setPlatformInitialView={setPlatformInitialView}
               />
-              <Mission language={language} />
               <Services />
+              <Features language={language} />
               <Feedback />
               <Offer language={language} setShowPlatform={setShowPlatform} />
+			  <MobileApp />
               <FAQ />
               <Footer />
             </>

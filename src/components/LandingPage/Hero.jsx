@@ -1,12 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { FaChevronDown } from "react-icons/fa";
-import { useNavigate } from "react-router-dom"; // Add this import
-import image1 from "../assets/image-1.jpg";
+import { ArrowRight } from "lucide-react";
 
-const Hero = ({ language, setShowPlatform, setPlatformInitialView }) => { // Change selectedLanguage to language
-  const navigate = useNavigate(); // Add this hook
-  
-  // Function to scroll to the "Features" section
+const Hero = ({ language, setShowPlatform, setPlatformInitialView }) => {
+  // Scroll to the "Features" section
   const scrollToFeatures = () => {
     const featuresSection = document.getElementById("features");
     if (featuresSection) {
@@ -14,6 +11,7 @@ const Hero = ({ language, setShowPlatform, setPlatformInitialView }) => { // Cha
     }
   };
 
+  // Get Started button functionality
   const handleGetStarted = () => {
     setPlatformInitialView("instant-payments");
     setShowPlatform(true);
@@ -24,91 +22,69 @@ const Hero = ({ language, setShowPlatform, setPlatformInitialView }) => { // Cha
     English: "Get Started",
     Hausa: "Fara",
     Igbo: "Malite",
-    Yoruba: "Bẹrẹ"
+    Yoruba: "Bẹrẹ",
   };
 
   const content = {
-    English: (
-      <>
-        <p className="custom-font text-6xl">
-          Welcome to <span className="text-orange-500">eVault</span>.
-        </p>
-        <br />
-        <p className="md:text-[1.5rem]">
-          At <span className="text-orange-500">eVault</span>, we believe in empowering individuals and businesses with{" "}
-          <span className="text-green-400">secure</span> and accessible financial solutions.
-        </p>
-      </>
-    ),
-    Hausa: (
-      <>
-        <p className="custom-font text-6xl">
-          Maraba da <span className="text-orange-500">eVault</span>.
-        </p>
-        <br />
-        <p className="md:text-[1.5rem]">
-          A <span className="text-orange-500">eVault</span>, Muna da yakinin cewa muna bai wa mutane da kasuwanci damar samun hanyoyin kudi masu aminci da saukin samu.
-        </p>
-      </>
-    ),
-    Igbo: (
-      <>
-        <p className="custom-font text-6xl">
-          Nnọọ na <span className="text-orange-500">eVault</span>.
-        </p>
-        <br />
-        <p className="md:text-[1.5rem]">
-          Na <span className="text-orange-500">eVault</span>, Anyị kwenyere n'inyere ndị mmadụ na azụmaahịa ikike iji nweta ihe ngwọta ego dị nchebe ma dị mfe.
-        </p>
-      </>
-    ),
-    Yoruba: (
-      <>
-        <p className="custom-font text-6xl">
-          Kaabo si <span className="text-orange-500">eVault</span>.
-        </p>
-        <br />
-        <p className="md:text-[1.5rem]">
-          Ni <span className="text-orange-500">eVault</span>, A gbagbọ ninu agbara eniyan ati awọn iṣowo pẹlu awọn solusan inawo ti o ni aabo ati ti o rọrun lati wọle si.
-        </p>
-      </>
-    ),
+    English: {
+      title: "Your All-in-One Wallet, Payment, and Financial Solution",
+      description:
+        "Experience seamless financial services with our comprehensive platform designed for individuals and businesses across Northern Nigeria.",
+    },
+    Hausa: {
+      title: "Jakada, Biyan Kuɗi, da Hanyar Kuɗi Na Duk-in-Day",
+      description:
+        "Yi amfani da sabis na kuɗi tare da dandamali mai zurfi wanda aka tsara don mutane da kasuwanci a Arewacin Najeriya.",
+    },
+    Igbo: {
+      title: "Obere Aka N’Onwe Gị Maka Ego, Ọrụ Ego, na Ntụgharị Ego",
+      description:
+        "Nwetaghachi ọrụ ego na enweghị nsogbu site na usoro anyị zuru oke nke dị maka ndị mmadụ na azụmahịa na Northern Nigeria.",
+    },
+    Yoruba: {
+      title: "Ẹgbẹ Kan Fun Apo Wọle, Sisanwo, Ati Solusan Isuna",
+      description:
+        "Ni iriri awọn iṣẹ iṣuna ti ko ni wahala pẹlu pẹpẹ wa ti a ṣe apẹrẹ fun awọn ẹni-kọọkan ati awọn iṣowo ni Aarin Ariwa Nigeria.",
+    },
   };
 
   return (
-    <section
-      className="relative z-0 hero bg-blue-900 text-white px-6 py-12 md:px-20 flex items-center justify-center overflow-hidden"
-      style={{
-        minHeight: "100vh", // Full screen height
-      }}
-    >
-      {/* Background Image */}
-      <div
-        className="absolute inset-0 w-full h-full overflow-hidden z-[-1]"
-        style={{ backgroundImage: `url(${image1})` }}
-      >
-        {/* Overlay */}
-        <div className="absolute inset-0 bg-blue-900 bg-opacity-40"></div>
-      </div>
-
-      {/* Content */}
-      <div className="relative container mx-auto flex flex-col items-center md:flex-row justify-between h-full">
-        {/* Left Content */}
-        <div className="text-content md:w-1/2 space-y-6 text-center md:text-left text-[2rem] md:text-lg">
-          {/* Dynamically Displayed Content */}
-          {content[language]} {/* Change selectedLanguage to language */}
-
-		  <br />
-
-          <button 
-            onClick={handleGetStarted}
-            className="bg-orange-700 px-6 py-3 rounded-md text-lg font-medium hover:bg-orange-400 transition-all duration-300"
-          >
-            {buttonText[language]}
-          </button>
+    <div className="pt-20 bg-[#025798] text-white">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+          {/* Left Content */}
+          <div className="space-y-6">
+            <h1 className="text-4xl md:text-5xl font-bold">
+              {content[language].title}
+            </h1>
+            <p className="text-lg text-gray-200">
+              {content[language].description}
+            </p>
+            <div className="flex space-x-4">
+              <button
+                onClick={handleGetStarted}
+                className="px-6 py-3 bg-orange-700 text-white rounded-lg hover:bg-orange-400 flex items-center"
+              >
+                {buttonText[language]} <ArrowRight className="ml-2 h-5 w-5" />
+              </button>
+              <button
+                onClick={scrollToFeatures}
+                className="px-6 py-3 border border-white text-white rounded-lg hover:bg-white hover:text-[#025798]"
+              >
+                Learn More
+              </button>
+            </div>
+          </div>
+          {/* Right Image */}
+          <div className="relative">
+            <img
+              src="https://picsum.photos/seed/fintech/800/600"
+              alt="Financial Platform"
+              className="rounded-lg shadow-xl"
+            />
+          </div>
         </div>
       </div>
-
       {/* Animated Chevron Down */}
       <div
         className="absolute bottom-20 left-1/2 transform -translate-x-1/2 cursor-pointer z-10"
@@ -119,7 +95,7 @@ const Hero = ({ language, setShowPlatform, setPlatformInitialView }) => { // Cha
           title="Scroll Down"
         />
       </div>
-    </section>
+    </div>
   );
 };
 
