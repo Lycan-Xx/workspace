@@ -28,11 +28,9 @@ const Navbar = ({ language, setLanguage }) => {
 
   const services = [
     { title: "Airtime Top Up", id: "airtime" },
-    { title: "Exams Pin", id: "exams" },
     { title: "Buy Data", id: "data" },
     { title: "Cable Subscription", id: "cable" },
     { title: "Utility Bills Payment", id: "utility" },
-    { title: "Bulk SMS", id: "sms" },
     { title: "Remita Payments", id: "remita" },
     { title: "School Fees Payment", id: "school" },
     { title: "Funds Transfer", id: "transfer" },
@@ -70,6 +68,7 @@ const Navbar = ({ language, setLanguage }) => {
                 className="flex items-center relative group text-gray-700 hover:text-[#025798] text-lg"
               >
                 Services
+				<span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#025798] transition-all group-hover:w-full"></span>
                 <ChevronDown className="ml-1 w-5 h-5" />
               </button>
               <div 

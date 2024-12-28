@@ -12,7 +12,7 @@ const Footer = ({ setLanguage }) => {
   };
 
   return (
-    <footer id="contact" className="bg-[#000B5B] text-white px-6 md:px-16 py-16">
+    <footer id="contact" className="bg-[#08448c] text-white px-6 md:px-16 py-16">
       <div className="max-w-7xl mx-auto">
         <div className="grid md:grid-cols-4 gap-12">
           {/* Company Info */}
@@ -57,11 +57,9 @@ const Footer = ({ setLanguage }) => {
             <h4 className="font-extrabold mb-4">Services</h4>
             <ul className="space-y-2 text-gray-300 font-sans">
               <li>Airtime TopUp</li>
-              <li>Exam Pin</li>
               <li>Buy Data</li>
               <li>Cable Subscription</li>
               <li>Electricity Bill</li>
-              <li>Bulk SMS</li>
             </ul>
           </div>
 
@@ -120,14 +118,22 @@ const Footer = ({ setLanguage }) => {
         </div>
 
         {/* Bottom Section */}
-        <div className="border-t border-gray-700 mt-12 pt-8 text-gray-300 flex flex-col md:flex-row justify-between items-center">
-          <p className="text-left text-gray-300">
-            Powered By <b>iSERVEBAY</b>
-          </p>
-          <div className="text-right text-gray-300 flex items-center space-x-4 mt-6 md:mt-0">
-            <Link to="/privacy-policy" className="hover:text-orange-500">Privacy Policy</Link>
-            <span>|</span>
-            <Link to="/terms-and-conditions" className="hover:text-orange-500">Terms & Conditions</Link>
+        <div className="border-t border-gray-700 mt-12 pt-8 text-gray-300">
+          <div className="flex flex-col md:flex-row justify-between items-center mb-4">
+            <p className="text-left text-gray-300">
+              Powered By <b>Bell MFB</b>
+            </p>
+            <div className="text-right text-gray-300 flex items-center space-x-4 mt-6 md:mt-0">
+              <Link to="/privacy-policy" className="hover:text-orange-500">Privacy Policy</Link>
+              <span>|</span>
+              <Link to="/terms-and-conditions" className="hover:text-orange-500">Terms & Conditions</Link>
+            </div>
+          </div>
+          
+          <div className="text-center pt-4">
+            <p className="text-gray-300">
+              © eVault - iSERVBAY, {new Date().getFullYear()}
+            </p>
           </div>
         </div>
       </div>
