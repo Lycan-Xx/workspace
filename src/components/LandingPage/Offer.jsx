@@ -111,7 +111,7 @@ const Offer = ({ language = "English", setShowPlatform }) => {
     >
       <div className="relative max-w-7xl mx-auto z-10 space-y-12">
         {/* Section Title */}
-        <h2 className="text-3xl md:text-4xl font-bold text-center text-blue-800">
+        <h2 className="text-3xl md:text-[3rem] font-bold mb-4 text-orange-500">
           {currentTranslation.sectionTitle}
         </h2>
 

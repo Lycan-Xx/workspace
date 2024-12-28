@@ -87,7 +87,7 @@ const Services = () => {
       <div className="relative z-10 max-w-7xl mx-auto px-6 sm:px-6 lg:px-8">
         {/* Title Section */}
         <div className="text-center mb-16">
-          <h3 className="text-orange-400 font-bold text-4xl mb-2">Our Services</h3>
+          <h3 className="text-3xl md:text-[3rem] font-bold mb-4 text-orange-500">Our Services</h3>
           <h2 className="text-3xl font-bold text-white mb-4">Comprehensive Solutions for All Your Needs</h2>
           <p className="text-gray-200 text-lg max-w-2xl mx-auto">
             Explore our diverse range of services tailored to simplify your financial transactions.

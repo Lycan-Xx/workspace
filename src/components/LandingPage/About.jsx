@@ -19,7 +19,7 @@ const About = ({ language, setShowPlatform, setPlatformInitialView }) => {
 		title: "About eVault",
 		description: (
 			<>
-				At <span className="font-bold">eVault</span>, we believe in empowering individuals and businesses by providing them with the financial tools they need to succeed. Our mission is to create an inclusive and accessible financial ecosystem that helps bridge gaps in financial management, making it easier for everyone to participate in the economy. <br /><br /> We are committed to delivering <span className="text-orange-500">secure</span>, <span className="text-orange-500">reliable</span>, and <span className="text-orange-500">efficient</span> financial solutions that cater to the diverse needs of our customers. Whether you're an individual looking for better financial security, or a business seeking innovative solutions to enhance your operations, we are here to help you navigate your financial journey.
+				At <span className="font-bold">eVault</span>, we believe in empowering individuals and businesses by providing them with the financial tools they need to succeed. <br /><br /> We are committed to delivering <span className="text-orange-500">secure</span>, <span className="text-orange-500">reliable</span>, and <span className="text-orange-500">efficient</span> financial solutions that cater to the diverse needs of our customers.
 			</>
 		),
 		learnMore: "Learn More"
@@ -28,7 +28,7 @@ const About = ({ language, setShowPlatform, setPlatformInitialView }) => {
 		title: "Game da eVault",
 		description: (
 			<>
-				A <span className="font-bold"> eVault</span> Muna da yakinin cewa muna bai wa mutane da kasuwanci damar samun hanyoyin kudi masu aminci da saukin samu. Manufarmu ita ce gina tsarin hada-hadar kudi wanda zai tabbatar da samun dama ga kowa da kowa, wanda zai magance gibin da ke cikin gudanar da kudi, yana saukaka shiga cikin tattalin arziki. <br /> <br /> Muna da kwazo wajen bayar da sabis na kudi masu tsaro, masu kyau da inganci wadanda za su biya bukatun masu amfani da su. Ko kai mutum ne da ke neman tsaro mafi kyau a cikin kudi, ko kuma kasuwanci da ke neman sabbin hanyoyi don inganta ayyukansu, muna nan don taimaka maka wajen shawo kan duk wani lamari na kudi.
+				A <span className="font-bold"> eVault</span> Muna da yakinin cewa muna bai wa mutane da kasuwanci damar samun hanyoyin kudi masu aminci da saukin samu. <br /> <br /> Muna da kwazo wajen bayar da sabis na kudi masu tsaro, masu kyau da inganci wadanda za su biya bukatun masu amfani da su.
 			</>
 		),
 		learnMore: "Koyi Kari"
@@ -37,7 +37,7 @@ const About = ({ language, setShowPlatform, setPlatformInitialView }) => {
 		title: "Maka eVault",
 		description: (
 			<>
-				Na <span className="font-bold"> eVault </span> Anyị kwenyere n’inyere ndị mmadụ na azụmaahịa ikike iji nweta ihe ngwọta ego dị nchebe ma dị mfe. Ebumnobi anyị bụ iwulite usoro ego nke na-eme ka ọ dị mfe maka onye ọ bụla ịbanye n’ime akụ na ụba, iji kpochapụ ihe mgbochi ọ bụla na-arụ ọrụ akụ na ụba. <br /> <br /> Anyị kwadoro iji nyere ndị ahịa anyị usoro ego dị nchebe, kwụsie ike, na nke a pụrụ ịdabere na ya, nke na-enyere ha aka nweta mkpa ha. Ma gị bụ onye ọchụnta ego ma ọ bụ azụmaahịa, anyị dị ebe a iji nyere gị aka.
+				Na <span className="font-bold"> eVault </span> Anyị kwenyere n’inyere ndị mmadụ na azụmaahịa ikike iji nweta ihe ngwọta ego dị nchebe ma dị mfe. <br /> <br /> Anyị kwadoro iji nyere ndị ahịa anyị usoro ego dị nchebe, kwụsie ike, na nke a pụrụ ịdabere na ya, nke na-enyere ha aka nweta mkpa ha.
 			</>
 		),
 		learnMore: "Mụta Karịa"
@@ -46,7 +46,7 @@ const About = ({ language, setShowPlatform, setPlatformInitialView }) => {
 		title: "Nipa eVault",
 		description: (
 			<>
-				Ni <span className="font-bold">eVault</span> A gbagbọ ninu agbara eniyan ati awọn iṣowo pẹlu awọn solusan inawo ti o ni aabo ati ti o rọrun lati wọle si.Aims wa ni lati ṣẹda eto inawo ti o ni wiwo gbogbo eniyan ati ti o rọrun lati wọle si, ti o ṣe iranlọwọ lati ṣe iwọn awọn ailagbara ni iṣakoso inawo, ṣiṣe ni irọrun fun gbogbo eniyan lati kopa ninu ọrọ-aje. <br /> <br /> A ni igbẹkẹle lati pese awọn solusan inawo to ni aabo, to ni igbẹkẹle ati to munadoko ti o yẹ fun awọn iwulo oriṣiriṣi ti awọn alabara wa. Boya o jẹ ẹni-kọọkan ti n wa aabo inawo ti o dara julọ, tabi iṣowo ti o n wa awọn solusan alailẹgbẹ lati mu awọn iṣẹ wọn dara si, a wa nibi lati ṣe iranlọwọ fun ọ ni irin-ajo rẹ.
+				Ni <span className="font-bold">eVault</span> A gbagbọ ninu agbara eniyan ati awọn iṣowo pẹlu awọn solusan inawo ti o ni aabo ati ti o rọrun lati wọle si. <br /> <br /> A ni igbẹkẹle lati pese awọn solusan inawo to ni aabo, to ni igbẹkẹle ati to munadoko ti o yẹ fun awọn iwulo oriṣiriṣi ti awọn alabara wa.
 			</>
 		),
 		learnMore: "Kẹkọ Diẹ Sii"
@@ -104,17 +104,18 @@ const About = ({ language, setShowPlatform, setPlatformInitialView }) => {
         <div className="relative">
           <div className="absolute inset-0 bg-cover bg-center filter blur-lg bg-blue-100"></div>
           <div className="relative z-10 bg-white p-8 rounded-3xl border border-blue-600">
-            <h2 className="text-4xl font-bold mb-6">
+            <h2 className="text-3xl md:text-[3rem] font-bold mb-4 text-orange-500">
               {translations[currentLanguage]?.title ||
                 translations.English.title}
             </h2>
+			<br />
             <p className="text-gray-700 text-lg leading-relaxed">
               {translations[currentLanguage]?.description ||
                 translations.English.description}
             </p>
             <button
               onClick={handleLearnMore}
-              className="mt-6 bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-all text-lg"
+              className="mt-6 bg-[#025798] text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-all text-lg"
             >
               {translations[currentLanguage]?.learnMore ||
                 translations.English.learnMore}

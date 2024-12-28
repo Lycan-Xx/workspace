@@ -1,24 +1,13 @@
 import React, { useState } from "react";
-import { Menu, X, Globe, Wallet } from "lucide-react";
+import { Menu, X, Globe } from "lucide-react";
+import { ChevronUp, ChevronDown } from "lucide-react";
 import { FaSignInAlt, FaUserPlus } from "react-icons/fa";
 import { AnimatePresence, motion } from "framer-motion";
+import logo from "../assets/evault-main-logo.png";
 
 const Navbar = ({ language, setLanguage }) => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-
-  // Dropdown hover handlers
-  let dropdownTimeout;
-  const openDropdown = () => {
-    clearTimeout(dropdownTimeout);
-    setIsDropdownOpen(true);
-  };
-
-  const closeDropdown = () => {
-    dropdownTimeout = setTimeout(() => {
-      setIsDropdownOpen(false);
-    }, 200); // Small delay to allow hover over the dropdown
-  };
+  const [isOpen, setIsOpen] = useState(false); // Mobile menu state
+  const [isServicesOpen, setIsServicesOpen] = useState(false); // Services dropdown state
 
   // Language switch handler
   const handleLanguageSwitch = () => {
@@ -28,12 +17,12 @@ const Navbar = ({ language, setLanguage }) => {
     setLanguage(languages[nextIndex]);
   };
 
-  // Scroll to section
   const scrollToSection = (sectionId) => {
     const element = document.getElementById(sectionId);
     if (element) {
       element.scrollIntoView({ behavior: "smooth" });
-      setIsOpen(false); // Close mobile menu after clicking
+      setIsOpen(false); // Close mobile menu
+      setIsServicesOpen(false); // Close dropdown if open
     }
   };
 
@@ -44,39 +33,55 @@ const Navbar = ({ language, setLanguage }) => {
     { title: "Cable Subscription", id: "cable" },
     { title: "Utility Bills Payment", id: "utility" },
     { title: "Bulk SMS", id: "sms" },
+    { title: "Remita Payments", id: "remita" },
+    { title: "School Fees Payment", id: "school" },
+    { title: "Funds Transfer", id: "transfer" },
+    { title: "Virtual Cards", id: "cards" },
+    { title: "Business Portfolio", id: "portfolio" },
   ];
 
   return (
     <nav className="bg-white fixed w-full z-50 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16 items-center">
-          {/* Logo */}
-          <div className="flex-shrink-0 flex items-center">
-            <Wallet className="h-8 w-8 text-[#025798]" />
-            <span className="ml-2 text-xl font-bold text-[#025798]">eVault</span>
-          </div>
+        <div className="flex justify-between items-center h-14 md:h-20"> {/* Reduced height for mobile */}
+		{/* Logo */}
+				  <div className="flex-shrink-0 flex items-center">
+					<img 
+					  src={logo} 
+					  alt="eVault Logo" 
+					  className="h-10 w-10 md:h-16 md:w-16 sm:h-12 sm:w-12" 
+					/>
+					<span className="mt-[2rem] mr-[2rem] text-xl font-bold text-[#025798] hidden md:block">Vault</span>
+				  </div>
 
-          {/* Desktop Navigation */}
+				  {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
             <button
               onClick={() => scrollToSection("about")}
-              className="text-gray-700 hover:text-[#025798]"
+              className="relative group text-gray-700 hover:text-[#025798] text-lg"
             >
               About
+              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#025798] transition-all group-hover:w-full"></span>
             </button>
-            <div
-              className="relative group"
-              onMouseEnter={openDropdown}
-              onMouseLeave={closeDropdown}
-            >
-              <button className="text-gray-700 hover:text-[#025798]">Services</button>
-              {isDropdownOpen && (
-                <div className="absolute left-0 mt-2 w-48 bg-white text-gray-700 shadow-lg rounded-lg z-10">
+
+            {/* Modified Services Dropdown */}
+            <div className="relative group">
+              <button
+                className="flex items-center relative group text-gray-700 hover:text-[#025798] text-lg"
+              >
+                Services
+                <ChevronDown className="ml-1 w-5 h-5" />
+              </button>
+              <div 
+                className="absolute left-0 mt-2 w-64 bg-white text-gray-700 shadow-lg rounded-lg z-10 opacity-0 invisible 
+                group-hover:opacity-100 group-hover:visible transition-all duration-300 transform origin-top"
+              >
+                <div className="py-2">
                   {services.map((service, index) => (
                     <button
                       key={service.id}
                       onClick={() => scrollToSection(service.id)}
-                      className={`block w-full text-left px-4 py-2 hover:bg-gray-100 transition-all duration-300 
+                      className={`block w-full text-left px-4 py-2 hover:bg-[#025798] hover:text-white transition-colors duration-200
                         ${index === 0 ? "rounded-t-lg" : ""} 
                         ${index === services.length - 1 ? "rounded-b-lg" : ""}`}
                     >
@@ -84,19 +89,22 @@ const Navbar = ({ language, setLanguage }) => {
                     </button>
                   ))}
                 </div>
-              )}
+              </div>
             </div>
+
             <button
               onClick={() => scrollToSection("features")}
-              className="text-gray-700 hover:text-[#025798]"
+              className="relative group text-gray-700 hover:text-[#025798] text-lg"
             >
               Features
+              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#025798] transition-all group-hover:w-full"></span>
             </button>
             <button
               onClick={() => scrollToSection("contact")}
-              className="text-gray-700 hover:text-[#025798]"
+              className="relative group text-gray-700 hover:text-[#025798] text-lg"
             >
               Contact
+              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#025798] transition-all group-hover:w-full"></span>
             </button>
           </div>
 
@@ -104,15 +112,17 @@ const Navbar = ({ language, setLanguage }) => {
           <div className="hidden md:flex items-center space-x-4">
             <button
               onClick={handleLanguageSwitch}
-              className="flex items-center text-gray-700 hover:text-[#025798]"
+              className="flex items-center px-4 py-2 text-gray-700 hover:text-[#025798] hover:bg-gray-100 rounded-lg transition-all"
             >
               <Globe className="h-5 w-5 mr-1" />
               {language}
             </button>
-            <button className="px-4 py-2 text-[#025798] hover:bg-gray-100 rounded-lg">
+            <button className="flex items-center px-4 py-2 text-[#025798] hover:bg-gray-100 rounded-lg transition-all">
+              <FaSignInAlt className="h-5 w-5 mr-2" />
               Sign In
             </button>
-            <button className="px-4 py-2 bg-[#025798] text-white rounded-lg hover:bg-[#024578]">
+            <button className="flex items-center px-4 py-2 bg-[#025798] text-white rounded-lg hover:bg-[#024578] transition-all">
+              <FaUserPlus className="h-5 w-5 mr-2" />
               Sign Up
             </button>
           </div>
@@ -131,58 +141,100 @@ const Navbar = ({ language, setLanguage }) => {
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            className="md:hidden bg-white px-4 py-3 shadow-md rounded-b-lg"
+            initial={{ x: "100%" }}
+            animate={{ x: 0 }}
+            exit={{ x: "100%" }}
+            transition={{ type: "tween", duration: 0.4 }}
+            className="fixed inset-y-0 right-0 bg-white shadow-md w-3/4 max-w-sm z-50 p-6"
           >
-            <button
-              onClick={() => scrollToSection("about")}
-              className="block text-gray-700 hover:text-[#025798] w-full text-left py-2"
-            >
-              About
-            </button>
-            <details className="w-full">
-              <summary className="text-gray-700 hover:text-[#025798] cursor-pointer">
-                Services
-              </summary>
-              <div className="mt-2 ml-4 space-y-2">
-                {services.map((service) => (
-                  <button
-                    key={service.id}
-                    onClick={() => scrollToSection(service.id)}
-                    className="block w-full text-left text-gray-700 hover:text-[#025798] transition-colors"
-                  >
-                    {service.title}
-                  </button>
-                ))}
+            {/* Mobile Logo */}
+            <div className="flex items-center justify-between mb-6">
+              <img src={logo} alt="eVault Logo" className="h-10 w-10" />
+              <button
+                onClick={() => setIsOpen(false)}
+                className="text-gray-700 focus:outline-none"
+              >
+                <X className="h-6 w-6" />
+              </button>
+            </div>
+
+            {/* Mobile Links */}
+            <div className="space-y-4">
+              {/* Main Navigation Links */}
+              {["About", "Features", "Contact"].map((link) => (
+                <button
+                  key={link}
+                  onClick={() => scrollToSection(link.toLowerCase())}
+                  className="block w-full text-left text-gray-700 hover:text-[#025798] text-lg"
+                >
+                  {link}
+                </button>
+              ))}
+
+              {/* Mobile Services Dropdown */}
+              <div>
+                <button
+                  onClick={() => setIsServicesOpen(!isServicesOpen)}
+                  className="flex justify-between w-full text-left text-gray-700 hover:text-[#025798] text-lg"
+                >
+                  Services
+                  {isServicesOpen ? <ChevronUp /> : <ChevronDown />}
+                </button>
+                <AnimatePresence>
+                  {isServicesOpen && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      className="ml-4 mt-2 space-y-2"
+                    >
+                      {services.map((service) => (
+                        <button
+                          key={service.id}
+                          onClick={() => scrollToSection(service.id)}
+                          className="block w-full text-left text-gray-700 hover:text-[#025798]"
+                        >
+                          {service.title}
+                        </button>
+                      ))}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
-            </details>
-            <button
-              onClick={() => scrollToSection("features")}
-              className="block text-gray-700 hover:text-[#025798] w-full text-left py-2"
-            >
-              Features
-            </button>
-            <button
-              onClick={() => scrollToSection("contact")}
-              className="block text-gray-700 hover:text-[#025798] w-full text-left py-2"
-            >
-              Contact
-            </button>
-            <button
-              onClick={handleLanguageSwitch}
-              className="flex items-center bg-blue-600 px-6 py-2 rounded-xl shadow-md hover:bg-blue-700 transition-all duration-300 text-white w-full mt-4"
-            >
-              <Globe className="mr-2" />
-              {language}
-            </button>
-            <button className="block w-full bg-gray-600 px-6 py-2 rounded-xl shadow-md hover:bg-gray-700 transition-all duration-300 mt-2">
-              Sign In
-            </button>
-            <button className="block w-full bg-[#025798] px-6 py-2 rounded-xl shadow-md hover:bg-[#024578] transition-all duration-300 mt-2">
-              Sign Up
-            </button>
+            </div>
+
+            {/* Divider */}
+            <div className="border-t border-gray-200 my-4"></div>
+
+            {/* Mobile Actions */}
+            <div className="space-y-4">
+              {/* Language Switch */}
+              <button
+                onClick={handleLanguageSwitch}
+                className="flex items-center px-4 py-2 text-gray-700 hover:text-[#025798] hover:bg-gray-100 rounded-lg transition-all w-full text-left"
+              >
+                <Globe className="h-5 w-5 mr-2" />
+                {language}
+              </button>
+
+              {/* Sign In */}
+              <button
+                onClick={() => console.log("Sign In clicked")}
+                className="flex items-center px-4 py-2 text-[#025798] hover:bg-gray-100 rounded-lg transition-all w-full text-left"
+              >
+                <FaSignInAlt className="h-5 w-5 mr-2" />
+                Sign In
+              </button>
+
+              {/* Sign Up */}
+              <button
+                onClick={() => console.log("Sign Up clicked")}
+                className="flex items-center px-4 py-2 bg-[#025798] text-white rounded-lg hover:bg-[#024578] transition-all w-full text-left"
+              >
+                <FaUserPlus className="h-5 w-5 mr-2" />
+                Sign Up
+              </button>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>

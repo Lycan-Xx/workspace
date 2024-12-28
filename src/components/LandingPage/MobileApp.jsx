@@ -18,7 +18,8 @@ return (
 				</div>
 
 				<div className="space-y-6">
-					<h2 className="text-3xl font-bold">Get Our Mobile App</h2>
+					<h2 className="text-3xl md:text-[3rem] font-bold mb-4 text-orange-500">Get Our Mobile App</h2>
+					<br />
 					<p className="text-lg text-gray-200">
 						Experience the power of eVault in your pocket. Download our mobile app
 						for seamless access to all our services, anytime, anywhere.

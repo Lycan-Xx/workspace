@@ -74,8 +74,8 @@ const Feedback = () => {
       <div className="max-w-7xl mx-auto space-y-12">
 		{/* Counting and Feedback Header */}
 		<div className="w-full text-center mb-12">
-			<h2 className="text-5xl font-bold">
-				<span className="text-orange-600">Feedback</span> from Our Users
+			<h2 className="text-3xl md:text-[3rem] font-bold mb-4 text-orange-500">
+				<span>Feedback</span> from Our Users
 			</h2>
 			<p className="text-3xl text-gray-300 mt-4 max-w-2xl mx-auto">
 				Discover what our valued clients have to say about their

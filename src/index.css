@@ -31,4 +31,20 @@
   .animate-bg-scrolling {
 	animation: bg-scrolling 2s linear infinite;
   }
+
+  /* handle hover behavior */
+.group:hover > .group-hover\:visible {
+	visibility: visible;
+  }
+  
+  /* slight delay to prevent accidental mouseout */
+  .group:hover > div {
+	transition-delay: 100ms;
+  }
+  
+  /*  keep the dropdown visible while hovering over it */
+  .group > div:hover {
+	opacity: 1 !important;
+	visibility: visible !important;
+  }
   
