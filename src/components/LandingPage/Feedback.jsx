@@ -75,7 +75,7 @@ const Feedback = () => {
         {/* Counting and Feedback Header */}
         <div className="w-full text-center mb-12">
           <h2 className="text-3xl md:text-[3rem] font-bold mb-4 text-orange-500">
-            <span>Feedback</span> from Our Users
+            <span>Feedback</span> from Our Customers
           </h2>
           <p className="text-3xl text-gray-300 mt-4 max-w-2xl mx-auto">
             Discover what our valued clients have to say about their
@@ -87,7 +87,7 @@ const Feedback = () => {
         <div className="flex flex-col md:flex-row items-center justify-between space-y-12 md:space-y-0">
           {/* Trust Counter */}
           <div className="text-center">
-            <div ref={ref} className="text-2xl font-medium">
+            <div ref={ref} className="text-3xl font-medium">
               Trusted by{' '}
               <span className="text-orange-500 text-4xl font-bold">
                 {count.toLocaleString()}+
