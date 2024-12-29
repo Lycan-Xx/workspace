@@ -3,13 +3,7 @@ import { FaChevronDown } from "react-icons/fa";
 import { ArrowRight } from "lucide-react";
 
 const Hero = ({ language, setShowPlatform, setPlatformInitialView }) => {
-  // Scroll to the "Features" section
-  const scrollToFeatures = () => {
-    const featuresSection = document.getElementById("features");
-    if (featuresSection) {
-      featuresSection.scrollIntoView({ behavior: "smooth" });
-    }
-  };
+
 
   // Get Started button functionality
   const handleGetStarted = () => {
@@ -78,16 +72,6 @@ const Hero = ({ language, setShowPlatform, setPlatformInitialView }) => {
             />
           </div>
         </div>
-      </div>
-      {/* Animated Chevron Down */}
-      <div
-        className="absolute bottom-20 left-1/2 transform -translate-x-1/2 cursor-pointer z-10"
-        onClick={scrollToFeatures}
-      >
-        <FaChevronDown
-          className="text-white text-3xl animate-bounce"
-          title="Scroll Down"
-        />
       </div>
     </div>
   );

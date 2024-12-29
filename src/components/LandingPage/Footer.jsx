@@ -12,7 +12,7 @@ const Footer = ({ setLanguage }) => {
   };
 
   return (
-    <footer id="contact" className="bg-[#08448c] text-white px-6 md:px-16 py-16">
+    <footer id="contact" className="bg-[#083060] text-white px-6 md:px-16 py-16">
       <div className="max-w-7xl mx-auto">
         <div className="grid md:grid-cols-4 gap-12">
           {/* Company Info */}
@@ -118,7 +118,7 @@ const Footer = ({ setLanguage }) => {
         </div>
 
         {/* Bottom Section */}
-        <div className="border-t border-gray-700 mt-12 pt-8 text-gray-300">
+        <div className="border-t border-gray-400 mt-12 pt-8 text-gray-300">
           <div className="flex flex-col md:flex-row justify-between items-center mb-4">
             <p className="text-left text-gray-300">
               Powered By <b>Bell MFB</b>

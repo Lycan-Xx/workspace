@@ -72,32 +72,34 @@ const Feedback = () => {
   return (
     <div className="px-6 md:px-16 py-20 bg-[#08448c] text-white">
       <div className="max-w-7xl mx-auto space-y-12">
-		{/* Counting and Feedback Header */}
-		<div className="w-full text-center mb-12">
-			<h2 className="text-3xl md:text-[3rem] font-bold mb-4 text-orange-500">
-				<span>Feedback</span> from Our Users
-			</h2>
-			<p className="text-3xl text-gray-300 mt-4 max-w-2xl mx-auto">
-				Discover what our valued clients have to say about their
-				experiences with our platform.
-			</p>
-		</div>
+        {/* Counting and Feedback Header */}
+        <div className="w-full text-center mb-12">
+          <h2 className="text-3xl md:text-[3rem] font-bold mb-4 text-orange-500">
+            <span>Feedback</span> from Our Users
+          </h2>
+          <p className="text-3xl text-gray-300 mt-4 max-w-2xl mx-auto">
+            Discover what our valued clients have to say about their
+            experiences with our platform.
+          </p>
+        </div>
 
-		{/* Feedback Section */}
+        {/* Feedback Section */}
         <div className="flex flex-col md:flex-row items-center justify-between space-y-12 md:space-y-0">
-          {/* Left Text */}
-
-		  <div className="text-center space-y-6">
-          <div ref={ref} className="text-4xl font-bold">
-            {count.toLocaleString()}+ <span className="text-orange-500">Users</span>
-          </div>
-          <div className="text-2xl font-medium">
-            Trusted by individuals and businesses across Nigeria
+          {/* Trust Counter */}
+          <div className="text-center">
+            <div ref={ref} className="text-2xl font-medium">
+              Trusted by{' '}
+              <span className="text-orange-500 text-4xl font-bold">
+                {count.toLocaleString()}+
+              </span>{' '}
+              <br className="md:hidden" />
+              individuals and businesses across Nigeria
+            </div>
           </div>
         </div>
 
-          {/* Testimonials Carousel */}
-          <div className="md:w-2/3 w-full relative">
+        {/* Testimonials Carousel */}
+        <div className="md:w-2/3 w-full relative">
             {/* Slider Container */}
             <div
               ref={scrollContainerRef}
@@ -148,7 +150,6 @@ const Feedback = () => {
           </div>
         </div>
       </div>
-    </div>
   );
 };
 
