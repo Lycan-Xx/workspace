@@ -1,4 +1,22 @@
 import React, { useState } from "react";
+import {
+  Box,
+  Grid,
+  Typography,
+  Button,
+  TextField,
+  Card,
+  CardContent,
+  CardActions,
+  Switch,
+  FormControlLabel,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Paper,
+} from "@mui/material";
+import { UploadFile, Save, Cancel } from "@mui/icons-material";
 import Accounts from "./Services/Accounts";
 
 const AdminPage = () => {
@@ -47,7 +65,6 @@ const AdminPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const vendorId = "vendor-id"; // Replace with actual vendor ID
       alert("Vendor updated successfully!");
     } catch (error) {
       console.error(error);
@@ -56,154 +73,175 @@ const AdminPage = () => {
   };
 
   return (
-    <form
+    <Box
+      component="form"
       onSubmit={handleSubmit}
-      className="p-6 bg-white border border-gray-300 rounded-lg shadow-lg flex flex-col space-y-8"
+      sx={{
+        maxWidth: 900,
+        mx: "auto",
+        my: 4,
+        p: 4,
+        bgcolor: "background.paper",
+        borderRadius: 2,
+        boxShadow: 3,
+      }}
     >
-      <h1 className="text-[2.4rem] font-extrabold text-red-600 mb-4">Portal Preference</h1>
+      <Typography variant="h4" color="primary" fontWeight="bold" gutterBottom>
+        Portal Preference
+      </Typography>
 
       {/* Top Banner Section */}
-      <div className="w-full h-56 sm:h-64 bg-cover bg-center relative border border-gray-300 rounded-lg">
-        <label className="absolute top-2 left-2 bg-black bg-opacity-50 text-white py-1 px-3 rounded-lg text-sm font-semibold cursor-pointer">
+      <Box sx={{ position: "relative", mb: 3 }}>
+        <Paper
+          elevation={3}
+          sx={{
+            height: 200,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            borderRadius: 2,
+            backgroundImage: `url(${formData.topBanner || ""})`,
+          }}
+        />
+        <Button
+          component="label"
+          startIcon={<UploadFile />}
+          sx={{ mt: 2 }}
+          variant="contained"
+        >
           Upload Top Banner
           <input
             name="topBanner"
             type="file"
             accept="image/*"
             onChange={handleImageChange}
-            className="hidden"
+            hidden
           />
-        </label>
-        {formData.topBanner && (
-          <div
-            className="w-full h-full bg-cover bg-center rounded-lg"
-            style={{ backgroundImage: `url(${formData.topBanner})` }}
-          />
-        )}
-      </div>
+        </Button>
+      </Box>
 
-      {/* Main Content Section */}
-      <div className="flex flex-col md:flex-row md:space-x-8">
-        {/* Left Banner Section */}
-        <div className="md:w-1/3 h-72 sm:h-96 bg-gray-200 rounded-lg bg-cover bg-center relative border border-gray-300">
-          <label className="absolute top-2 left-2 bg-black bg-opacity-50 text-white py-1 px-3 rounded-lg text-sm font-semibold cursor-pointer">
+      {/* Left Banner and Contact Info Section */}
+      <Grid container spacing={3} sx={{ mb: 3 }}>
+        <Grid item xs={12} md={4}>
+          <Paper
+            elevation={3}
+            sx={{
+              height: 200,
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+              borderRadius: 2,
+              backgroundImage: `url(${formData.leftBanner || ""})`,
+            }}
+          />
+          <Button
+            component="label"
+            startIcon={<UploadFile />}
+            sx={{ mt: 2 }}
+            variant="contained"
+          >
             Upload Left Banner
             <input
               name="leftBanner"
               type="file"
               accept="image/*"
               onChange={handleImageChange}
-              className="hidden"
+              hidden
             />
-          </label>
-          {formData.leftBanner && (
-            <div
-              className="w-full h-full bg-cover bg-center rounded-lg"
-              style={{ backgroundImage: `url(${formData.leftBanner})` }}
-            />
-          )}
-        </div>
+          </Button>
+        </Grid>
 
-        {/* Contact Info Section */}
-        <div className="md:w-2/3 flex flex-col space-y-4">
-          <input
+        <Grid item xs={12} md={8}>
+          <TextField
             name="businessName"
-            placeholder="Business Name"
+            label="Business Name"
+            fullWidth
+            value={formData.businessName}
             onChange={handleChange}
-            className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-red-500"
-            required
+            sx={{ mb: 2 }}
           />
-
-          <input
+          <TextField
             name="contactEmail"
-            placeholder="Contact Email"
+            label="Contact Email"
+            fullWidth
+            type="email"
+            value={formData.contactEmail}
             onChange={handleChange}
-            className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-red-500"
-            required
+            sx={{ mb: 2 }}
           />
-
-          <input
+          <TextField
             name="contactPhone"
-            placeholder="Contact Phone"
+            label="Contact Phone"
+            fullWidth
+            type="tel"
+            value={formData.contactPhone}
             onChange={handleChange}
-            className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-red-500"
-            required
+            sx={{ mb: 2 }}
           />
-
-          <textarea
+          <TextField
             name="description"
-            placeholder="Description"
+            label="Description"
+            fullWidth
+            multiline
+            rows={4}
+            value={formData.description}
             onChange={handleChange}
-            className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-red-500"
-            required
           />
-        </div>
-      </div>
+        </Grid>
+      </Grid>
 
-      {/* Payment Options Section */}
-      <div className="p-4 bg-gray-100 border border-gray-300 rounded-lg">
-        <h2 className="text-lg font-bold mb-4">Payment Options</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {[
-            { option: "card", title: "Credit/Debit Card", description: "Pay using your credit or debit card." },
-            { option: "transfer", title: "Bank Transfer", description: "Transfer funds directly from your bank." },
-            { option: "ussd", title: "USSD Payment", description: "Use USSD codes for quick payments." },
-          ].map(({ option, title, description }) => (
-            <div
-              key={option}
-              className="p-4 bg-white border border-gray-300 rounded-lg shadow-md"
-            >
-              <h3 className="text-md font-bold mb-2">{title}</h3>
-              <p className="text-sm mb-4">{description}</p>
-              <div className="flex items-center space-x-2 text-sm font-medium">
-                <button
-                  type="button"
-                  onClick={() =>
-                    setFormData((prevData) => ({
-                      ...prevData,
-                      paymentOptions: {
-                        ...prevData.paymentOptions,
-                        [option]: !prevData.paymentOptions[option], // Toggle state
-                      },
-                    }))
-                  }
-                  className={`relative w-12 h-6 rounded-full transition-all duration-300 ${
-                    formData.paymentOptions[option] ? "bg-blue-600" : "bg-gray-300"
-                  }`}
-                >
-                  <span
-                    className={`absolute top-1/2 left-1 transform -translate-y-1/2 w-4 h-4 bg-white rounded-full transition-all duration-300 ${
-                      formData.paymentOptions[option]
-                        ? "translate-x-6"
-                        : "translate-x-0"
-                    }`}
-                  ></span>
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
+      {/* Payment Options */}
+      <Box sx={{ mb: 3 }}>
+        <Typography variant="h6" gutterBottom>
+          Payment Options
+        </Typography>
+        {[
+          { option: "card", label: "Credit/Debit Card" },
+          { option: "transfer", label: "Bank Transfer" },
+          { option: "ussd", label: "USSD Payment" },
+        ].map(({ option, label }) => (
+          <FormControlLabel
+            key={option}
+            control={
+              <Switch
+                checked={formData.paymentOptions[option]}
+                onChange={handleCheckboxChange}
+                name={option}
+              />
+            }
+            label={label}
+          />
+        ))}
+      </Box>
 
-      <h4 className="text-2xl font-extrabold">Account Details</h4>
-
-      <div className="p-4 bg-gray-100 border border-gray-300 rounded-lg">
-        <h4>
-          <span className="text-lg font-bold">Active Accounts</span>
-        </h4>
+      {/* Accounts Section */}
+      <Box sx={{ mb: 3 }}>
+        <Typography variant="h6" gutterBottom>
+          Active Accounts
+        </Typography>
         <Accounts />
-      </div>
+      </Box>
 
       {/* Submit Button */}
-      <button
-        type="submit"
-        className="w-full md:w-1/4 py-4 bg-red-600 text-white font-bold rounded-xl hover:bg-red-700 transition duration-200"
-      >
-        Update Vendor
-      </button>
-    </form>
+      <Box textAlign="center">
+        <Button
+          type="submit"
+          variant="contained"
+          color="primary"
+          startIcon={<Save />}
+          sx={{ mr: 2 }}
+        >
+          Update Vendor
+        </Button>
+        <Button
+          variant="outlined"
+          color="error"
+          startIcon={<Cancel />}
+          onClick={() => setFormData({ ...formData })}
+        >
+          Reset
+        </Button>
+      </Box>
+    </Box>
   );
 };
 
 export default AdminPage;
-
