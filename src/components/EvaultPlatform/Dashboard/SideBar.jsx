@@ -10,8 +10,10 @@ import {
   FaBars,
   FaTimes,
 } from "react-icons/fa";
+import { useNavigate } from 'react-router-dom';
 
 const Sidebar = ({ selectedTab, setSelectedTab, setIsSidebarCollapsed }) => {
+  const navigate = useNavigate();
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
@@ -39,6 +41,18 @@ const Sidebar = ({ selectedTab, setSelectedTab, setIsSidebarCollapsed }) => {
     const newCollapsedState = !isCollapsed;
     setIsCollapsed(newCollapsedState);
     setIsSidebarCollapsed(newCollapsedState); // Notify parent of the collapsed state
+  };
+
+  const handleLogout = () => {
+    // Clear any auth tokens/session data
+    localStorage.removeItem('authToken');
+    sessionStorage.clear();
+    
+    // Navigate to PlatformApp with sign-in view
+    navigate('/', { 
+      replace: true,
+      state: { returnToSignIn: true }
+    });
   };
 
   const SidebarContent = () => (
@@ -104,7 +118,7 @@ const Sidebar = ({ selectedTab, setSelectedTab, setIsSidebarCollapsed }) => {
 
       {/* Logout Button */}
       <button
-        onClick={() => console.log("Logout")}
+        onClick={handleLogout}
         className={`mx-4 mb-4 flex items-center p-3 rounded-lg bg-red-600 text-white hover:bg-red-700 transition-colors ${
           isCollapsed ? "justify-center" : "justify-start"
         }`}

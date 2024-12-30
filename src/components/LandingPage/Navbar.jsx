@@ -5,7 +5,7 @@ import { FaSignInAlt, FaUserPlus } from "react-icons/fa";
 import { AnimatePresence, motion } from "framer-motion";
 import logo from "../assets/evault-main-logo.png";
 
-const Navbar = ({ language, setLanguage }) => {
+const Navbar = ({ setShowPlatform, setPlatformInitialView, language, setLanguage }) => {
   const [isOpen, setIsOpen] = useState(false); // Mobile menu state
   const [isServicesOpen, setIsServicesOpen] = useState(false); // Services dropdown state
 
@@ -37,6 +37,16 @@ const Navbar = ({ language, setLanguage }) => {
     { title: "Virtual Cards", id: "cards" },
     { title: "Business Portfolio", id: "portfolio" },
   ];
+
+  const handleSignIn = () => {
+    setPlatformInitialView("sign-in");
+    setShowPlatform(true);
+  };
+
+  const handleSignUp = () => {
+    setPlatformInitialView("sign-up");
+    setShowPlatform(true);
+  };
 
   return (
     <nav className="bg-white fixed w-full z-50 shadow-sm">
@@ -116,11 +126,17 @@ const Navbar = ({ language, setLanguage }) => {
               <Globe className="h-5 w-5 mr-1" />
               {language}
             </button>
-            <button className="flex items-center px-4 py-2 text-[#025798] hover:bg-gray-100 rounded-lg transition-all">
+            <button
+              onClick={handleSignIn}
+              className="flex items-center px-4 py-2 text-[#025798] hover:bg-gray-100 rounded-lg transition-all"
+            >
               <FaSignInAlt className="h-5 w-5 mr-2" />
               Sign In
             </button>
-            <button className="flex items-center px-4 py-2 bg-[#025798] text-white rounded-lg hover:bg-[#024578] transition-all">
+            <button
+              onClick={handleSignUp}
+              className="flex items-center px-4 py-2 bg-[#025798] text-white rounded-lg hover:bg-[#024578] transition-all"
+            >
               <FaUserPlus className="h-5 w-5 mr-2" />
               Sign Up
             </button>
@@ -218,7 +234,7 @@ const Navbar = ({ language, setLanguage }) => {
 
               {/* Sign In */}
               <button
-                onClick={() => console.log("Sign In clicked")}
+                onClick={handleSignIn}
                 className="flex items-center px-4 py-2 text-[#025798] hover:bg-gray-100 rounded-lg transition-all w-full text-left"
               >
                 <FaSignInAlt className="h-5 w-5 mr-2" />
@@ -227,7 +243,7 @@ const Navbar = ({ language, setLanguage }) => {
 
               {/* Sign Up */}
               <button
-                onClick={() => console.log("Sign Up clicked")}
+                onClick={handleSignUp}
                 className="flex items-center px-4 py-2 bg-[#025798] text-white rounded-lg hover:bg-[#024578] transition-all w-full text-left"
               >
                 <FaUserPlus className="h-5 w-5 mr-2" />

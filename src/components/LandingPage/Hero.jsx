@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { FaChevronDown } from "react-icons/fa";
 import { ArrowRight } from "lucide-react";
 
 const Hero = ({ language, setShowPlatform, setPlatformInitialView }) => {

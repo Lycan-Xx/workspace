@@ -4,8 +4,10 @@ import ProgressBar from './ProgressBar';
 import InitialStep from './InitialStep';
 import BvnStep from './BvnStep';
 import SuccessStep from './SuccessStep';
+import { useNavigate } from 'react-router-dom';
 
 const ConfigureSecurity = ({ onSkip, onComplete }) => {
+  const navigate = useNavigate();
   const [step, setStep] = useState(1);
   const [bvn, setBvn] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -35,6 +37,16 @@ const ConfigureSecurity = ({ onSkip, onComplete }) => {
     }, 5000);
   };
 
+  const handleCompletion = () => {
+    onComplete();
+    navigate('/dashboard');
+  };
+
+  const handleSkip = () => {
+    onSkip();
+    navigate('/dashboard');
+  };
+
   useEffect(() => {
     if (step === 3 && !isSuccess) {
       setStep(2);
@@ -47,7 +59,7 @@ const ConfigureSecurity = ({ onSkip, onComplete }) => {
         return (
           <InitialStep
             onNext={() => setStep(2)}
-            onSkip={onSkip} // Notify parent to load Dashboard
+            onSkip={handleSkip} // Notify parent to load Dashboard
           />
         );
       case 2:
@@ -63,7 +75,7 @@ const ConfigureSecurity = ({ onSkip, onComplete }) => {
       case 3:
         return (
           <SuccessStep
-            onComplete={onComplete} // Notify parent of completion
+            onComplete={handleCompletion} // Notify parent of completion
           />
         );
       default:

@@ -14,7 +14,7 @@ import FAQ from './components/LandingPage/FAQ';
 import Footer from './components/LandingPage/Footer';
 import PrivacyPolicy from './components/LandingPage/Extras/PrivacyPolicy'; // Imported Privacy Policy
 import TermsAndConditions from './components/LandingPage/Extras/TermsAndConditions'; // Imported Terms & Conditions
-import PlatformApp from './components/EvaultPlatform/PlatformApp';
+import WelcomeApp from './components/EvaultPlatform/PlatfromRoute';
 import MobileApp from './components/LandingPage/MobileApp';
 
 const App = () => {
@@ -32,7 +32,7 @@ const App = () => {
 
   if (showPlatform) {
     return (
-      <PlatformApp 
+      <WelcomeApp 
         initialView={platformInitialView} 
         onBack={() => {
           setShowPlatform(false);

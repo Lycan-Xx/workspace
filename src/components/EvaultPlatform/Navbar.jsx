@@ -1,139 +1,189 @@
 import React, { useState } from "react";
-import { Menu, X } from "lucide-react";
-import logo from "./assets/logo.jpg";
+import {
+  FaBars,
+  FaTimes,
+  FaSignInAlt,
+  FaUserPlus,
+  FaDownload,
+  FaHandshake,
+} from "react-icons/fa";
+import logo from './assets/logo.jpg'
 
 const Navbar = ({ onNavigate, currentView }) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isNavOpen, setIsNavOpen] = useState(false);
 
-  const toggleNav = () => setIsNavOpen(!isNavOpen);
+  const navItems = [
+    {
+      name: "instant-payments",
+      label: "Instant Payment",
+      icon: <FaHandshake className="w-5 h-5 text-yellow-500" />,
+      className: "bg-white text-[#025798]",
+    },
+    {
+      name: "sign-in",
+      label: "Sign In",
+      icon: <FaSignInAlt className="w-5 h-5" />,
+      className: "bg-[#025798] text-white",
+    },
+    {
+      name: "sign-up",
+      label: "Sign Up",
+      icon: <FaUserPlus className="w-5 h-5" />,
+      className: "bg-[#025798] text-white",
+    },
+  ];
 
   return (
-    <nav className="bg-white shadow-md rounded-b-3xl border-b-4 border-[#025798]">
-      <div className="container mx-auto flex items-center justify-between h-[7rem] px-4 lg:px-8">
+    <nav className="bg-white shadow-md rounded-b-3xl border-b-4 border-[rgb(2,87,152)] relative z-50">
+      <div className="container mx-auto flex items-center justify-between h-16 px-4">
         {/* Logo */}
         <div className="flex items-center">
-          <a href="#">
-            <img src={logo} alt="Logo" className="h-[5rem] w-auto" />
+          <a href="#" className="flex items-center">
+		  <img 
+					  src={logo} 
+					  alt="eVault Logo" 
+					  className="h-10 w-10 md:h-16 md:w-16 sm:h-12 sm:w-12" 
+					/>
+							<span className="mt-[2rem] mr-[2rem] text-xl font-bold text-[#025798] hidden md:block">Vault</span>
           </a>
-          <span className="hidden lg:block text-2xl font-bold text-[#025798] ml-4">
-            <a href="#">Vault</a>
-          </span>
         </div>
 
-        {/* Mobile Menu */}
+        {/* Mobile Menu Button */}
         <button
-          onClick={toggleNav}
-          aria-label="Toggle navigation menu"
-          className="lg:hidden p-2 text-gray-600"
+          onClick={() => setIsNavOpen(!isNavOpen)}
+          className="lg:hidden p-2 text-[#025798] hover:bg-gray-100 rounded-lg transition-colors"
         >
-          {isNavOpen ? <X className="w-8 h-8" /> : <Menu className="w-8 h-8" />}
+          {isNavOpen ? <FaTimes className="w-6 h-6" /> : <FaBars className="w-6 h-6" />}
         </button>
 
         {/* Desktop Navigation */}
-        <div className="hidden lg:flex space-x-4">
-          {["sign-in", "sign-up"].map((view) => (
+        <div className="hidden lg:flex items-center space-x-3">
+          {navItems.map((item) => (
             <button
-              key={view}
-              onClick={() => onNavigate(view)}
-              className="bg-[#025798] text-white px-6 py-2 rounded-xl border border-[#025798] hover:bg-white hover:text-[#025798] transition"
+              key={item.name}
+              onClick={() => onNavigate(item.name)}
+              className={`${item.className} px-4 py-1.5 rounded-lg border border-[#025798] 
+                hover:bg-opacity-90 hover:scale-105 transform transition-all duration-200 
+                flex items-center gap-2 text-sm font-medium`}
             >
-              {view.replace("-", " ").replace(/^\w/, (c) => c.toUpperCase())}
+              {item.icon}
+              {item.label}
             </button>
           ))}
           <button
             onClick={() => setIsDialogOpen(true)}
-            className="bg-white text-[#025798] px-6 py-2 rounded-xl border border-[#025798] hover:bg-[#025798] hover:text-white transition"
+            className="bg-white text-[#025798] px-4 py-1.5 rounded-lg border border-[#025798] 
+              hover:bg-[#025798] hover:text-white hover:scale-105 transform transition-all duration-200 
+              flex items-center gap-2 text-sm font-medium"
           >
+            <FaDownload className="w-5 h-5" />
             Download
           </button>
         </div>
-      </div>
 
-      {/* Mobile Navigation Links */}
-      <div 
-        className={`
-          absolute top-[7rem] left-0 w-full bg-[#025798] text-white lg:hidden z-50 shadow-lg
-          transform transition-all duration-300 ease-in-out
-          ${isNavOpen 
-            ? 'opacity-100 translate-y-0 max-h-[300px]' 
-            : 'opacity-0 -translate-y-2 max-h-0 overflow-hidden'
-          }
-        `}
-      >
-        <ul className={`
-          space-y-4 p-4
-          transition-opacity duration-300 ease-in-out
-          ${isNavOpen ? 'opacity-100' : 'opacity-0'}
-        `}>
-          {["sign-in", "sign-up"].map((view) => (
-            <li key={view}
-              className="transform transition-transform duration-300 ease-in-out hover:translate-x-2"
-            >
+        {/* Mobile Navigation Overlay */}
+        <div
+          className={`
+            fixed inset-0 bg-black/50 backdrop-blur-sm lg:hidden z-40
+            transition-opacity duration-300
+            ${isNavOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}
+          `}
+          onClick={() => setIsNavOpen(false)}
+        />
+
+        {/* Mobile Navigation Menu */}
+        <div
+          className={`
+            fixed right-0 top-14 w-64 bg-white shadow-xl lg:hidden z-50
+            transform transition-transform duration-300 ease-out
+            ${isNavOpen ? 'translate-x-0' : 'translate-x-full'}
+          `}
+        >
+          <div className="p-4 space-y-2">
+            {navItems.map((item) => (
               <button
+                key={item.name}
                 onClick={() => {
-                  onNavigate(view);
+                  onNavigate(item.name);
                   setIsNavOpen(false);
                 }}
-                className="block w-full text-left px-4 py-2 rounded hover:bg-[#033e58] transition-colors duration-300"
+                className={`
+                  w-full px-4 py-2.5 rounded-lg
+                  ${currentView === item.name 
+                    ? 'bg-[#025798] text-white' 
+                    : 'bg-white text-[#025798]'}
+                  border border-[#025798]
+                  hover:bg-opacity-90 hover:scale-[1.02]
+                  active:scale-[0.98]
+                  transform transition-all duration-200
+                  flex items-center gap-2 text-sm font-medium
+                `}
               >
-                {view.replace("-", " ").replace(/^\w/, (c) => c.toUpperCase())}
+                {item.icon}
+                {item.label}
               </button>
-            </li>
-          ))}
-          <li className="transform transition-transform duration-300 ease-in-out hover:translate-x-2">
+            ))}
             <button
               onClick={() => {
                 setIsDialogOpen(true);
                 setIsNavOpen(false);
               }}
-              className="block w-full text-left px-4 py-2 rounded hover:bg-[#033e58] transition-colors duration-300"
+              className="w-full px-4 py-2.5 rounded-lg
+                bg-white text-[#025798] border border-[#025798]
+                hover:bg-[#025798] hover:text-white
+                hover:scale-[1.02] active:scale-[0.98]
+                transform transition-all duration-200
+                flex items-center gap-2 text-sm font-medium"
             >
+              <FaDownload className="w-5 h-5" />
               Download
             </button>
-          </li>
-        </ul>
-      </div>
-
-      {/* Download Dialog */}
-      {isDialogOpen && (
-        <div
-          className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
-          role="dialog"
-          aria-labelledby="download-dialog-title"
-          aria-describedby="download-dialog-description"
-        >
-          <div className="relative bg-white rounded-2xl shadow-xl p-6 max-w-md w-11/12">
-            <button
-              onClick={() => setIsDialogOpen(false)}
-              aria-label="Close dialog"
-              className="absolute top-4 right-4 text-gray-600 hover:text-red-500 transition"
-            >
-              <X className="w-6 h-6" />
-            </button>
-            <h2 id="download-dialog-title" className="text-xl font-bold mb-4">
-              Download Our App
-            </h2>
-            <p id="download-dialog-description" className="mb-6 text-gray-600">
-              Send support, feed a passion, or strengthen a bond instantly.
-            </p>
-            <div className="flex space-x-4">
-              <a
-                href="#"
-                className="bg-[#025798] text-white px-4 py-2 rounded-lg shadow hover:bg-opacity-90"
-              >
-                App Store
-              </a>
-              <a
-                href="#"
-                className="bg-green-500 text-white px-4 py-2 rounded-lg shadow hover:bg-opacity-90"
-              >
-                Google Play
-              </a>
-            </div>
           </div>
         </div>
-      )}
+
+        {/* Download Dialog */}
+        {isDialogOpen && (
+          <div
+            className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
+            role="dialog"
+            aria-labelledby="download-dialog-title"
+            aria-describedby="download-dialog-description"
+          >
+            <div className="relative bg-white rounded-2xl shadow-xl p-6 max-w-md w-11/12">
+              <button
+                onClick={() => setIsDialogOpen(false)}
+                aria-label="Close dialog"
+                className="absolute top-4 right-4 text-gray-600 hover:text-red-500 transition"
+              >
+                <FaTimes className="w-6 h-6" />
+              </button>
+              <h2 id="download-dialog-title" className="text-xl font-bold mb-4">
+                Download Our App
+              </h2>
+              <p id="download-dialog-description" className="mb-6 text-gray-600">
+                Get access to exclusive features and manage your account on the go.
+              </p>
+              <div className="flex space-x-4">
+                <a
+                  href="#"
+                  className="flex-1 py-2 bg-[#025798] text-white text-center rounded-lg 
+                    hover:bg-opacity-90 hover:scale-105 transform transition-all duration-200"
+                >
+                  App Store
+                </a>
+                <a
+                  href="#"
+                  className="flex-1 py-2 bg-[#025798] text-white text-center rounded-lg 
+                    hover:bg-opacity-90 hover:scale-105 transform transition-all duration-200"
+                >
+                  Google Play
+                </a>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
     </nav>
   );
 };
