@@ -5,16 +5,9 @@ import {
   Typography,
   Button,
   TextField,
-  Card,
-  CardContent,
-  CardActions,
-  Switch,
-  FormControlLabel,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
   Paper,
+  FormControlLabel,
+  Switch,
 } from "@mui/material";
 import { UploadFile, Save, Cancel } from "@mui/icons-material";
 import Accounts from "./Services/Accounts";
@@ -54,28 +47,35 @@ const AdminPage = () => {
   const handleImageChange = (e) => {
     const { name, files } = e.target;
     if (files && files[0]) {
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        setFormData({ ...formData, [name]: event.target.result });
-      };
-      reader.readAsDataURL(files[0]);
+      // Validate file type
+      const validTypes = ['image/jpeg', 'image/png', 'image/gif'];
+      if (!validTypes.includes(files[0].type)) {
+        alert('Please upload an image file (JPEG, PNG, GIF)');
+        return;
+      }
+
+      // Create preview URL
+      const previewUrl = URL.createObjectURL(files[0]);
+      setFormData({ ...formData, [name]: previewUrl });
+
+      // Clean up the URL when component unmounts
+      return () => URL.revokeObjectURL(previewUrl);
     }
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    try {
-      alert("Vendor updated successfully!");
-    } catch (error) {
-      console.error(error);
-      alert("Failed to update vendor.");
-    }
+    console.log("Form submitted:", formData);
+    alert("Vendor updated successfully!");
   };
 
   return (
     <Box
       component="form"
-      onSubmit={handleSubmit}
+      onSubmit={(e) => {
+        e.stopPropagation();
+        handleSubmit(e);
+      }}
       sx={{
         maxWidth: 900,
         mx: "auto",
@@ -90,7 +90,6 @@ const AdminPage = () => {
         Portal Preference
       </Typography>
 
-      {/* Top Banner Section */}
       <Box sx={{ position: "relative", mb: 3 }}>
         <Paper
           elevation={3}
@@ -99,29 +98,33 @@ const AdminPage = () => {
             backgroundSize: "cover",
             backgroundPosition: "center",
             borderRadius: 2,
-            backgroundImage: `url(${formData.topBanner || ""})`,
+            backgroundImage: formData.topBanner ? `url(${formData.topBanner})` : 'none',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            border: '2px dashed #ccc',
+            cursor: 'pointer',
           }}
-        />
-        <Button
-          component="label"
-          startIcon={<UploadFile />}
-          sx={{ mt: 2 }}
-          variant="contained"
+          onClick={() => document.getElementById('topBanner').click()}
         >
-          Upload Top Banner
-          <input
-            name="topBanner"
-            type="file"
-            accept="image/*"
-            onChange={handleImageChange}
-            hidden
-          />
-        </Button>
+          {!formData.topBanner && (
+            <Typography variant="body1" color="textSecondary">
+              Click to upload top banner
+            </Typography>
+          )}
+        </Paper>
+        <input
+          type="file"
+          id="topBanner"
+          name="topBanner"
+          accept="image/*"
+          onChange={handleImageChange}
+          style={{ display: 'none' }}
+        />
       </Box>
 
-      {/* Left Banner and Contact Info Section */}
       <Grid container spacing={3} sx={{ mb: 3 }}>
-        <Grid item xs={12} md={4}>
+        <Grid item xs={12} md={6}>
           <Paper
             elevation={3}
             sx={{
@@ -129,27 +132,32 @@ const AdminPage = () => {
               backgroundSize: "cover",
               backgroundPosition: "center",
               borderRadius: 2,
-              backgroundImage: `url(${formData.leftBanner || ""})`,
+              backgroundImage: formData.leftBanner ? `url(${formData.leftBanner})` : 'none',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              border: '2px dashed #ccc',
+              cursor: 'pointer',
             }}
-          />
-          <Button
-            component="label"
-            startIcon={<UploadFile />}
-            sx={{ mt: 2 }}
-            variant="contained"
+            onClick={() => document.getElementById('leftBanner').click()}
           >
-            Upload Left Banner
-            <input
-              name="leftBanner"
-              type="file"
-              accept="image/*"
-              onChange={handleImageChange}
-              hidden
-            />
-          </Button>
+            {!formData.leftBanner && (
+              <Typography variant="body1" color="textSecondary">
+                Click to upload left banner
+              </Typography>
+            )}
+          </Paper>
+          <input
+            type="file"
+            id="leftBanner"
+            name="leftBanner"
+            accept="image/*"
+            onChange={handleImageChange}
+            style={{ display: 'none' }}
+          />
         </Grid>
 
-        <Grid item xs={12} md={8}>
+        <Grid item xs={12} md={6}>
           <TextField
             name="businessName"
             label="Business Name"
@@ -188,7 +196,6 @@ const AdminPage = () => {
         </Grid>
       </Grid>
 
-      {/* Payment Options */}
       <Box sx={{ mb: 3 }}>
         <Typography variant="h6" gutterBottom>
           Payment Options
@@ -212,7 +219,6 @@ const AdminPage = () => {
         ))}
       </Box>
 
-      {/* Accounts Section */}
       <Box sx={{ mb: 3 }}>
         <Typography variant="h6" gutterBottom>
           Active Accounts
@@ -220,7 +226,6 @@ const AdminPage = () => {
         <Accounts />
       </Box>
 
-      {/* Submit Button */}
       <Box textAlign="center">
         <Button
           type="submit"
