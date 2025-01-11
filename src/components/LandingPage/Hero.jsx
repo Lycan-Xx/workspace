@@ -1,13 +1,11 @@
-import React, { useState } from "react";
+import React from "react";
 import { ArrowRight } from "lucide-react";
+import heroImage from "../assets/hero-page.jpg";
 
-const Hero = ({ language, setShowPlatform, setPlatformInitialView }) => {
-
-
+const Hero = ({ language }) => {
   // Get Started button functionality
   const handleGetStarted = () => {
-    setPlatformInitialView("instant-payments");
-    setShowPlatform(true);
+    window.open('https://app.evault.com.ng/mobile/register/', '_blank');
   };
 
   // Language-specific content
@@ -32,7 +30,7 @@ const Hero = ({ language, setShowPlatform, setPlatformInitialView }) => {
     Igbo: {
       title: "Nnọọ na eVault",
       description:
-        "Na eVault, anyị kwenyere n’inyere ndị mmadụ na azụmaahịa ikike iji nweta ihe ngwọta ego dị nchebe ma dị mfe.",
+        "Na eVault, anyị kwenyere n'inyere ndị mmadụ na azụmaahịa ikike iji nweta ihe ngwọta ego dị nchebe ma dị mfe.",
     },
     Yoruba: {
       title: "Kaabo si eVault",
@@ -56,7 +54,7 @@ const Hero = ({ language, setShowPlatform, setPlatformInitialView }) => {
             <div className="flex space-x-4">
               <button
                 onClick={handleGetStarted}
-                className="px-6 py-3 bg-orange-700 text-white rounded-lg hover:bg-orange-400 flex items-center"
+                className="px-6 py-3 bg-orange-700 text-white rounded-lg hover:bg-orange-400 flex items-center transition-all duration-300"
               >
                 {buttonText[language]} <ArrowRight className="ml-2 h-5 w-5" />
               </button>
@@ -65,7 +63,7 @@ const Hero = ({ language, setShowPlatform, setPlatformInitialView }) => {
           {/* Right Image */}
           <div className="relative">
             <img
-              src="https://picsum.photos/seed/fintech/800/600"
+              src={heroImage}
               alt="Financial Platform"
               className="rounded-lg shadow-xl"
             />

@@ -1,26 +1,22 @@
 import React, { useRef } from "react";
 import { motion, useInView } from "framer-motion";
 
-const Offer = ({ language = "English", setShowPlatform }) => {
+const Offer = ({ language = "English" }) => {
   const sectionRef = useRef(null);
   const isInView = useInView(sectionRef, { once: true }); // Trigger animation only once
 
   const translations = {
     English: {
       sectionTitle: "What We Offer",
-      learnMore: "Learn More",
     },
     Hausa: {
       sectionTitle: "Abin Da Muke Bayarwa",
-      learnMore: "Ƙara Koyi",
     },
     Igbo: {
       sectionTitle: "Ihe Anyị Na-Enye",
-      learnMore: "Mụta Karịa",
     },
     Yoruba: {
       sectionTitle: "Ohun Ti A Npese",
-      learnMore: "Kẹkọ Diẹ Sii",
     },
   };
 
@@ -174,16 +170,6 @@ const Offer = ({ language = "English", setShowPlatform }) => {
               </p>
             </motion.div>
           ))}
-        </div>
-
-        {/* Call-to-Action Button - Made responsive */}
-        <div className="text-center">
-          <button
-            onClick={() => setShowPlatform(true)}
-            className="mt-6 sm:mt-8 bg-blue-800 text-white px-4 sm:px-6 py-2 sm:py-3 text-sm sm:text-base rounded-md hover:bg-blue-700 transition-all"
-          >
-            {currentTranslation.learnMore}
-          </button>
         </div>
       </div>
     </section>

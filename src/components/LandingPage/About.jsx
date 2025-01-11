@@ -9,7 +9,7 @@ import {
 } from "react-icons/fa";
 import clsx from "clsx";
 
-const About = ({ language, setShowPlatform, setPlatformInitialView }) => {
+const About = ({ language }) => {
   const [activeDropdown, setActiveDropdown] = useState(null);
 
   const currentLanguage = language || "English";
@@ -25,7 +25,6 @@ const About = ({ language, setShowPlatform, setPlatformInitialView }) => {
 We are committed to delivering secure, reliable, and efficient financial solutions that cater to the...
 			</>
 		),
-		learnMore: "Learn More"
 	},
 	Hausa: {
 		title: "Game da eVault",
@@ -37,7 +36,6 @@ We are committed to delivering secure, reliable, and efficient financial solutio
 Muna da kwazo wajen bayar da sabis na kudi masu tsaro, masu kyau da inganci wadanda za su biya bukatun masu...
 </>
 		),
-		learnMore: "Koyi Kari"
 	},
 	Igbo: {
 		title: "Maka eVault",
@@ -49,7 +47,6 @@ Muna da kwazo wajen bayar da sabis na kudi masu tsaro, masu kyau da inganci wada
 Anyị kwadoro iji nyere ndị ahịa anyị usoro ego dị nchebe, kwụsie ike, na nke a pụrụ ịdabere na ya, nke na-enyere ha aka...
 </>
 		),
-		learnMore: "Mụta Karịa"
 	},
 	Yoruba: {
 		title: "Nipa eVault",
@@ -61,7 +58,6 @@ Anyị kwadoro iji nyere ndị ahịa anyị usoro ego dị nchebe, kwụsie ike
 A ni igbẹkẹle lati pese awọn solusan inawo to ni aabo, to ni igbẹkẹle ati to munadoko ti o yẹ fun awọn iwulo oriṣiriṣi ti awọn...
 </>
 		),
-		learnMore: "Kẹkọ Diẹ Sii"
 	}
 };
 
@@ -104,11 +100,6 @@ A ni igbẹkẹle lati pese awọn solusan inawo to ni aabo, to ni igbẹkẹle 
     setActiveDropdown(activeDropdown === id ? null : id);
   };
 
-  const handleLearnMore = () => {
-    setPlatformInitialView("instant-payments");
-    setShowPlatform(true);
-  };
-
   const colorMap = {
     red: 'bg-red-50 text-red-800',
     green: 'bg-green-50 text-green-800',
@@ -132,13 +123,6 @@ A ni igbẹkẹle lati pese awọn solusan inawo to ni aabo, to ni igbẹkẹle 
               {translations[currentLanguage]?.description ||
                 translations.English.description}
             </p>
-            <button
-              onClick={handleLearnMore}
-              className="mt-6 bg-[#025798] text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-all text-lg"
-            >
-              {translations[currentLanguage]?.learnMore ||
-                translations.English.learnMore}
-            </button>
           </div>
         </div>
 

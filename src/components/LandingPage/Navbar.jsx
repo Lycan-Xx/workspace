@@ -48,6 +48,16 @@ const Navbar = ({ setShowPlatform, setPlatformInitialView, language, setLanguage
     setShowPlatform(true);
   };
 
+
+//   // Sign-in and sign-up handlers to the current live webpage
+//   const handleSignIn = () => {
+//     window.open('https://app.evault.com.ng/mobile/login/', '_blank');
+//   };
+
+//   const handleSignUp = () => {
+//     window.open('https://app.evault.com.ng/mobile/register/', '_blank');
+//   };
+
   return (
     <nav className="bg-white fixed w-full z-50 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

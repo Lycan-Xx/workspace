@@ -68,13 +68,13 @@ const Footer = ({ setLanguage }) => {
             <h4 className="font-extrabold mb-4">Contact</h4>
             <ul className="space-y-2 text-gray-300">
               <li>
-                <a href="#">
+                <a href="tel:+2348140332887">
                   <FaPhone className="inline-block mr-2" />
-                  +234 000000000
+                  +234 8140332887
                 </a>
               </li>
               <li>
-                <a href="#">
+                <a href="mailto:support@evault.com.ng">
                   <FaEnvelope className="inline-block mr-2" />
                   support@evault.com.ng
                 </a>
@@ -132,7 +132,7 @@ const Footer = ({ setLanguage }) => {
           
           <div className="text-center pt-4">
             <p className="text-gray-300">
-              © eVault - iSERVBAY, {new Date().getFullYear()}
+              &copy; eVault - iSERVBAY, {new Date().getFullYear()}
             </p>
           </div>
         </div>
