@@ -4,6 +4,7 @@ import { PersonalInfo } from "./portfolio-settings/Profile/PersonalInfo";
 import AdminPage from "./portfolio-settings/AdminPage";
 import HistoryList from "./portfolio-settings/HistoryList";
 import Services from "./portfolio-settings/Services/Services";
+import { AccountsProvider } from './portfolio-settings/Services/AccountsContext';
 
 const Portfolio = () => {
   const [currentView, setCurrentView] = useState("info");
@@ -33,15 +34,17 @@ const Portfolio = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto p-4 md:p-8">
-        <TabNavigation 
-          currentView={currentView} 
-          setCurrentView={setCurrentView}
-        />
-        {renderContent()}
+    <AccountsProvider>
+      <div className="portfolio">
+        <div className="max-w-7xl mx-auto p-4 md:p-8">
+          <TabNavigation 
+            currentView={currentView} 
+            setCurrentView={setCurrentView}
+          />
+          {renderContent()}
+        </div>
       </div>
-    </div>
+    </AccountsProvider>
   );
 };
 

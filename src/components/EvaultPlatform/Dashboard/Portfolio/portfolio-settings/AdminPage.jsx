@@ -8,9 +8,25 @@ import {
   Paper,
   FormControlLabel,
   Switch,
+  CircularProgress,
+  IconButton,
+  Tooltip,
+  Card,
+  CardContent,
+  Divider,
 } from "@mui/material";
-import { UploadFile, Save, Cancel } from "@mui/icons-material";
+import {
+  UploadFile as UploadIcon,
+  Save as SaveIcon,
+  Cancel as CancelIcon,
+  Edit as EditIcon,
+  Delete as DeleteIcon,
+  Power as PowerIcon,
+} from "@mui/icons-material";
 import Accounts from "./Services/Accounts";
+import { toast, ToastContainer } from 'react-toastify';
+import Chip from "@mui/material/Chip";
+import 'react-toastify/dist/ReactToastify.css';
 
 const AdminPage = () => {
   const [formData, setFormData] = useState({
@@ -28,8 +44,14 @@ const AdminPage = () => {
     },
   });
 
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [editingId, setEditingId] = useState(null);
+  const [accounts, setAccounts] = useState([]);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
+    console.log('Form change:', name, value); // Debug log
     setFormData({ ...formData, [name]: value });
   };
 
@@ -50,7 +72,7 @@ const AdminPage = () => {
       // Validate file type
       const validTypes = ['image/jpeg', 'image/png', 'image/gif'];
       if (!validTypes.includes(files[0].type)) {
-        alert('Please upload an image file (JPEG, PNG, GIF)');
+        toast.error('Please upload an image file (JPEG, PNG, GIF)');
         return;
       }
 
@@ -65,186 +87,282 @@ const AdminPage = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    console.log('Form submitted:', formData); // Debug log
+    setIsLoading(true);
     console.log("Form submitted:", formData);
     alert("Vendor updated successfully!");
+    setIsLoading(false);
+  };
+
+  const handleEdit = (index) => {
+    // Implement edit functionality
+  };
+
+  const handleDelete = (index) => {
+    // Implement delete functionality
+  };
+
+  const toggleActive = (index) => {
+    // Implement toggle active functionality
+  };
+
+  const handleCancel = () => {
+    // Implement cancel functionality
   };
 
   return (
-    <Box
-      component="form"
-      onSubmit={(e) => {
-        e.stopPropagation();
-        handleSubmit(e);
-      }}
-      sx={{
-        maxWidth: 900,
-        mx: "auto",
-        my: 4,
-        p: 4,
-        bgcolor: "background.paper",
-        borderRadius: 2,
-        boxShadow: 3,
-      }}
-    >
-      <Typography variant="h4" color="primary" fontWeight="bold" gutterBottom>
-        Portal Preference
-      </Typography>
-
-      <Box sx={{ position: "relative", mb: 3 }}>
-        <Paper
-          elevation={3}
-          sx={{
-            height: 200,
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-            borderRadius: 2,
-            backgroundImage: formData.topBanner ? `url(${formData.topBanner})` : 'none',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            border: '2px dashed #ccc',
-            cursor: 'pointer',
-          }}
-          onClick={() => document.getElementById('topBanner').click()}
-        >
-          {!formData.topBanner && (
-            <Typography variant="body1" color="textSecondary">
-              Click to upload top banner
-            </Typography>
-          )}
-        </Paper>
-        <input
-          type="file"
-          id="topBanner"
-          name="topBanner"
-          accept="image/*"
-          onChange={handleImageChange}
-          style={{ display: 'none' }}
-        />
-      </Box>
-
-      <Grid container spacing={3} sx={{ mb: 3 }}>
-        <Grid item xs={12} md={6}>
-          <Paper
-            elevation={3}
-            sx={{
-              height: 200,
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-              borderRadius: 2,
-              backgroundImage: formData.leftBanner ? `url(${formData.leftBanner})` : 'none',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              border: '2px dashed #ccc',
-              cursor: 'pointer',
-            }}
-            onClick={() => document.getElementById('leftBanner').click()}
-          >
-            {!formData.leftBanner && (
-              <Typography variant="body1" color="textSecondary">
-                Click to upload left banner
-              </Typography>
-            )}
-          </Paper>
-          <input
-            type="file"
-            id="leftBanner"
-            name="leftBanner"
-            accept="image/*"
-            onChange={handleImageChange}
-            style={{ display: 'none' }}
-          />
-        </Grid>
-
-        <Grid item xs={12} md={6}>
-          <TextField
-            name="businessName"
-            label="Business Name"
-            fullWidth
-            value={formData.businessName}
-            onChange={handleChange}
-            sx={{ mb: 2 }}
-          />
-          <TextField
-            name="contactEmail"
-            label="Contact Email"
-            fullWidth
-            type="email"
-            value={formData.contactEmail}
-            onChange={handleChange}
-            sx={{ mb: 2 }}
-          />
-          <TextField
-            name="contactPhone"
-            label="Contact Phone"
-            fullWidth
-            type="tel"
-            value={formData.contactPhone}
-            onChange={handleChange}
-            sx={{ mb: 2 }}
-          />
-          <TextField
-            name="description"
-            label="Description"
-            fullWidth
-            multiline
-            rows={4}
-            value={formData.description}
-            onChange={handleChange}
-          />
-        </Grid>
-      </Grid>
-
-      <Box sx={{ mb: 3 }}>
-        <Typography variant="h6" gutterBottom>
-          Payment Options
+    <Box sx={{ p: 3 }}>
+      <ToastContainer position="top-right" autoClose={3000} />
+      
+      <Paper elevation={3} sx={{ p: 3, mb: 4 }}>
+        <Typography variant="h5" gutterBottom>
+          Portal Preference
         </Typography>
-        {[
-          { option: "card", label: "Credit/Debit Card" },
-          { option: "transfer", label: "Bank Transfer" },
-          { option: "ussd", label: "USSD Payment" },
-        ].map(({ option, label }) => (
-          <FormControlLabel
-            key={option}
-            control={
-              <Switch
-                checked={formData.paymentOptions[option]}
-                onChange={handleCheckboxChange}
-                name={option}
+        
+        <form onSubmit={handleSubmit}>
+          <Grid container spacing={3}>
+            {/* Banner Upload Section */}
+            <Grid item xs={12}>
+              <Box sx={{ mb: 3 }}>
+                <Paper
+                  elevation={3}
+                  sx={{
+                    height: 200,
+                    backgroundSize: "cover",
+                    backgroundPosition: "center",
+                    borderRadius: 2,
+                    backgroundImage: formData.topBanner ? `url(${formData.topBanner})` : 'none',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    border: '2px dashed #ccc',
+                    cursor: 'pointer',
+                    transition: 'all 0.3s ease',
+                    '&:hover': {
+                      borderColor: '#1976d2',
+                      backgroundColor: 'rgba(25, 118, 210, 0.04)',
+                    },
+                  }}
+                  onClick={() => document.getElementById('topBanner').click()}
+                >
+                  {!formData.topBanner && (
+                    <Box sx={{ textAlign: 'center' }}>
+                      <UploadIcon sx={{ fontSize: 48, color: '#666' }} />
+                      <Typography variant="body1" color="textSecondary">
+                        Click to upload top banner
+                      </Typography>
+                    </Box>
+                  )}
+                </Paper>
+                <input
+                  type="file"
+                  id="topBanner"
+                  name="topBanner"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  style={{ display: 'none' }}
+                />
+              </Box>
+            </Grid>
+
+            <Grid item xs={12} md={6}>
+              <Paper
+                elevation={3}
+                sx={{
+                  height: 200,
+                  backgroundSize: "cover",
+                  backgroundPosition: "center",
+                  borderRadius: 2,
+                  backgroundImage: formData.leftBanner ? `url(${formData.leftBanner})` : 'none',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  border: '2px dashed #ccc',
+                  cursor: 'pointer',
+                }}
+                onClick={() => document.getElementById('leftBanner').click()}
+              >
+                {!formData.leftBanner && (
+                  <Typography variant="body1" color="textSecondary">
+                    Click to upload left banner
+                  </Typography>
+                )}
+              </Paper>
+              <input
+                type="file"
+                id="leftBanner"
+                name="leftBanner"
+                accept="image/*"
+                onChange={handleImageChange}
+                style={{ display: 'none' }}
               />
-            }
-            label={label}
-          />
+            </Grid>
+
+            <Grid item xs={12} md={6}>
+              <TextField
+                name="businessName"
+                label="Business Name"
+                fullWidth
+                value={formData.businessName}
+                onChange={handleChange}
+                sx={{ mb: 2 }}
+              />
+              <TextField
+                name="contactEmail"
+                label="Contact Email"
+                fullWidth
+                type="email"
+                value={formData.contactEmail}
+                onChange={handleChange}
+                sx={{ mb: 2 }}
+              />
+              <TextField
+                name="contactPhone"
+                label="Contact Phone"
+                fullWidth
+                type="tel"
+                value={formData.contactPhone}
+                onChange={handleChange}
+                sx={{ mb: 2 }}
+              />
+              <TextField
+                name="description"
+                label="Description"
+                fullWidth
+                multiline
+                rows={4}
+                value={formData.description}
+                onChange={handleChange}
+              />
+            </Grid>
+          </Grid>
+
+          <Box sx={{ mb: 3 }}>
+            <Typography variant="h6" gutterBottom>
+              Payment Options
+            </Typography>
+            {[
+              { option: "card", label: "Credit/Debit Card" },
+              { option: "transfer", label: "Bank Transfer" },
+              { option: "ussd", label: "USSD Payment" },
+            ].map(({ option, label }) => (
+              <FormControlLabel
+                key={option}
+                control={
+                  <Switch
+                    checked={formData.paymentOptions[option]}
+                    onChange={handleCheckboxChange}
+                    name={option}
+                  />
+                }
+                label={label}
+              />
+            ))}
+          </Box>
+
+          <Box sx={{ mb: 3 }}>
+            <Typography variant="h6" gutterBottom>
+              Active Accounts
+            </Typography>
+            <Accounts />
+          </Box>
+
+          {/* Action Buttons */}
+          <Box sx={{ display: 'flex', gap: 2, mt: 3 }}>
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              disabled={isLoading}
+              startIcon={isLoading ? <CircularProgress size={20} /> : <SaveIcon />}
+            >
+              Update Vendor
+            </Button>
+            <Button
+              variant="outlined"
+              color="error"
+              startIcon={<CancelIcon />}
+              onClick={() => setFormData({ ...formData })}
+            >
+              Reset
+            </Button>
+          </Box>
+        </form>
+      </Paper>
+
+      {/* Accounts List */}
+      <Grid container spacing={3}>
+        {accounts.map((account, index) => (
+          <Grid item xs={12} md={6} key={index}>
+            <Card
+              sx={{
+                position: 'relative',
+                transition: 'all 0.3s ease',
+                '&:hover': {
+                  transform: 'translateY(-2px)',
+                  boxShadow: 3,
+                },
+              }}
+            >
+              <CardContent>
+                <Typography variant="h6" gutterBottom>
+                  {account.bankName}
+                </Typography>
+                <Typography color="textSecondary" gutterBottom>
+                  {account.accountName} - {account.accountNumber}
+                </Typography>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 1,
+                    mt: 2,
+                  }}
+                >
+                  <Chip
+                    label={account.active ? 'Active' : 'Inactive'}
+                    color={account.active ? 'success' : 'default'}
+                    size="small"
+                  />
+                  <Typography variant="caption" color="textSecondary">
+                    Last modified: {new Date(account.lastModified).toLocaleDateString()}
+                  </Typography>
+                </Box>
+                <Divider sx={{ my: 2 }} />
+                <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1 }}>
+                  <Tooltip title="Edit">
+                    <IconButton
+                      onClick={() => handleEdit(index)}
+                      color="primary"
+                      size="small"
+                    >
+                      <EditIcon />
+                    </IconButton>
+                  </Tooltip>
+                  <Tooltip title={account.active ? 'Deactivate' : 'Activate'}>
+                    <IconButton
+                      onClick={() => toggleActive(index)}
+                      color={account.active ? 'primary' : 'default'}
+                      size="small"
+                    >
+                      <PowerIcon />
+                    </IconButton>
+                  </Tooltip>
+                  <Tooltip title="Delete">
+                    <IconButton
+                      onClick={() => handleDelete(index)}
+                      color="error"
+                      size="small"
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                  </Tooltip>
+                </Box>
+              </CardContent>
+            </Card>
+          </Grid>
         ))}
-      </Box>
-
-      <Box sx={{ mb: 3 }}>
-        <Typography variant="h6" gutterBottom>
-          Active Accounts
-        </Typography>
-        <Accounts />
-      </Box>
-
-      <Box textAlign="center">
-        <Button
-          type="submit"
-          variant="contained"
-          color="primary"
-          startIcon={<Save />}
-          sx={{ mr: 2 }}
-        >
-          Update Vendor
-        </Button>
-        <Button
-          variant="outlined"
-          color="error"
-          startIcon={<Cancel />}
-          onClick={() => setFormData({ ...formData })}
-        >
-          Reset
-        </Button>
-      </Box>
+      </Grid>
     </Box>
   );
 };
