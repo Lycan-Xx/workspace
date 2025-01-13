@@ -6,7 +6,7 @@ import PaymentCards from "../Dashboard/PaymentCard";
 import Services from "./Services";
 import Trade from "./Trade";
 import Vault from "./Vault/Vault";
-import Settings from "./SettingsApp.tsx";
+import Settings from "./SettingsApp";
 import TabContent from "./TabContents/TabContent";
 import Databundles from "./Databundles";
 import Schoolfees from "./SchoolFees/Schoolfees";
