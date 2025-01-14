@@ -1,86 +1,81 @@
-# evault-frontend
+# eVault - Secure Digital Financial Management
 
-This is a React-based web application built with npm. Tailwind CSS is used for styling, and the code is written in JSX for easier modification.
 
 ## Screenshots:
+Landing page ![alt text](src/components/assets/screenshots/preview-1.png)
 
-### - Desktop 
-![app preview](src/components/assets/screenshots/preview-1.jpg)
+Login page ![alt text](src/components/assets/screenshots/preview-2.png)
 
-### - Mobile
-![mobile preview 1](src/components/assets/screenshots/preview-2.png)
-![mobile preview 2](src/components/assets/screenshots/preview-3.png)
+## Table of Contents
+- [Introduction](#introduction)
+- [Features](#features)
+- [Getting Started](#getting-started)
+- [Usage](#usage)
+- [Security](#security)
+- [Support](#support)
+- [Contributing](#contributing)
+- [License](#license)
 
-## Project Recreation Steps
+## Introduction
 
-1. **Create a new React project:**
-   ```bash
-   npx create-react-app evault-frontend
-   cd evault-frontend
-   ```
+eVault is a cutting-edge digital financial management platform designed to empower individuals and businesses with secure, accessible, and innovative financial solutions. Our mission is to bridge the gap in financial management and create an inclusive ecosystem that enables everyone to participate in the modern economy.
 
-2. **Install required dependencies:**
-   ```bash
-   npm install tailwindcss postcss autoprefixer
-   npm install react-router-dom
-   npm install @heroicons/react
-   ```
+## Features
 
-3. **Initialize Tailwind CSS:**
-   ```bash
-   npx tailwindcss init -p
-   ```
+- **Bank-Grade Security**: Military-grade encryption and multi-layer security protocols to protect your financial data.
+- **24/7 Access**: Manage your finances anytime, anywhere with real-time transactions and instant updates.
+- **Smart Digital Vault**: Securely store and manage sensitive credentials, documents, and important files.
+- **Multi-language Support**: Available in English, Hausa, Igbo, and Yoruba to serve a diverse user base.
+- **Inclusive Financial Access**: Tailored solutions for individuals and businesses, regardless of location or background.
+- **Expert Support**: Round-the-clock dedicated support team to assist with queries and concerns.
 
-4. **Project Structure:**
-   ```
-   src/
-   ├── components/
-   │   ├── assets/
-   │   ├── layout/
-   │   └── pages/
-   ├── App.jsx
-   └── index.js
-   ```
+## Getting Started
 
-## Project Setup
+To get started with eVault:
 
-To set up the project locally, follow these steps:
+1. Visit our website at [https://www.evault.com.ng](https://www.evault.com.ng)
+2. Create an account through [https://app.evault.com.ng/mobile/register/](Sign up)
+3. Sign in to your existing account at [https://app.evault.com.ng/mobile/login/](Sign in)
+4. Click on the "Get Started" button to start
+5. Follow the registration process to create your account
+6. Verify your email address
+7. Log in to your new eVault account
 
-1. **Clone the repository:**
-   ```bash
-   git clone https://github.com/your-username/evault-webpage.git
-   cd evault-webpage
-   ```
+## Usage
 
-2. **Install dependencies:**
-   Make sure you have Node.js and npm installed on your machine. Then, run:
-   ```bash
-   npm install
-   ```
+After logging in, you can:
 
-3. **Start the development server:**
-   ```bash
-   npm run dev
-   ```
-   This will start the development server and open the application in your default browser.
+- Upload and manage documents in your digital vault
+- Perform financial transactions
+- Monitor your account activities in real-time
+- Customize your security settings
+- Access customer support
 
-## Available Scripts
+For detailed instructions, please refer to our [WebPage](https://www.evault.com.ng).
 
-In the project directory, you can run:
+## Security
 
-- `npm start`: Runs the app in development mode at [http://localhost:3000](http://localhost:3000)
-- `npm test`: Launches the test runner
-- `npm run build`: Builds the app for production
-- `npm run eject`: Ejects the create-react-app configuration
+At eVault, your security is our top priority. We employ:
 
-## Contact
+- End-to-end encryption for all data transmissions
+- Multi-factor authentication
+- Regular security audits and penetration testing
+- Compliance with international financial security standards
 
-For any queries or suggestions, feel free to reach out:
+For more information, visit our [WebPage](https://www.evault.com.ng).
 
-- GitHub: [your-github-username]
-- Email: [your-email@example.com]
-- LinkedIn: [your-linkedin-profile]
+## Support
+
+If you need assistance, our support team is available 24/7:
+
+- Email: support@evault.com.ng
+- Phone: +234 (0) 123 456 7890
+- Live Chat: Available on our website
+
+
 
 ## License
 
-This project is open source and available under the MIT License.
+eVault is proprietary software. All rights reserved. Unauthorized copying, modification, distribution, or use of this software is strictly prohibited.
+
+© 2024 eVault Technologies Ltd.
