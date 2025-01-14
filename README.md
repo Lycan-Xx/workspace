@@ -2,9 +2,9 @@
 
 
 ## Screenshots:
-Landing page ![alt text](src/components/assets/screenshots/preview-1.png)
+![alt text](src/components/assets/screenshots/preview-1.png)
 
-Login page ![alt text](src/components/assets/screenshots/preview-2.png)
+![alt text](src/components/assets/screenshots/preview-2.png)
 
 ## Table of Contents
 - [Introduction](#introduction)
