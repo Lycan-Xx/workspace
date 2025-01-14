@@ -40,7 +40,7 @@ const PaymentCards = ({ onRequestCard, cards, setCards }) => {
 		<div className="mt-4 flex justify-end">
 		  <button
 			onClick={onRequestCard}
-			className="bg-blue-600 text-white px-8 py-2 rounded-lg hover:bg-blue-700 flex items-center gap-2"
+			className="bg-blue-600 text-white px-8 py-2 mb-2 rounded-lg hover:bg-blue-700 flex items-center gap-2"
 		  >
 			<i className="fas fa-credit-card"></i>
 			Request Virtual Card
