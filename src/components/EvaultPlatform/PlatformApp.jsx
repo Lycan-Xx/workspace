@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useTransition, animated, config } from '@react-spring/web'; 
+import { useTransition, animated, config } from '@react-spring/web'; // Add this import
 import { useLocation } from 'react-router-dom';
 import MainLayout from "./layout/MainLayout";
 import Navbar from "./Navbar";
@@ -47,7 +47,7 @@ function App({ initialView = "instant-payments", onBack }) {
   });
 
   const renderComponent = () => {
-    console.log('Current view:', currentView); 
+    console.log('Current view:', currentView); // Add this
     switch (currentView) {
       case "instant-payments":
         return (
@@ -59,10 +59,7 @@ function App({ initialView = "instant-payments", onBack }) {
       case "sign-in":
         return (
           <SignIn
-            onContinue={() => {
-              localStorage.setItem('isAuthenticated', 'true');
-              window.location.href = '/dashboard';
-            }}
+            onContinue={() => handleNavigation("configure-security")}
             onSignUp={() => handleNavigation("sign-up")}
           />
         );
@@ -71,14 +68,8 @@ function App({ initialView = "instant-payments", onBack }) {
       case "configure-security":
         return (
           <ConfigureSecurity
-            onSkip={() => {
-              localStorage.setItem('isAuthenticated', 'true');
-              window.location.href = '/dashboard';
-            }}
-            onComplete={() => {
-              localStorage.setItem('isAuthenticated', 'true');
-              window.location.href = '/dashboard';
-            }}
+            onSkip={() => handleNavigation("dashboard")}
+            onComplete={() => handleNavigation("dashboard")}
           />
         );
       case "vendor-details":
@@ -120,7 +111,7 @@ function App({ initialView = "instant-payments", onBack }) {
               height: "100%"
             }}
           >
-            {renderComponent()} 
+            {renderComponent()} {/* This should match the current view */}
           </animated.div>
         ))}
       </MainLayout>

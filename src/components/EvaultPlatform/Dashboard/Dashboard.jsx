@@ -236,14 +236,6 @@ const Dashboard = () => {
           />
         )}
       </div>
-	  <div>
-	  {showVirtualCardRequest && (
-          <VirtualCardRequest 
-            onClose={() => setShowVirtualCardRequest(false)}
-            addCard={handleAddCard}
-          />
-        )}
-	  </div>
     </div>
   );
 };

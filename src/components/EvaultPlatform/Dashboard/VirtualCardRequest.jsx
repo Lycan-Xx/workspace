@@ -52,19 +52,19 @@ const VirtualCardRequest = ({ onClose, addCard }) => {
   return (
     <Portal>
       <motion.div
-        className="fixed inset-0 bg-black/50 flex items-start justify-center z-[9999] overflow-y-auto pt-20 pb-20"
+        className="fixed inset-0 bg-black/50 flex items-center justify-center z-[9999]"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
       >
         <motion.div
-          className="bg-white rounded-lg shadow-xl p-6 max-w-md w-full mx-4 relative"
-          initial={{ scale: 0.8, opacity: 0, y: -20 }}
-          animate={{ scale: 1, opacity: 1, y: 0 }}
-          exit={{ scale: 0.8, opacity: 0, y: -20 }}
+          className="bg-white rounded-lg shadow-xl p-6 max-w-md w-full m-4"
+          initial={{ scale: 0.8, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          exit={{ scale: 0.8, opacity: 0 }}
         >
           {/* Header */}
-          <div className="flex justify-between items-center">
+          <div className="flex justify-between items-center mb-4">
             <h2 className="text-xl font-semibold text-blue-600">Request a Virtual Card</h2>
             <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
               <X className="w-5 h-5" />
