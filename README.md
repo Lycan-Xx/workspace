@@ -13,7 +13,7 @@ Login page ![alt text](src/components/assets/screenshots/preview-2.png)
 - [Usage](#usage)
 - [Security](#security)
 - [Support](#support)
-- [Contributing](#contributing)
+- [Developers](#developers)
 - [License](#license)
 
 ## Introduction
@@ -34,8 +34,8 @@ eVault is a cutting-edge digital financial management platform designed to empow
 To get started with eVault:
 
 1. Visit our website at [https://www.evault.com.ng](https://www.evault.com.ng)
-2. Create an account through [https://app.evault.com.ng/mobile/register/](Sign up)
-3. Sign in to your existing account at [https://app.evault.com.ng/mobile/login/](Sign in)
+2. Create an account through [Sign up](https://app.evault.com.ng/mobile/register/)
+3. Sign in to your existing account at [Sign in](https://app.evault.com.ng/mobile/login/)
 4. Click on the "Get Started" button to start
 5. Follow the registration process to create your account
 6. Verify your email address
@@ -51,7 +51,7 @@ After logging in, you can:
 - Customize your security settings
 - Access customer support
 
-For detailed instructions, please refer to our [WebPage](https://www.evault.com.ng).
+For detailed instructions, please refer to our webpage [eVault](https://www.evault.com.ng).
 
 ## Security
 
@@ -62,7 +62,7 @@ At eVault, your security is our top priority. We employ:
 - Regular security audits and penetration testing
 - Compliance with international financial security standards
 
-For more information, visit our [WebPage](https://www.evault.com.ng).
+For more information, visit our webpage [eVault](https://www.evault.com.ng).
 
 ## Support
 
@@ -72,6 +72,75 @@ If you need assistance, our support team is available 24/7:
 - Phone: +234 (0) 123 456 7890
 - Live Chat: Available on our website
 
+
+## Developers
+
+
+### Prerequisites
+- Node.js (v14.0.0 or later)
+- npm (v6.0.0 or later)
+
+### Setting up the development environment
+
+1. Clone the repository:
+   ```
+   git clone https://github.com/Lycan-Xx/evault_web
+   cd evault
+   ```
+
+2. Install dependencies:
+   ```
+   npm install
+   ```
+
+3. Set up environment variables:
+   - Copy `.env.example` to `.env`
+   - Fill in the required environment variables
+
+4. Start the development server:
+   ```
+   npm start
+   ```
+
+5. Open your browser and visit `http://localhost:3000`
+
+### Building for production
+
+To create a production build, run:
+```
+npm run build
+```
+
+### Tailwind CSS
+
+This project uses Tailwind CSS for styling. The configuration file is located at `tailwind.config.js`. To compile Tailwind CSS:
+
+1. Run the build process:
+   ```
+   npm run build:css
+   ```
+
+2. For development with hot reloading:
+   ```
+   npm run watch:css
+   ```
+
+### Testing
+
+Run the test suite with:
+```
+npm test
+```
+
+### Contributing
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+Please ensure your code adheres to our coding standards and includes appropriate tests.
 
 
 ## License
