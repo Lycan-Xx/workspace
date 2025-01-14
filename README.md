@@ -84,7 +84,7 @@ If you need assistance, our support team is available 24/7:
 
 1. Clone the repository:
    ```
-   git clone https://github.com/Lycan-Xx/evault_web
+   git clone <repo name>
    cd evault
    ```
 
