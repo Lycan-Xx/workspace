@@ -1,8 +1,7 @@
 {
   "files": {
-    "main.css": "/workspace/static/css/main.4a4810e4.css",
-    "main.js": "/workspace/static/js/main.7ff94905.js",
-    "static/media/evault-app.jpg": "/workspace/static/media/evault-app.20ffc09e66183a855706.jpg",
+    "main.css": "/workspace/static/css/main.62707f7a.css",
+    "main.js": "/workspace/static/js/main.b34c8b45.js",
     "static/media/remitaBanner.png": "/workspace/static/media/remitaBanner.9124ce76afce2f9fb87c.png",
     "static/media/airtelBanner.jpg": "/workspace/static/media/airtelBanner.baf7bdd473171c3a603c.jpg",
     "static/media/gloBanner.jpg": "/workspace/static/media/gloBanner.d2edf2151e7c08678ce8.jpg",
@@ -18,13 +17,12 @@
     "static/media/logo.jpg": "/workspace/static/media/logo.e542d8ab45ae422d6eaa.jpg",
     "static/media/mtn.png": "/workspace/static/media/mtn.689904f7d969e63b86ff.png",
     "static/media/multichoice.jpg": "/workspace/static/media/multichoice.f1046067d79a9c4f1206.jpg",
-    "static/media/evault-main-logo.png": "/workspace/static/media/evault-main-logo.8aea430236bb526ed1bd.png",
     "index.html": "/workspace/index.html",
-    "main.4a4810e4.css.map": "/workspace/static/css/main.4a4810e4.css.map",
-    "main.7ff94905.js.map": "/workspace/static/js/main.7ff94905.js.map"
+    "main.62707f7a.css.map": "/workspace/static/css/main.62707f7a.css.map",
+    "main.b34c8b45.js.map": "/workspace/static/js/main.b34c8b45.js.map"
   },
   "entrypoints": [
-    "static/css/main.4a4810e4.css",
-    "static/js/main.7ff94905.js"
+    "static/css/main.62707f7a.css",
+    "static/js/main.b34c8b45.js"
   ]
 }
