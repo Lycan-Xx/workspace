@@ -214,6 +214,7 @@ const Dashboard = () => {
         selectedTab={selectedTab}
         setSelectedTab={setSelectedTab}
         setIsSidebarCollapsed={setIsSidebarCollapsed}
+        user={undefined} // Declare user as undefined since it has not been declared
         className="relative z-10"
       />
 
