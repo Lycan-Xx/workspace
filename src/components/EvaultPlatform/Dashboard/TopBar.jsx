@@ -1,16 +1,17 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Bell, Mail, Eye, EyeOff, User, Settings, LogOut } from 'lucide-react';
 import PropTypes from 'prop-types';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { logout } from '../store/authSlice';
 
-const TopBar = ({ user }) => {
+const TopBar = () => {
   const [showBalance, setShowBalance] = useState(true);
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef(null);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const user = useSelector((state) => state.auth.user);
 
   useEffect(() => {
     const handleClickOutside = (event) => {

@@ -11,7 +11,7 @@ import {
   FaBars,
   FaTimes,
 } from "react-icons/fa";
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { logout } from '../store/authSlice';
 
@@ -21,6 +21,7 @@ const Sidebar = ({ user, selectedTab, setSelectedTab, setIsSidebarCollapsed }) =
   const [isMobile, setIsMobile] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const userFromRedux = useSelector((state) => state.auth.user);
 
   useEffect(() => {
     const handleResize = () => {
@@ -71,15 +72,15 @@ const Sidebar = ({ user, selectedTab, setSelectedTab, setIsSidebarCollapsed }) =
       <div className="flex-1 px-4">
         <div className="mb-8 text-center">
           <img
-            src={`https://picsum.photos/seed/${user?.email || 'default'}/200`}
-            alt={user?.name || 'User Avatar'}
+            src={`https://picsum.photos/seed/${userFromRedux?.email || 'default'}/200`}
+            alt={userFromRedux?.name || 'User Avatar'}
             className={`rounded-full mx-auto mb-4 ${
               isCollapsed ? "w-12 h-12" : "w-20 h-20"
             }`}
           />
           {!isCollapsed && (
             <>
-              <h3 className="text-lg font-bold text-gray-800">{user?.name || 'Guest'}</h3>
+              <h3 className="text-lg font-bold text-gray-800">{userFromRedux?.name || 'Guest'}</h3>
               <p className="text-sm text-gray-600">Customer</p>
             </>
           )}
