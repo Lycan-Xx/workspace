@@ -80,34 +80,46 @@ const Sidebar = ({ user, selectedTab, setSelectedTab, setIsSidebarCollapsed }) =
           />
           {!isCollapsed && (
             <>
-              <h3 className="text-lg font-bold text-gray-800">{userFromRedux?.name || 'Guest'}</h3>
-              <p className="text-sm text-gray-600">Customer</p>
+              <h3 className="text-lg font-bold text-gray-800">
+                {userFromRedux?.name || 'Guest'}
+              </h3>
+              <p className="text-sm text-gray-600 capitalize">
+                {userFromRedux?.role || 'Guest'} Account
+              </p>
             </>
           )}
         </div>
 
         <nav className="space-y-2">
-          {menuItems.map((item) => (
-            <button
-              key={item.name}
-              onClick={() => {
-                setSelectedTab(item.name);
-                setIsMobileMenuOpen(false);
-              }}
-              className={`w-full flex items-center ${
-                isCollapsed ? "justify-center" : "justify-start"
-              } p-3 rounded-lg transition-colors ${
-                selectedTab === item.name
-                  ? "bg-blue-600 text-white"
-                  : "text-gray-700 hover:bg-blue-50"
-              }`}
-            >
-              <span className="text-xl">{item.icon}</span>
-              {(!isCollapsed || isMobileMenuOpen) && (
-                <span className="ml-3">{item.name}</span>
-              )}
-            </button>
-          ))}
+          {menuItems
+            .filter(item => {
+              // Only show Portfolio tab for business accounts
+              if (item.name === "Portfolio") {
+                return userFromRedux?.role === "business";
+              }
+              return true;
+            })
+            .map((item) => (
+              <button
+                key={item.name}
+                onClick={() => {
+                  setSelectedTab(item.name);
+                  setIsMobileMenuOpen(false);
+                }}
+                className={`w-full flex items-center ${
+                  isCollapsed ? "justify-center" : "justify-start"
+                } p-3 rounded-lg transition-colors ${
+                  selectedTab === item.name
+                    ? "bg-blue-600 text-white"
+                    : "text-gray-700 hover:bg-blue-50"
+                }`}
+              >
+                <span className="text-xl">{item.icon}</span>
+                {(!isCollapsed || isMobileMenuOpen) && (
+                  <span className="ml-3">{item.name}</span>
+                )}
+              </button>
+            ))}
         </nav>
       </div>
 

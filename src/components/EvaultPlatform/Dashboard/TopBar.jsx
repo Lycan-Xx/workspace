@@ -82,8 +82,12 @@ const TopBar = () => {
               aria-haspopup="true"
             >
               <span className="hidden md:block text-right mr-2">
-                <span className="block text-sm font-medium text-gray-100">{user?.name || 'Guest'}</span>
-                <span className="block text-xs text-gray-300">Customer</span>
+                <span className="block text-sm font-medium text-gray-100">
+                  {user?.name || 'Guest'}
+                </span>
+                <span className="block text-xs text-gray-300 capitalize">
+                  {user?.role || 'Guest'} Account
+                </span>
               </span>
               <img
                 src={`https://picsum.photos/seed/${user?.email || 'default'}/200`}
