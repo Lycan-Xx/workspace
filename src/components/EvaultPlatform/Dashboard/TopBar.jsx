@@ -30,7 +30,7 @@ const TopBar = () => {
   };
 
   return (
-    <div className="bg-blue-600 p-4">
+    <div className="bg-blue-600 rounded-lg shadow-sm p-4 mb-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-2">
           <div className="text-white font-bold">
@@ -89,11 +89,13 @@ const TopBar = () => {
                   {user?.role || 'Guest'} Account
                 </span>
               </span>
-              <img
-                src={`https://picsum.photos/seed/${user?.email || 'default'}/200`}
-                alt={`${user?.name || 'Guest'}'s avatar`}
-                className="w-10 h-10 rounded-full border-2 border-white"
-              />
+              <div className="flex-shrink-0 w-10 h-10">
+                <img
+                  src={`https://picsum.photos/seed/${user?.email || 'default'}/200`}
+                  alt={`${user?.name || 'Guest'}'s avatar`}
+                  className="w-full h-full rounded-full border-2 border-white object-cover"
+                />
+              </div>
             </button>
 
             {menuOpen && (
