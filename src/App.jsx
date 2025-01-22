@@ -1,85 +1,15 @@
-import React, { useState } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import './index.css';
-
-// Import Components
-import Navbar from './components/LandingPage/Navbar';
-import Hero from './components/LandingPage/Hero';
-import Mission from './components/LandingPage/Mission';
-import About from './components/LandingPage/About';
-import Services from './components/LandingPage/Services';
-import Feedback from './components/LandingPage/Feedback';
-import Offer from './components/LandingPage/Offer';
-import FAQ from './components/LandingPage/FAQ';
-import Footer from './components/LandingPage/Footer';
-import PrivacyPolicy from './components/LandingPage/Extras/PrivacyPolicy'; // Imported Privacy Policy
-import TermsAndConditions from './components/LandingPage/Extras/TermsAndConditions'; // Imported Terms & Conditions
+import React from 'react';
+import { Provider } from 'react-redux';
 import PlatformRoute from './components/EvaultPlatform/PlatfromRoute';
-import MobileApp from './components/LandingPage/MobileApp';
+import { store } from './components/EvaultPlatform/store/store';
+import "./index.css";
 
-const App = () => {
-  const [language, setLanguage] = useState("English");
-  const [showPlatform, setShowPlatform] = useState(false);
-  const [platformInitialView, setPlatformInitialView] = useState(null);
-
-  // Scroll to the top on route change
-  const ScrollToTop = () => {
-    React.useEffect(() => {
-      window.scrollTo(0, 0);
-    }, []);
-    return null;
-  };
-
-  if (showPlatform) {
-    return (
-      <PlatformRoute 
-        initialView={platformInitialView} 
-        onBack={() => {
-          setShowPlatform(false);
-          setPlatformInitialView(null);
-        }}
-      />
-    );
-  }
-
+function App() {
   return (
-    <Router>
-      <ScrollToTop />
-      <div className="App">
-        <Navbar 
-          language={language} 
-          setLanguage={setLanguage}
-          setShowPlatform={setShowPlatform}
-          setPlatformInitialView={setPlatformInitialView}
-        />
-        <Routes>
-          <Route path="*" element={
-            <>
-              <Hero 
-                language={language} 
-                setShowPlatform={setShowPlatform}
-                setPlatformInitialView={setPlatformInitialView}
-              />
-              <About 
-                language={language} 
-                setShowPlatform={setShowPlatform}
-                setPlatformInitialView={setPlatformInitialView}
-              />
-              <Services />
-              <Mission language={language} />
-              <Feedback />
-              <Offer language={language} setShowPlatform={setShowPlatform} />
-			  <MobileApp />
-              <FAQ />
-              <Footer />
-            </>
-          } />
-          <Route path="/privacy-policy" element={<><PrivacyPolicy /><Footer /></>} />
-          <Route path="/terms-and-conditions" element={<><TermsAndConditions /><Footer /></>} />
-        </Routes>
-      </div>
-    </Router>
+    <Provider store={store}>
+      <PlatformRoute />
+    </Provider>
   );
-};
+}
 
-export default App;
+export default App
