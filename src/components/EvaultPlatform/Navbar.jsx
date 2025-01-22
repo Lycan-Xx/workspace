@@ -149,6 +149,8 @@ const Navbar = ({ onNavigate, currentView }) => {
         </div>
       </div>
 
+
+      {/* The asdfhjakjshfh a fasdfhj asdfk aghsdfk ajhsdf */}
       {/* Download Dialog */}
       {isDialogOpen && (
         <div
@@ -180,7 +182,7 @@ const Navbar = ({ onNavigate, currentView }) => {
                 App Store
               </a>
               <a
-                href="#"
+                href='#'
                 className="flex-1 py-2 bg-[#025798] text-white text-center rounded-lg 
                   hover:bg-opacity-90 hover:scale-105 transform transition-all duration-200"
               >

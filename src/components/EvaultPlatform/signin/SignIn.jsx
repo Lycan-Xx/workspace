@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { useDispatch, useSelector } from 'react-redux';
+import { login } from '../store/authSlice';
 import { Eye, EyeOff, Mail } from "lucide-react";
 
 function SuccessStep({ onContinue }) {
@@ -26,15 +28,20 @@ export default function SignIn({ onContinue, onSignUp }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const dispatch = useDispatch();
+  const error = useSelector(state => state.auth.error);
 
   const Steps = {
     LOGIN: 1,
     SUCCESS: 2,
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setCurrentStep(Steps.SUCCESS);
+    const success = await dispatch(login({ email, password }));
+    if (success) {
+      setCurrentStep(Steps.SUCCESS);
+    }
   };
 
   return (
@@ -48,6 +55,13 @@ export default function SignIn({ onContinue, onSignUp }) {
           <h3 className="text-base sm:text-lg font-medium text-center text-gray-700 mb-6">
             Sign In to Your Account
           </h3>
+
+          {error && (
+            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-6">
+              {error}
+            </div>
+          )}
+
           <form onSubmit={handleSubmit} className="space-y-6 sm:space-y-8">
             {/* Email Input */}
             <div className="relative">
@@ -93,7 +107,7 @@ export default function SignIn({ onContinue, onSignUp }) {
             {/* Sign In Button */}
             <button
               type="submit"
-              className="w-full sm:w-1/2 px-6 py-3 bg-[#025798] hover:bg-white text-white hover:text-[#025798] transition duration-300 border-2 border-[#025798] text-base sm:text-lg rounded-lg ease-linear mx-auto"
+              className="w-full sm:w-1/2 px-6 py-3 bg-[#025798] hover:bg-white text-white hover:text-[#025798] transition duration-300 border-2 border-[#025798] text-base sm:text-lg rounded-lg ease-linear mx-auto block"
             >
               Sign In
             </button>
