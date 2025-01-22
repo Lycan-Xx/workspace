@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import PropTypes from 'prop-types';
 import {
   FaTachometerAlt,
   FaLock,
@@ -10,13 +11,17 @@ import {
   FaBars,
   FaTimes,
 } from "react-icons/fa";
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { logout } from '../store/authSlice';
 
-const Sidebar = ({ selectedTab, setSelectedTab, setIsSidebarCollapsed }) => {
-  const navigate = useNavigate();
+const Sidebar = ({ user, selectedTab, setSelectedTab, setIsSidebarCollapsed }) => {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const userFromRedux = useSelector((state) => state.auth.user);
 
   useEffect(() => {
     const handleResize = () => {
@@ -40,24 +45,16 @@ const Sidebar = ({ selectedTab, setSelectedTab, setIsSidebarCollapsed }) => {
   const handleToggle = () => {
     const newCollapsedState = !isCollapsed;
     setIsCollapsed(newCollapsedState);
-    setIsSidebarCollapsed(newCollapsedState); // Notify parent of the collapsed state
+    setIsSidebarCollapsed(newCollapsedState);
   };
 
   const handleLogout = () => {
-    // Clear any auth tokens/session data
-    localStorage.removeItem('authToken');
-    sessionStorage.clear();
-    
-    // Navigate to PlatformApp with sign-in view
-    navigate('/', { 
-      replace: true,
-      state: { returnToSignIn: true }
-    });
+    dispatch(logout());
+    navigate('/sign-in');
   };
 
   const SidebarContent = () => (
     <div className="flex flex-col h-full">
-      {/* Sidebar Header */}
       <div className="flex items-center justify-between p-4">
         {!isCollapsed && (
           <h2 className="text-2xl font-bold text-blue-600">eVault</h2>
@@ -72,25 +69,23 @@ const Sidebar = ({ selectedTab, setSelectedTab, setIsSidebarCollapsed }) => {
         )}
       </div>
 
-      {/* User Profile Section */}
       <div className="flex-1 px-4">
         <div className="mb-8 text-center">
           <img
-            src="https://picsum.photos/id/237/200/300"
-            alt="User"
+            src={`https://picsum.photos/seed/${userFromRedux?.email || 'default'}/200`}
+            alt={userFromRedux?.name || 'User Avatar'}
             className={`rounded-full mx-auto mb-4 ${
               isCollapsed ? "w-12 h-12" : "w-20 h-20"
             }`}
           />
           {!isCollapsed && (
             <>
-              <h3 className="text-lg font-bold text-gray-800">Usman Ahmad</h3>
-              <p className="text-sm text-gray-600">Customer (User)</p>
+              <h3 className="text-lg font-bold text-gray-800">{userFromRedux?.name || 'Guest'}</h3>
+              <p className="text-sm text-gray-600">Customer</p>
             </>
           )}
         </div>
 
-        {/* Navigation Menu */}
         <nav className="space-y-2">
           {menuItems.map((item) => (
             <button
@@ -116,7 +111,6 @@ const Sidebar = ({ selectedTab, setSelectedTab, setIsSidebarCollapsed }) => {
         </nav>
       </div>
 
-      {/* Logout Button */}
       <button
         onClick={handleLogout}
         className={`mx-4 mb-4 flex items-center p-3 rounded-lg bg-red-600 text-white hover:bg-red-700 transition-colors ${
@@ -131,7 +125,6 @@ const Sidebar = ({ selectedTab, setSelectedTab, setIsSidebarCollapsed }) => {
 
   return (
     <>
-      {/* Desktop Sidebar */}
       <div
         className={`hidden md:block fixed top-0 left-0 h-full bg-white shadow-lg z-40 ${
           isCollapsed ? "w-20" : "w-64"
@@ -140,11 +133,9 @@ const Sidebar = ({ selectedTab, setSelectedTab, setIsSidebarCollapsed }) => {
         <SidebarContent />
       </div>
 
-      {/* Mobile Menu */}
       <AnimatePresence>
         {isMobileMenuOpen && (
           <>
-            {/* Overlay */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -153,7 +144,6 @@ const Sidebar = ({ selectedTab, setSelectedTab, setIsSidebarCollapsed }) => {
               className="fixed inset-0 bg-black/50 z-40 md:hidden"
             />
 
-            {/* Sidebar */}
             <motion.div
               initial={{ x: "-100%" }}
               animate={{ x: 0 }}
@@ -173,7 +163,6 @@ const Sidebar = ({ selectedTab, setSelectedTab, setIsSidebarCollapsed }) => {
         )}
       </AnimatePresence>
 
-      {/* Mobile Menu Toggle */}
       {isMobile && (
         <button
           onClick={() => setIsMobileMenuOpen(true)}
@@ -184,6 +173,16 @@ const Sidebar = ({ selectedTab, setSelectedTab, setIsSidebarCollapsed }) => {
       )}
     </>
   );
+};
+
+Sidebar.propTypes = {
+  user: PropTypes.shape({
+    name: PropTypes.string,
+    email: PropTypes.string
+  }),
+  selectedTab: PropTypes.string.isRequired,
+  setSelectedTab: PropTypes.func.isRequired,
+  setIsSidebarCollapsed: PropTypes.func.isRequired
 };
 
 export default Sidebar;

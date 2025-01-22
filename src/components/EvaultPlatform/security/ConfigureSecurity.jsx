@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import PropTypes from 'prop-types';
+import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { setSecurityVerified } from '../../EvaultPlatform/store/authSlice';
 import ProgressBar from './ProgressBar';
 import InitialStep from './InitialStep';
 import BvnStep from './BvnStep';
 import SuccessStep from './SuccessStep';
-import { useNavigate } from 'react-router-dom';
 
-const ConfigureSecurity = ({ onSkip, onComplete }) => {
+const ConfigureSecurity = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [step, setStep] = useState(1);
   const [bvn, setBvn] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -34,16 +36,16 @@ const ConfigureSecurity = ({ onSkip, onComplete }) => {
       setIsLoading(false);
       setIsSuccess(true);
       setStep(3);
-    }, 5000);
+    }, 2000);
   };
 
   const handleCompletion = () => {
-    onComplete();
+    dispatch(setSecurityVerified(true));
     navigate('/dashboard');
   };
 
   const handleSkip = () => {
-    onSkip();
+    dispatch(setSecurityVerified(true));
     navigate('/dashboard');
   };
 
@@ -59,7 +61,7 @@ const ConfigureSecurity = ({ onSkip, onComplete }) => {
         return (
           <InitialStep
             onNext={() => setStep(2)}
-            onSkip={handleSkip} // Notify parent to load Dashboard
+            onSkip={handleSkip}
           />
         );
       case 2:
@@ -75,7 +77,7 @@ const ConfigureSecurity = ({ onSkip, onComplete }) => {
       case 3:
         return (
           <SuccessStep
-            onComplete={handleCompletion} // Notify parent of completion
+            onComplete={handleCompletion}
           />
         );
       default:
@@ -93,11 +95,6 @@ const ConfigureSecurity = ({ onSkip, onComplete }) => {
       </div>
     </div>
   );
-};
-
-ConfigureSecurity.propTypes = {
-  onSkip: PropTypes.func.isRequired,
-  onComplete: PropTypes.func.isRequired,
 };
 
 export default ConfigureSecurity;
