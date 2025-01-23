@@ -1,168 +1,219 @@
 import React, { useState } from "react";
 import {
-  Button,
-  Card,
-  CardContent,
-  CardActions,
-  Typography,
-  TextField,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  Switch,
-  Tooltip,
-  Box,
-  Tab,
-  Tabs,
-  Grid,
+	Button,
+	Typography,
+	TextField,
+	Dialog,
+	DialogActions,
+	DialogContent,
+	DialogTitle,
+	Box,
+	MenuItem,
+	Select,
+	FormControl,
+	InputLabel,
+	Switch,
+	IconButton,
 } from "@mui/material";
-import { Add, Edit, Delete, ToggleOn, ToggleOff } from "@mui/icons-material";
+import { Add, Edit, Delete } from "@mui/icons-material";
+import { motion } from "framer-motion";
 import { useServiceManagement } from "./hooks/useServiceManagement";
 
+const categories = {
+	Restaurants: ["Fast Food", "Fine Dining", "Cafes"],
+	Shops: ["Grocery", "Electronics", "Clothing"],
+	"Service Providers": ["Cleaning", "Plumbing", "Electrical"],
+	"Health & Wellness": ["Gym", "Spa", "Yoga"],
+	"School Fees": ["Primary 1", "JSS 1", "SSS 1", "P.T.A", "Others"],
+};
+
 const Services = () => {
-  const [activeCategory, setActiveCategory] = useState("Class Names");
-  const classNamesManagement = useServiceManagement([]);
-  const paymentTypesManagement = useServiceManagement([]);
+	const [selectedCategory, setSelectedCategory] = useState("");
+	const [selectedSubCategory, setSelectedSubCategory] = useState("");
 
-  const currentManagement =
-    activeCategory === "Class Names" ? classNamesManagement : paymentTypesManagement;
+	const serviceManagement = useServiceManagement([]);
 
-  const {
-    services,
-    showModal,
-    form,
-    editingIndex,
-    setShowModal,
-    handleChange,
-    handleSave,
-    handleEdit,
-    handleDelete,
-    toggleActive,
-  } = currentManagement;
+	const {
+		services,
+		showModal,
+		form,
+		editingIndex,
+		setShowModal,
+		handleChange,
+		handleSave,
+		handleEdit,
+		handleDelete,
+		toggleActive,
+	} = serviceManagement;
 
-  return (
-    <Box sx={{ width: "100%", maxWidth: "900px", mx: "auto", mt: 4, p: 3, bgcolor: "background.paper", borderRadius: 2, boxShadow: 3 }}>
-      {/* Category Tabs */}
-      <Tabs
-        value={activeCategory}
-        onChange={(e, newValue) => setActiveCategory(newValue)}
-        indicatorColor="primary"
-        textColor="primary"
-        centered
-        sx={{ mb: 3 }}
-      >
-        <Tab label="Class Names" value="Class Names" />
-        <Tab label="Payment Types" value="Payment Types" />
-      </Tabs>
+	return (
+		<Box
+			sx={{
+				width: "100%",
+				maxWidth: "900px",
+				mx: "auto",
+				mt: 4,
+				p: 3,
+				bgcolor: "background.paper",
+				borderRadius: 2,
+				boxShadow: 3,
+			}}
+		>
+			<Box
+				sx={{
+					mb: 4,
+					py: 2,
+					px: 3,
+					textAlign: "center",
+					bgcolor: "white",
+					borderRadius: 2,
+				}}
+			>
+				<Typography variant="h5" sx={{ fontWeight: "bold", color: "dark", mb: 1 }}>
+					Service Management
+				</Typography>
+				<Typography variant="body1" color="text.secondary">
+					Organize your services effectively with tools to add, edit, delete, and activate or deactivate them easily.
+				</Typography>
+			</Box>
 
-      {/* Add Button */}
-      <Box sx={{ textAlign: "right", mb: 2 }}>
-        <Button
-          variant="contained"
-          startIcon={<Add />}
-          onClick={() => setShowModal(true)}
-          sx={{ textTransform: "none" }}
-        >
-          Add New {activeCategory}
-        </Button>
-      </Box>
+			<Box sx={{ textAlign: "right", mb: 3 }}>
+				<Button
+					variant="contained"
+					startIcon={<Add />}
+					onClick={() => setShowModal(true)}
+					sx={{ textTransform: "none" }}
+				>
+					Add New Service
+				</Button>
+			</Box>
 
-      {/* Service Cards */}
-      <Grid container spacing={2}>
-        {services.map((item, index) => (
-          <Grid item xs={12} sm={6} md={4} key={index}>
-            <Card sx={{ boxShadow: 2 }}>
-              <CardContent>
-                <Typography variant="h6" component="div" gutterBottom>
-                  {item.name}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  {item.description}
-                </Typography>
-                <Typography
-                  variant="caption"
-                  sx={{ color: item.active ? "success.main" : "error.main", fontWeight: "bold" }}
-                >
-                  {item.active ? "Active" : "Inactive"}
-                </Typography>
-              </CardContent>
-              <CardActions sx={{ justifyContent: "space-between" }}>
-                <Tooltip title="Edit">
-                  <Button
-                    size="small"
-                    color="warning"
-                    startIcon={<Edit />}
-                    onClick={() => handleEdit(index)}
-                  >
-                    Edit
-                  </Button>
-                </Tooltip>
-                <Tooltip title={item.active ? "Deactivate" : "Activate"}>
-                  <Button
-                    size="small"
-                    color={item.active ? "primary" : "secondary"}
-                    startIcon={item.active ? <ToggleOff /> : <ToggleOn />}
-                    onClick={() => toggleActive(index)}
-                  >
-                    {item.active ? "Deactivate" : "Activate"}
-                  </Button>
-                </Tooltip>
-                <Tooltip title="Delete">
-                  <Button
-                    size="small"
-                    color="error"
-                    startIcon={<Delete />}
-                    onClick={() => handleDelete(index)}
-                  >
-                    Delete
-                  </Button>
-                </Tooltip>
-              </CardActions>
-            </Card>
-          </Grid>
-        ))}
-      </Grid>
+			<Box
+				component={motion.div}
+				initial={{ opacity: 0 }}
+				animate={{ opacity: 1 }}
+				transition={{ duration: 0.5 }}
+				sx={{
+					maxHeight: "400px",
+					overflowY: "auto",
+					pr: 1,
+					"&::-webkit-scrollbar": {
+						width: "8px",
+					},
+					"&::-webkit-scrollbar-thumb": {
+						backgroundColor: "rgba(0,0,0,0.2)",
+						borderRadius: "4px",
+					},
+				}}
+			>
+				{services.map((item, index) => (
+					<Box
+						component={motion.div}
+						key={index}
+						whileHover={{ scale: 1.01 }}
+						transition={{ duration: 0.2 }}
+						sx={{
+							display: "flex",
+							alignItems: "center",
+							justifyContent: "space-between",
+							p: 2,
+							mb: 1,
+							borderRadius: 2,
+							bgcolor: "grey.100",
+							boxShadow: 2,
+						}}
+					>
+						<Box sx={{ flex: 1 }}>
+							<Typography variant="h6" sx={{ fontWeight: "bold", mb: 0.5 }}>
+								{item.name}
+							</Typography>
+							<Typography variant="body2" color="text.secondary">
+								{item.description}
+							</Typography>
+						</Box>
+						<Switch
+							checked={item.active}
+							onChange={() => toggleActive(index)}
+							color="primary"
+							inputProps={{ "aria-label": "Activate/Deactivate" }}
+						/>
+						<IconButton color="warning" onClick={() => handleEdit(index)}>
+							<Edit />
+						</IconButton>
+						<IconButton color="error" onClick={() => handleDelete(index)}>
+							<Delete />
+						</IconButton>
+					</Box>
+				))}
+			</Box>
 
-      {/* Modal for Add/Edit */}
-      <Dialog
-        open={showModal}
-        onClose={() => setShowModal(false)}
-        maxWidth="sm"
-        fullWidth
-      >
-        <DialogTitle>
-          {editingIndex !== null ? `Edit ${activeCategory}` : `Add New ${activeCategory}`}
-        </DialogTitle>
-        <DialogContent>
-          <TextField
-            label="Name"
-            name="name"
-            value={form.name}
-            onChange={handleChange}
-            fullWidth
-            margin="dense"
-          />
-          <TextField
-            label="Description"
-            name="description"
-            value={form.description}
-            onChange={handleChange}
-            fullWidth
-            margin="dense"
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setShowModal(false)} color="error">
-            Cancel
-          </Button>
-          <Button onClick={handleSave} variant="contained" color="primary">
-            Save
-          </Button>
-        </DialogActions>
-      </Dialog>
-    </Box>
-  );
+			<Dialog
+				open={showModal}
+				onClose={() => setShowModal(false)}
+				maxWidth="sm"
+				fullWidth
+			>
+				<DialogTitle>
+					{editingIndex !== null ? "Edit Service" : "Add New Service"}
+				</DialogTitle>
+				<DialogContent>
+					<FormControl fullWidth margin="dense">
+						<InputLabel>Category</InputLabel>
+						<Select
+							value={selectedCategory}
+							onChange={(e) => {
+								setSelectedCategory(e.target.value);
+								setSelectedSubCategory("");
+							}}
+						>
+							{Object.keys(categories).map((cat) => (
+								<MenuItem key={cat} value={cat}>
+									{cat}
+								</MenuItem>
+							))}
+						</Select>
+					</FormControl>
+					<FormControl fullWidth margin="dense" disabled={!selectedCategory}>
+						<InputLabel>Subcategory</InputLabel>
+						<Select
+							value={selectedSubCategory}
+							onChange={(e) => setSelectedSubCategory(e.target.value)}
+						>
+							{categories[selectedCategory]?.map((sub) => (
+								<MenuItem key={sub} value={sub}>
+									{sub}
+								</MenuItem>
+							))}
+						</Select>
+					</FormControl>
+					<TextField
+						label="Name"
+						name="name"
+						value={form.name}
+						onChange={handleChange}
+						fullWidth
+						margin="dense"
+					/>
+					<TextField
+						label="Description"
+						name="description"
+						value={form.description}
+						onChange={handleChange}
+						fullWidth
+						margin="dense"
+					/>
+				</DialogContent>
+				<DialogActions>
+					<Button onClick={() => setShowModal(false)} color="error">
+						Cancel
+					</Button>
+					<Button onClick={handleSave} variant="contained" color="primary">
+						Save
+					</Button>
+				</DialogActions>
+			</Dialog>
+		</Box>
+	);
 };
 
 export default Services;

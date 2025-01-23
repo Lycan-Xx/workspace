@@ -82,10 +82,10 @@ const TopBar = () => {
               aria-haspopup="true"
             >
               <span className="hidden md:block text-right mr-2">
-                <span className="block text-sm font-medium text-gray-100">
+                <span className="block text-sm font-medium text-white">
                   {user?.name || 'Guest'}
                 </span>
-                <span className="block text-xs text-gray-300 capitalize">
+                <span className="block text-xs text-white capitalize">
                   {user?.role || 'Guest'} Account
                 </span>
               </span>
