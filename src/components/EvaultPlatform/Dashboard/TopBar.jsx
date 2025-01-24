@@ -4,19 +4,42 @@ import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { logout } from '../store/authSlice';
+import { settingsCategories } from './settings/data/categories';
 
-const TopBar = () => {
+const TopBar = ({ setSelectedTab, onSettingSelect }) => {
   const [showBalance, setShowBalance] = useState(true);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [notificationOpen, setNotificationOpen] = useState(false);
+  const [messageOpen, setMessageOpen] = useState(false);
   const menuRef = useRef(null);
+  const notificationRef = useRef(null);
+  const messageRef = useRef(null);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const user = useSelector((state) => state.auth.user);
+
+  // Sample notification data
+  const notifications = [
+    { id: 1, title: "New Login Alert", message: "New login from Lagos", time: "2m ago" },
+    { id: 2, title: "Transaction Success", message: "Transfer of ₦50,000 successful", time: "1h ago" },
+    { id: 3, title: "Security Alert", message: "Password changed successfully", time: "2h ago" }
+  ];
+
+  const messages = [
+    { id: 1, sender: "Support Team", message: "Your ticket has been resolved", time: "5m ago" },
+    { id: 2, sender: "System", message: "Welcome to eVault!", time: "1d ago" }
+  ];
 
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (menuRef.current && !menuRef.current.contains(event.target)) {
         setMenuOpen(false);
+      }
+      if (notificationRef.current && !notificationRef.current.contains(event.target)) {
+        setNotificationOpen(false);
+      }
+      if (messageRef.current && !messageRef.current.contains(event.target)) {
+        setMessageOpen(false);
       }
     };
 
@@ -28,6 +51,40 @@ const TopBar = () => {
     dispatch(logout());
     navigate('/sign-in');
   };
+
+  const renderNotifications = () => (
+    <div className="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-lg py-2 z-50">
+      <div className="px-4 py-2 border-b border-gray-200">
+        <h3 className="font-semibold text-gray-900">Notifications</h3>
+      </div>
+      <div className="max-h-96 overflow-y-auto">
+        {notifications.map(notification => (
+          <div key={notification.id} className="px-4 py-3 hover:bg-gray-50 cursor-pointer">
+            <p className="font-medium text-gray-900">{notification.title}</p>
+            <p className="text-sm text-gray-600">{notification.message}</p>
+            <p className="text-xs text-gray-500 mt-1">{notification.time}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+
+  const renderMessages = () => (
+    <div className="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-lg py-2 z-50">
+      <div className="px-4 py-2 border-b border-gray-200">
+        <h3 className="font-semibold text-gray-900">Messages</h3>
+      </div>
+      <div className="max-h-96 overflow-y-auto">
+        {messages.map(message => (
+          <div key={message.id} className="px-4 py-3 hover:bg-gray-50 cursor-pointer">
+            <p className="font-medium text-gray-900">{message.sender}</p>
+            <p className="text-sm text-gray-600">{message.message}</p>
+            <p className="text-xs text-gray-500 mt-1">{message.time}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
 
   return (
     <div className="bg-blue-600 rounded-lg shadow-sm p-4 mb-4">
@@ -54,24 +111,39 @@ const TopBar = () => {
 
         <div className="flex items-center space-x-4">
           <div className="flex space-x-3">
-            <button 
-              className="relative p-2 rounded-full transition-colors hover:bg-blue-700"
-              aria-label="Notifications"
-            >
-              <Bell className="text-white" size={24} />
-              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                3
-              </span>
-            </button>
-            <button 
-              className="relative p-2 rounded-full transition-colors hover:bg-blue-700"
-              aria-label="Messages"
-            >
-              <Mail className="text-white" size={24} />
-              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                2
-              </span>
-            </button>
+            <div className="relative" ref={notificationRef}>
+              <button 
+                className="relative p-2 rounded-full transition-colors hover:bg-blue-700"
+                aria-label="Notifications"
+                onClick={() => {
+                  setNotificationOpen(!notificationOpen);
+                  setMessageOpen(false);
+                }}
+              >
+                <Bell className="text-white" size={24} />
+                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                  3
+                </span>
+              </button>
+              {notificationOpen && renderNotifications()}
+            </div>
+
+            <div className="relative" ref={messageRef}>
+              <button 
+                className="relative p-2 rounded-full transition-colors hover:bg-blue-700"
+                aria-label="Messages"
+                onClick={() => {
+                  setMessageOpen(!messageOpen);
+                  setNotificationOpen(false);
+                }}
+              >
+                <Mail className="text-white" size={24} />
+                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                  2
+                </span>
+              </button>
+              {messageOpen && renderMessages()}
+            </div>
           </div>
 
           <div className="relative" ref={menuRef}>
@@ -102,14 +174,21 @@ const TopBar = () => {
               <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 z-50">
                 <button 
                   className="w-full px-4 py-2 text-left hover:bg-blue-50 flex items-center space-x-2"
-                  onClick={() => setMenuOpen(false)}
+                  onClick={() => {
+                    setMenuOpen(false);
+                    onSettingSelect(settingsCategories.find(cat => cat.id === 'account'));
+                    setSelectedTab('Settings');
+                  }}
                 >
                   <User size={18} className="text-blue-600" />
                   <span>Profile</span>
                 </button>
                 <button 
                   className="w-full px-4 py-2 text-left hover:bg-blue-50 flex items-center space-x-2"
-                  onClick={() => setMenuOpen(false)}
+                  onClick={() => {
+                    setMenuOpen(false);
+                    setSelectedTab('Settings');
+                  }}
                 >
                   <Settings size={18} className="text-blue-600" />
                   <span>Settings</span>

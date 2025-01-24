@@ -27,6 +27,7 @@ const Dashboard = () => {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [showTransferForm, setShowTransferForm] = useState(false);
   const [showVirtualCardRequest, setShowVirtualCardRequest] = useState(false);
+  const [selectedSetting, setSelectedSetting] = useState(null);
 
   // Move card data state to Dashboard
   const [cardData, setCardData] = useState([
@@ -76,13 +77,6 @@ const Dashboard = () => {
       icon: <i className="fas fa-tv text-red-500 text-3xl"></i>,
       component: "Cable",
     },
-  ];
-
-  const menuItems = [
-    { name: "Dashboard", icon: <FaTachometerAlt color="#4CAF50" />, color: "#4CAF50" },
-    { name: "Vault", icon: <FaLock color="#FF9800" />, color: "#FF9800" },
-    { name: "Portfolio", icon: <FaWallet color="#2196F3" />, color: "#2196F3" },
-    { name: "Settings", icon: <FaCogs color="#9C27B0" />, color: "#9C27B0" },
   ];
 
   const handleServiceClick = (service) => {
@@ -223,7 +217,14 @@ const Dashboard = () => {
           isSidebarCollapsed ? "md:ml-20" : "md:ml-64"
         }`}
       >
-        <TopBar />
+        <TopBar 
+          setSelectedTab={setSelectedTab} 
+          onSettingSelect={(setting) => {
+            setSelectedTab('Settings');
+            // You'll need to add state management for selected setting
+            setSelectedSetting(setting);
+          }}
+        />
         <animated.div style={homeSpring}>
           {selectedTab === "Dashboard" && renderContent()}
         </animated.div>
