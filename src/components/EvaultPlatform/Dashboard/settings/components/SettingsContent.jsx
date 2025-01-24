@@ -1,13 +1,23 @@
-import React, { useState } from 'react';
-import { ArrowLeft } from 'lucide-react';
+import React, { useState, useRef } from 'react';
+import { ArrowLeft, Upload, CheckCircle, XCircle } from 'lucide-react';
 import { FormField } from './FormField';
+import { clsx } from 'clsx';
 
 export const SettingsContent = ({ setting, onBack }) => {
+  const fileInputRef = useRef(null);
   const [formState, setFormState] = useState({
-    // Account
+    // Account & Biodata
+    profilePicture: 'https://images.unsplash.com/photo-1633332755192-727a05c4013d?auto=format&fit=crop&q=80&w=200&h=200',
     fullName: '',
     email: '',
     phone: '',
+    dateOfBirth: '',
+    gender: 'prefer-not-to-say',
+    address: '',
+    state: '',
+    country: '',
+    bvnVerified: false,
+    ninVerified: true,
     // Security
     currentPassword: '',
     newPassword: '',
@@ -28,11 +38,55 @@ export const SettingsContent = ({ setting, onBack }) => {
     setFormState(prev => ({ ...prev, [field]: value }));
   };
 
+  const handleImageUpload = (event) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        handleChange('profilePicture', reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const renderContent = () => {
     switch (setting.id) {
       case 'account':
         return (
-          <>
+          <div className="space-y-6">
+            {/* Profile Picture Section */}
+            <div className="p-4">
+              <label className="block text-sm font-medium text-gray-700 mb-4">Profile Picture</label>
+              <div className="flex items-center space-x-6">
+                <div className="relative">
+                  <img
+                    src={formState.profilePicture}
+                    alt="Profile"
+                    className="w-32 h-32 rounded-full object-cover border-4 border-white shadow-lg"
+                  />
+                  <button
+                    onClick={() => fileInputRef.current?.click()}
+                    className="absolute bottom-0 right-0 p-2 bg-blue-600 rounded-full text-white hover:bg-blue-700 transition-colors"
+                  >
+                    <Upload className="w-4 h-4" />
+                  </button>
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    onChange={handleImageUpload}
+                    accept="image/*"
+                    className="hidden"
+                  />
+                </div>
+                <div className="flex-1">
+                  <p className="text-sm text-gray-600">
+                    Upload a new profile picture. Recommended size: 200x200px.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Personal Information */}
             <FormField
               label="Full Name"
               type="text"
@@ -54,7 +108,80 @@ export const SettingsContent = ({ setting, onBack }) => {
               onChange={value => handleChange('phone', value)}
               placeholder="Enter your phone number"
             />
-          </>
+            <FormField
+              label="Date of Birth"
+              type="date"
+              value={formState.dateOfBirth}
+              onChange={value => handleChange('dateOfBirth', value)}
+            />
+            <FormField
+              label="Gender"
+              type="select"
+              value={formState.gender}
+              onChange={value => handleChange('gender', value)}
+              options={[
+                { label: 'Male', value: 'male' },
+                { label: 'Female', value: 'female' },
+                { label: 'Prefer not to say', value: 'prefer-not-to-say' }
+              ]}
+            />
+            <FormField
+              label="Address"
+              type="text"
+              value={formState.address}
+              onChange={value => handleChange('address', value)}
+              placeholder="Enter your address"
+            />
+            <FormField
+              label="State"
+              type="text"
+              value={formState.state}
+              onChange={value => handleChange('state', value)}
+              placeholder="Enter your state"
+            />
+            <FormField
+              label="Country"
+              type="text"
+              value={formState.country}
+              onChange={value => handleChange('country', value)}
+              placeholder="Enter your country"
+            />
+
+            {/* ID Verification Status */}
+            <div className="p-4">
+              <h3 className="text-lg font-medium text-gray-900 mb-4">ID Verification Status</h3>
+              <div className="space-y-4">
+                <div className={clsx(
+                  'flex items-center justify-between p-4 rounded-lg',
+                  formState.bvnVerified ? 'bg-green-50' : 'bg-red-50'
+                )}>
+                  <div>
+                    <h4 className="font-medium text-gray-900">BVN Verification</h4>
+                    <p className="text-sm text-gray-600">Bank Verification Number status</p>
+                  </div>
+                  {formState.bvnVerified ? (
+                    <CheckCircle className="w-6 h-6 text-green-600" />
+                  ) : (
+                    <XCircle className="w-6 h-6 text-red-600" />
+                  )}
+                </div>
+                <div className={clsx(
+                  'flex items-center justify-between p-4 rounded-lg',
+                  formState.ninVerified ? 'bg-green-50' : 'bg-red-50'
+                )}>
+                  <div>
+                    <h4 className="font-medium text-gray-900">NIN Verification</h4>
+                    <p className="text-sm text-gray-600">National Identity Number status</p>
+                  </div>
+                  {formState.ninVerified ? (
+                    <CheckCircle className="w-6 h-6 text-green-600" />
+                  ) : (
+                    <XCircle className="w-6 h-6 text-red-600" />
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
         );
 
       case 'security':
