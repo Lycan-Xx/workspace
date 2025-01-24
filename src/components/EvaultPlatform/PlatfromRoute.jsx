@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { BrowserRouter, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
+import { HashRouter, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import PlatformApp from './PlatformApp';
 import Dashboard from './Dashboard/Dashboard';
@@ -52,13 +52,21 @@ const PublicRoute = ({ children }) => {
 
 const App = () => {
   return (
-    <BrowserRouter>
+    <HashRouter>
       <Routes>
         <Route 
           path="/sign-in" 
           element={
             <PublicRoute>
               <PlatformApp initialView="sign-in" />
+            </PublicRoute>
+          } 
+        />
+        <Route 
+          path="/sign-up" 
+          element={
+            <PublicRoute>
+              <PlatformApp initialView="sign-up" />
             </PublicRoute>
           } 
         />
@@ -88,7 +96,7 @@ const App = () => {
         />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
-    </BrowserRouter>
+    </HashRouter>
   );
 };
 
