@@ -61,6 +61,12 @@ const Airtime = ({ onBack }) => {
     setIsDialogOpen(true); // Open the payment popup
   };
 
+  const handleCustomAmountChange = (e) => {
+    const value = e.target.value;
+    setCustomAmount(value);
+    setAirtimePackage(""); // Deselect airtime package when custom amount is entered
+  };
+
   const validateForm = () => {
     const errors = {};
     if (!mobileNumber) {
@@ -138,21 +144,19 @@ const Airtime = ({ onBack }) => {
             <label className="block text-sm font-medium">Select Airtime Package</label>
             <div className="grid grid-cols-2 gap-4">
               {airtimePackages.map((pkg) => (
-                <button
-                  key={pkg}
-                  onClick={() => {
-                    setAirtimePackage(pkg);
-                    setCustomAmount(""); // Clear custom amount
-                  }}
-                  className={clsx(
-                    "px-4 py-2 border rounded-md transition duration-300 text-center",
-                    airtimePackage === pkg
-                      ? "bg-blue-500 text-white"
-                      : "bg-gray-200 hover:bg-gray-300"
-                  )}
-                >
-                  {pkg}
-                </button>
+                <label key={pkg} className="flex items-center">
+                  <input
+                    type="radio"
+                    value={pkg}
+                    checked={airtimePackage === pkg && customAmount === ""}
+                    onChange={() => {
+                      setAirtimePackage(pkg);
+                      setCustomAmount(""); // Deselect custom amount when package is selected
+                    }}
+                    disabled={customAmount !== ""} // Disable if custom amount is entered
+                  />
+                  <span className="ml-2">{pkg}</span>
+                </label>
               ))}
             </div>
 
@@ -162,9 +166,7 @@ const Airtime = ({ onBack }) => {
               type="text"
               placeholder="Enter custom amount"
               value={customAmount}
-              onChange={(e) =>
-                setCustomAmount(e.target.value.replace(/\D/g, ""))
-              }
+              onChange={handleCustomAmountChange}
               className="border p-2 rounded w-full"
             />
             {customAmount && (

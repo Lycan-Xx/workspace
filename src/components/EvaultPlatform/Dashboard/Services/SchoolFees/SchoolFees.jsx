@@ -210,16 +210,20 @@ const SchoolFees = ({ onBack }) => {
 
 	  {/* Payment Summary Popup */}
       {isPaymentDialogOpen && (
-        <PaymentPopup
-          isOpen={isPaymentDialogOpen}
-          onClose={() => setIsPaymentDialogOpen(false)}
-          serviceDetails={{
-            service: selectedSchool ? selectedSchool.name : "",
-            plan: classLevel,
-            mobile: mobileNumber,
-            email: email,
-          }}
-        />
+
+		<PaymentPopup
+		isOpen={isPaymentDialogOpen}
+		onClose={() => setIsPaymentDialogOpen(false)}
+		serviceDetails={{
+			service: selectedSchool ? selectedSchool.name : "",
+			class: classLevel,
+			mobile: mobileNumber,
+			email: email,
+			studentName: studentName,
+			paymentPurpose: text,
+		}}
+		/> 
+		
       )}
 
       {/* Help Dialog */}

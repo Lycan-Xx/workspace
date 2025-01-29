@@ -165,6 +165,7 @@ const Electricity = ({ onBack }) => {
                 plan: amount,
                 mobile: phoneNumber,
                 email: email,
+                meterId: meterId,
               }}
             />
           </div>

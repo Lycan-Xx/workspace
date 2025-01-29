@@ -14,6 +14,7 @@ const Cable = ({ onBack }) => {
   const [streamingService, setStreamingService] = useState("");
   const [subscriptionPlan, setSubscriptionPlan] = useState("");
   const [email, setEmail] = useState("");
+  const [price, setPrice] = useState("");
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
   const [paymentMethod, setPaymentMethod] = useState("card");
@@ -39,8 +40,7 @@ const Cable = ({ onBack }) => {
     return newErrors;
   };
 
-  const handleProceed = (e) => {
-    e.preventDefault();
+  const handleProceed = () => {
     const formErrors = validateForm();
     if (Object.keys(formErrors).length > 0) {
       setErrors(formErrors);
@@ -171,16 +171,17 @@ const Cable = ({ onBack }) => {
       </div>
 
       {/* Payment Popup Dialogue */}
-      <PaymentPopup
-        isOpen={isDialogOpen}
-        onClose={() => setIsDialogOpen(false)}
-        serviceDetails={{
-          service: streamingService,
-          plan: subscriptionPlan,
-          mobile: "", // Add mobile if needed
-          email: email,
-        }}
-      />
+	  <PaymentPopup
+  isOpen={isDialogOpen}
+  onClose={handleDialogClose}
+  serviceDetails={{
+    streamingService: streamingService, // Ensure key name matches PaymentPopup
+    plan: subscriptionPlan, // Ensure key name matches PaymentPopup
+    email: email,
+    amount: price, // Keep consistency with other fields
+  }}
+/>
+
 
       {/* Help Dialog */}
       <button
