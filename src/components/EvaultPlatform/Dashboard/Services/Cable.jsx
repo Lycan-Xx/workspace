@@ -72,105 +72,115 @@ const Cable = ({ onBack }) => {
         <span>Back to Dashboard</span>
       </button>
 
-      {/* Main Content */}
-      <div className="container mx-auto px-4 py-8">
-        <div className="bg-white shadow-lg rounded-lg overflow-hidden">
-          <div
-            className="w-full h-56 sm:h-64 bg-cover bg-center"
-            style={{ backgroundImage: `url(${bannerImage})` }}
-          ></div>
+	{/* Main Content */}
+		<div className="container mx-auto px-4 py-8">
+		  <div className="bg-white shadow-lg rounded-lg overflow-hidden">
+			<div
+			className="w-full h-56 sm:h-64 bg-cover bg-center"
+			style={{ backgroundImage: `url(${bannerImage})` }}
+			></div>
 
-          <div className="flex flex-col lg:flex-row flex-1">
-            <div className="w-full lg:w-1/2 p-8 bg-gray-200 flex items-center justify-center">
-              {streamingService ? (
-                <img
-                  src={serviceImages[streamingService]}
-                  alt={streamingService}
-                  className="w-full max-h-[90%] rounded-xl shadow-lg object-cover"
-                />
-              ) : (
-                <p className="text-gray-600 text-center">
-                  Select a streaming service to see its image.
-                </p>
-              )}
-            </div>
+			<div className="flex flex-col lg:flex-row flex-1">
+			<div className="w-full lg:w-1/2 p-8 bg-gray-200 flex items-center justify-center">
+			  {streamingService ? (
+				<img
+				src={serviceImages[streamingService]}
+				alt={streamingService}
+				className="w-full max-h-[90%] rounded-xl shadow-lg object-cover"
+				/>
+			  ) : (
+				<p className="text-gray-600 text-center">
+				Select a streaming service to see its image.
+				</p>
+			  )}
+			</div>
 
-            <div className="w-full lg:w-1/2 p-8 bg-white flex items-center justify-center">
-              <div className="bg-white shadow-lg rounded-xl p-8 w-full max-w-xl">
-                <h2 className="text-3xl font-bold mb-6 text-blue-700 text-center">
-                  Subscribe Now
-                </h2>
-                <p className="mb-8 text-gray-600 text-center">
-                  Choose your favorite streaming service and enjoy unlimited entertainment.{" "}
-                  <a href="#" className="text-blue-600 font-semibold hover:underline">
-                    Sign Up
-                  </a>
-                </p>
+			<div className="w-full lg:w-1/2 p-8 bg-white flex items-center justify-center">
+			  <div className="bg-white shadow-lg rounded-xl p-8 w-full max-w-xl">
+				<h2 className="text-3xl font-bold mb-6 text-blue-700 text-center">
+				Subscribe Now
+				</h2>
+				<p className="mb-8 text-gray-600 text-center">
+				Choose your favorite streaming service and enjoy unlimited entertainment.{" "}
+				<a href="#" className="text-blue-600 font-semibold hover:underline">
+				  Sign Up
+				</a>
+				</p>
 
-                <label className="block text-sm font-medium">Streaming Service</label>
-                <select
-                  value={streamingService}
-                  onChange={(e) => setStreamingService(e.target.value)}
-                  className="border p-3 rounded w-full mb-4"
-                >
-                  <option value="" disabled>
-                    Select a service
-                  </option>
-                  {Object.keys(serviceImages).map((service) => (
-                    <option key={service} value={service}>
-                      {service}
-                    </option>
-                  ))}
-                </select>
-                {errors.streamingService && (
-                  <p className="text-red-500 text-sm">{errors.streamingService}</p>
-                )}
+				<label className="block text-sm font-medium">Streaming Service</label>
+				<select
+				value={streamingService}
+				onChange={(e) => setStreamingService(e.target.value)}
+				className="border p-3 rounded w-full mb-4"
+				>
+				<option value="" disabled>
+				  Select a service
+				</option>
+				{Object.keys(serviceImages).map((service) => (
+				  <option key={service} value={service}>
+					{service}
+				  </option>
+				))}
+				</select>
+				{errors.streamingService && (
+				<p className="text-red-500 text-sm">{errors.streamingService}</p>
+				)}
 
-                <label className="block text-sm font-medium">Subscription Plan</label>
-                <select
-                  value={subscriptionPlan}
-                  onChange={(e) => setSubscriptionPlan(e.target.value)}
-                  className="border p-3 rounded w-full mb-4"
-                >
-                  <option value="" disabled>
-                    Select a plan
-                  </option>
-                  {["Basic - $9.99", "Standard - $13.99", "Premium - $17.99"].map((plan) => (
-                    <option key={plan} value={plan}>
-                      {plan}
-                    </option>
-                  ))}
-                </select>
-                {errors.subscriptionPlan && (
-                  <p className="text-red-500 text-sm">{errors.subscriptionPlan}</p>
-                )}
+				<label className="block text-sm font-medium">Subscription Plan</label>
+				<select
+				value={subscriptionPlan}
+				onChange={(e) => setSubscriptionPlan(e.target.value)}
+				className="border p-3 rounded w-full mb-4"
+				>
+				<option value="" disabled>
+				  Select a plan
+				</option>
+				{["Basic - $9.99", "Standard - $13.99", "Premium - $17.99"].map((plan) => (
+				  <option key={plan} value={plan}>
+					{plan}
+				  </option>
+				))}
+				</select>
+				{errors.subscriptionPlan && (
+				<p className="text-red-500 text-sm">{errors.subscriptionPlan}</p>
+				)}
 
-                <label className="block text-sm font-medium">Email Address</label>
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Enter your email"
-                  className="border p-3 rounded w-full mb-4"
-                />
-                {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
+				<label className="block text-sm font-medium">Email Address</label>
+				<input
+				type="email"
+				value={email}
+				onChange={(e) => setEmail(e.target.value)}
+				placeholder="Enter your email"
+				className="border p-3 rounded w-full mb-4"
+				/>
+				{errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
 
-                <button
-                  onClick={handleProceed}
-                  className={clsx(
-                    "mt-6 w-full px-6 py-3 rounded-md text-white font-bold text-sm transition duration-500",
-                    "bg-blue-500 hover:bg-blue-600"
-                  )}
-                >
-                  Proceed to Pay
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+				<button
+  onClick={handleProceed}
+  disabled={!streamingService || !subscriptionPlan || !email || loading}
+  className={clsx(
+    "mt-6 px-6 py-3 rounded-md text-white font-bold text-sm transition duration-500",
+    streamingService && subscriptionPlan && email && !loading
+      ? "bg-blue-500 hover:bg-blue-600"
+      : "bg-gray-300 cursor-not-allowed"
+  )}
+>
+  {loading ? (
+    <div className="flex items-center space-x-2">
+      <span className="animate-spin border-2 border-white border-t-transparent rounded-full w-5 h-5"></span>
+      <span>Processing...</span>
+    </div>
+  ) : (
+    "Proceed"
+  )}
+</button>
+			  </div>
+			</div>
+			</div>
+		  </div>
+		</div>
 
-      {/* Payment Popup Dialogue */}
+		{/* Payment Popup Dialogue */}
 	  <PaymentPopup
   isOpen={isDialogOpen}
   onClose={handleDialogClose}

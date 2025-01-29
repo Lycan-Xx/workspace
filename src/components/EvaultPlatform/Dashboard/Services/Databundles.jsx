@@ -31,7 +31,6 @@ const Databundles = ({ onBack }) => {
   const [dataPlan, setDataPlan] = useState("");
   const [loading, setLoading] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [paymentMethod, setPaymentMethod] = useState("card");
 
   // Handle service selection
   const handleServiceClick = (service) => {
@@ -175,13 +174,16 @@ const Databundles = ({ onBack }) => {
               disabled={!mobileNumber || !planType || !dataPlan || loading}
               className={clsx(
                 "mt-6 px-6 py-3 rounded-md text-white font-bold text-sm transition duration-500",
-                mobileNumber && planType && dataPlan
+                mobileNumber && planType && dataPlan && !loading
                   ? "bg-blue-500 hover:bg-blue-600"
                   : "bg-gray-300 cursor-not-allowed"
               )}
             >
               {loading ? (
-                <span className="animate-pulse">Processing...</span>
+                <div className="flex items-center space-x-2">
+                  <span className="animate-spin border-2 border-white border-t-transparent rounded-full w-5 h-5"></span>
+                  <span>Processing...</span>
+                </div>
               ) : (
                 "Proceed"
               )}
@@ -189,8 +191,6 @@ const Databundles = ({ onBack }) => {
           </div>
         </div>
       )}
-
-      {/* Payment Popup Dialogue */}
       <PaymentPopup
         isOpen={isDialogOpen}
         onClose={() => setIsDialogOpen(false)}

@@ -9,7 +9,7 @@ import Vault from "./Vault/Vault";
 import Settings from "./SettingsApp";
 import TabContent from "./TabContents/TabContent";
 import Databundles from "./Services/Databundles";
-import Schoolfees from "./Services/SchoolFees/SchoolFees";
+import SchoolFees from "./Services/SchoolFees/SchoolFees";
 import Airtime from "./Services/Airtime";
 import Electricity from "./Services/Electricity";
 import Remita from "./Services/Remita";
@@ -51,7 +51,7 @@ const Dashboard = () => {
       title: "School Fees Payment",
       description: "Pay school fees",
       icon: <i className="fas fa-school text-orange-500 text-3xl"></i>,
-      component: "Schoolfees",
+      component: "SchoolFees",
     },
     {
       title: "Airtime Recharge",
@@ -111,8 +111,8 @@ const Dashboard = () => {
     switch (selectedService) {
       case "Databundles":
         return <Databundles onBack={handleBack} />;
-      case "Schoolfees":
-        return <Schoolfees onBack={handleBack} />;
+      case "SchoolFees":
+        return <SchoolFees onBack={handleBack} />;
       case "Airtime":
         return <Airtime onBack={handleBack} />;
       case "Electricity":

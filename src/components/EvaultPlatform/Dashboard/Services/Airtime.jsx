@@ -136,8 +136,8 @@ const Airtime = ({ onBack }) => {
               }
               className="border p-2 rounded w-full"
             />
-            {!mobileNumber && (
-              <p className="text-red-500 text-sm">Mobile number is required.</p>
+            {errors.mobileNumber && (
+              <p className="text-red-500 text-sm">{errors.mobileNumber}</p>
             )}
 
             {/* Airtime Packages */}
@@ -176,27 +176,26 @@ const Airtime = ({ onBack }) => {
             {/* Proceed Button */}
             <button
               onClick={handleProceed}
-              disabled={
-                !mobileNumber ||
-                (customAmount === "" && airtimePackage === "") ||
-                loading
-              }
+              disabled={!mobileNumber || (!customAmount && !airtimePackage) || loading}
               className={clsx(
                 "mt-6 px-6 py-3 rounded-md text-white font-bold text-sm transition duration-500",
-                mobileNumber &&
-                  (customAmount || airtimePackage) &&
-                  !loading
+                mobileNumber && (customAmount || airtimePackage) && !loading
                   ? "bg-blue-500 hover:bg-blue-600"
                   : "bg-gray-300 cursor-not-allowed"
               )}
             >
-              {loading ? <span className="animate-pulse">Processing...</span> : "Proceed"}
+              {loading ? (
+                <div className="flex items-center space-x-2">
+                  <span className="animate-spin border-2 border-white border-t-transparent rounded-full w-5 h-5"></span>
+                  <span>Processing...</span>
+                </div>
+              ) : (
+                "Proceed"
+              )}
             </button>
           </div>
         </div>
       )}
-
-      {/* Payment Popup Dialogue */}
       <PaymentPopup
         isOpen={isDialogOpen}
         onClose={() => setIsDialogOpen(false)}
