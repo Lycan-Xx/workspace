@@ -9,7 +9,7 @@ import Vault from "./Vault/Vault";
 import Settings from "./SettingsApp";
 import TabContent from "./TabContents/TabContent";
 import Databundles from "./Services/Databundles";
-import Schoolfees from "./Services/SchoolFees/Schoolfees";
+import Schoolfees from "./Services/SchoolFees/SchoolFees";
 import Airtime from "./Services/Airtime";
 import Electricity from "./Services/Electricity";
 import Remita from "./Services/Remita";

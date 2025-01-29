@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { ArrowLeft } from "lucide-react";
 import clsx from "clsx";
+import PaymentPopup from "./PaymentPopup"; // Import PaymentPopup
 
 // icon imports
 
@@ -32,7 +33,6 @@ const Airtime = ({ onBack }) => {
   const [loading, setLoading] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [errors, setErrors] = useState({});
-  const [paymentMethod, setPaymentMethod] = useState("card");
 
   const airtimePackages = ["₦100", "₦200", "₦500", "₦1000"];
 
@@ -195,124 +195,16 @@ const Airtime = ({ onBack }) => {
       )}
 
       {/* Payment Popup Dialogue */}
-      {isDialogOpen && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg w-[90%] max-w-md">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-bold text-[#025798]">Payment Checkout</h2>
-              <button
-                onClick={() => setIsDialogOpen(false)}
-                className="text-red-500 hover:text-red-700"
-              >
-                Close
-              </button>
-            </div>
-            {/* Summary Section */}
-            <div className="border-b mb-4">
-              <div className="grid grid-cols-2 gap-2 text-sm font-semibold text-gray-700">
-                <div>Service:</div>
-                <div>{selectedService ? selectedService.title : "N/A"}</div>
-                <div>Package:</div>
-                <div>{airtimePackage || customAmount || "N/A"}</div>
-                <div>Mobile:</div>
-                <div>{mobileNumber || "N/A"}</div>
-              </div>
-            </div>
-            {/* Tab Interface */}
-            <div>
-              <div className="flex border-b">
-                <button
-                  className={`w-1/3 py-2 ${paymentMethod === "card" ? "border-b-4 border-blue-600 text-blue-600" : "text-gray-600"}`}
-                  onClick={() => setPaymentMethod("card")}
-                >
-                  Card
-                </button>
-                <button
-                  className={`w-1/3 py-2 ${paymentMethod === "transfer" ? "border-b-4 border-blue-600 text-blue-600" : "text-gray-600"}`}
-                  onClick={() => setPaymentMethod("transfer")}
-                >
-                  Transfer
-                </button>
-                <button
-                  className={`w-1/3 py-2 ${paymentMethod === "ussd" ? "border-b-4 border-blue-600 text-blue-600" : "text-gray-600"}`}
-                  onClick={() => setPaymentMethod("ussd")}
-                >
-                  USSD
-                </button>
-              </div>
-
-              {/* Tab Content */}
-              <div className="mt-4">
-                {paymentMethod === "card" && (
-                  <div>
-                    <h3 className="text-lg font-semibold mb-2 text-gray-800">Card Payment</h3>
-                    <div className="space-y-4">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Card Number</label>
-                        <input
-                          type="text"
-                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 transition duration-300"
-                          placeholder="Enter Card Number"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Expiry Date</label>
-                        <input
-                          type="text"
-                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 transition duration-300"
-                          placeholder="MM/YY"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">CVV</label>
-                        <input
-                          type="text"
-                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 transition duration-300"
-                          placeholder="CVV"
-                        />
-                      </div>
-                    </div>
-                    <button
-                      className="mt-4 px-6 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700"
-                      onClick={() => console.log("Proceed with Card Payment")}
-                    >
-                      Proceed
-                    </button>
-                  </div>
-                )}
-
-                {paymentMethod === "transfer" && (
-                  <div>
-                    <h3 className="text-lg font-semibold mb-2 text-gray-800">Bank Transfer Details</h3>
-                    <p className="text-gray-700 text-sm">Account Number: 1234567890</p>
-                    <p className="text-gray-700 text-sm">Account Name: John Doe</p>
-                    <p className="text-gray-700 text-sm">Bank Name: ABC Bank</p>
-                    <button
-                      className="mt-4 px-6 py-2 bg-green-600 text-white rounded-lg shadow hover:bg-green-700"
-                      onClick={() => console.log("Proceed with Bank Transfer")}
-                    >
-                      Proceed
-                    </button>
-                  </div>
-                )}
-
-                {paymentMethod === "ussd" && (
-                  <div>
-                    <h3 className="text-lg font-semibold mb-2 text-gray-800">USSD Payment</h3>
-                    <p className="text-sm text-gray-700">Dial *123*456# to proceed with the payment.</p>
-                    <button
-                      className="mt-4 px-6 py-2 bg-yellow-600 text-white rounded-lg shadow hover:bg-yellow-700"
-                      onClick={() => console.log("Proceed with USSD Payment")}
-                    >
-                      Proceed
-                    </button>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      <PaymentPopup
+        isOpen={isDialogOpen}
+        onClose={() => setIsDialogOpen(false)}
+        serviceDetails={{
+          service: selectedService ? selectedService.title : "",
+          plan: airtimePackage || customAmount,
+          mobile: mobileNumber,
+          email: "", // Add email if needed
+        }}
+      />
     </div>
   );
 };
