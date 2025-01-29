@@ -37,16 +37,14 @@ const Databundles = ({ onBack }) => {
 
   // Handle back button click
   const handleBackClick = () => {
-	if (selectedService) {
-	  if (window.confirm("Are you sure you want to go back? Unsaved progress will be lost.")) {
-		setSelectedService(null);
-		setMobileNumber("");
-		setPlanType("");
-		setDataPlan("");
-	  }
-	} else {
-	  onBack();
-	}
+    if (selectedService) {
+      setSelectedService(null);
+      setMobileNumber("");
+      setPlanType("");
+      setDataPlan("");
+    } else {
+      onBack();
+    }
   };
   
 
