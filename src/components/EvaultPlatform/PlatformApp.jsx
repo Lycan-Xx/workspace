@@ -8,10 +8,10 @@ import SignIn from "./signin/SignIn";
 import ConfigureSecurity from "./security/ConfigureSecurity";
 import Dashboard from "./Dashboard/Dashboard";
 import VendorDetails from "./InstantPayments/VendorDetails";
-import Databundles from "./Dashboard/Databundles";
-import Airtime from "./Dashboard/Airtime";
-import Electricity from "./Dashboard/Electricity";
-import Cable from "./Dashboard/Cable";
+import Databundles from "./Dashboard/Services/Databundles";
+import Airtime from "./Dashboard/Services/Airtime";
+import Electricity from "./Dashboard/Services/Electricity";
+import Cable from "./Dashboard/Services/Cable";
 import InstantPayments from "./InstantPayments/InstantPayments";
 
 function App({ initialView = "instant-payments", onBack }) {

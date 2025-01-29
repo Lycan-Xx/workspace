@@ -4,10 +4,10 @@ import clsx from "clsx";
 
 //cable tv subscription  banner imports
 
-import dstv from "../assets/tv/dstv.jpg";
-import gotv from "../assets/tv/gotv.jpg";
-import startimes from "../assets/tv/startimes.jpg";
-import multichoice from "../assets/tv/multichoice.jpg";
+import dstv from "../../assets/tv/dstv.jpg";
+import gotv from "../../assets/tv/gotv.jpg";
+import startimes from "../../assets/tv/startimes.jpg";
+import multichoice from "../../assets/tv/multichoice.jpg";
 
 const Cable = ({ onBack }) => {
   const [streamingService, setStreamingService] = useState("");

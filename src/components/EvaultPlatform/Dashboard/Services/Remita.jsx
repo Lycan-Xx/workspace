@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { ArrowLeft } from "lucide-react";
-import remita from "../assets/remitaBanner.png";
+import remita from "../../assets/remitaBanner.png";
 
 const Remita = ({ onBack }) => {
   const [rrr, setRrr] = useState("");

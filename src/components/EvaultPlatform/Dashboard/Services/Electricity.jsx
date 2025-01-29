@@ -3,16 +3,16 @@ import clsx from "clsx";
 import { PlugZap, ArrowLeft } from "lucide-react";
 
 // icon imports
-import yedc from "../assets/power/yedc.jpeg";
-import phcn from "../assets/power/phcn.jpeg";
-import kedco from "../assets/power/kedco.png";
-import aedc from "../assets/power/aedc.png";
+import yedc from "../../assets/power/yedc.jpeg";
+import phcn from "../../assets/power/phcn.jpeg";
+import kedco from "../../assets/power/kedco.png";
+import aedc from "../../assets/power/aedc.png";
 
 // banner imports
-import yedcBanner from "../assets/power/banner/yedcBanner.jpeg";
-import phcnBanner from "../assets/power/banner/phcnBanner.jpeg";
-import kedcoBanner from "../assets/power/banner/kedcoBanner.png";
-import aedcBanner from "../assets/power/banner/aedcBanner.png";
+import yedcBanner from "../../assets/power/banner/yedcBanner.jpeg";
+import phcnBanner from "../../assets/power/banner/phcnBanner.jpeg";
+import kedcoBanner from "../../assets/power/banner/kedcoBanner.png";
+import aedcBanner from "../../assets/power/banner/aedcBanner.png";
 
 const services = [
   { title: "YEDC", description: "Yola Electricity Distribution Company", icon: yedc, image: yedcBanner },

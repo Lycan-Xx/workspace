@@ -3,17 +3,17 @@ import { useSpring, animated } from "react-spring";
 import Sidebar from "../Dashboard/SideBar";
 import TopBar from "./TopBar";
 import PaymentCards from "../Dashboard/PaymentCard";
-import Services from "./Services";
+import ServiceCardsDescription from "./ServiceCardsDescription";
 import Trade from "./Trade";
 import Vault from "./Vault/Vault";
 import Settings from "./SettingsApp";
 import TabContent from "./TabContents/TabContent";
-import Databundles from "./Databundles";
-import Schoolfees from "./SchoolFees/Schoolfees";
-import Airtime from "./Airtime";
-import Electricity from "./Electricity";
-import Remita from "./Remita";
-import Cable from "./Cable";
+import Databundles from "./Services/Databundles";
+import Schoolfees from "./Services/SchoolFees/Schoolfees";
+import Airtime from "./Services/Airtime";
+import Electricity from "./Services/Electricity";
+import Remita from "./Services/Remita";
+import Cable from "./Services/Cable";
 import Portfolio from "./Portfolio/Portfolio";
 import DepositForm from "./TabContents/DepositForm";
 import TransferForm from "./TabContents/TransferForm";
@@ -186,7 +186,7 @@ const Dashboard = () => {
           <span className="font-bold text-lg">Transfer Funds</span>
         </button>
         <div className="bg-white border rounded-lg p-4 my-4">
-          <Services
+          <ServiceCardsDescription
             services={services}
             onServiceClick={handleServiceClick}
             className="grid grid-cols-2 md:grid-cols-3 gap-4"

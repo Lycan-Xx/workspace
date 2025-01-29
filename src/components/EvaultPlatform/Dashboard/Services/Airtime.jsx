@@ -1,66 +1,80 @@
 import React, { useState } from "react";
 import { ArrowLeft } from "lucide-react";
-import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import clsx from "clsx";
 
 // icon imports
-import airtel from "../assets/telecomm/airtel.jpg";
-import mtn from "../assets/telecomm/mtn.png";
-import glo from "../assets/telecomm/glo.png";
-import nine from "../assets/telecomm/nine.jpg";
+
+import airtel from "../../assets/telecomm/airtel.jpg";
+import mtn from "../../assets/telecomm/mtn.png";
+import glo from "../../assets/telecomm/glo.png";
+import nine from "../../assets/telecomm/nine.jpg";
 
 // banner imports
-import airtelBanner from "../assets/telecomm/banner/airtelBanner.jpg";
-import mtnBanner from "../assets/telecomm/banner/mtnBanner.png";
-import gloBanner from "../assets/telecomm/banner/gloBanner.jpg";
-import nineBanner from "../assets/telecomm/banner/nineBanner.jpg";
+
+import airtelBanner from "../../assets/telecomm/banner/airtelBanner.jpg";
+import mtnBanner from "../../assets/telecomm/banner/mtnBanner.png";
+import gloBanner from "../../assets/telecomm/banner/gloBanner.jpg";
+import nineBanner from "../../assets/telecomm/banner/nineBanner.jpg";
 
 // Define the services for data bundles
 const services = [
-  { title: "9 mobile", description: "9 mobile", icon: nine, image: nineBanner },
-  { title: "Airtel", description: "Airtel", icon: airtel, image: airtelBanner },
-  { title: "Glo", description: "Glo", icon: glo, image: gloBanner },
-  { title: "M T N", description: "M T N", icon: mtn, image: mtnBanner },
+  { title: "9 mobile", description: "Recharge airtime", icon: nine, image: nineBanner },
+  { title: "Airtel", description: "Recharge airtime", icon: airtel, image: airtelBanner },
+  { title: "Glo", description: "Recharge airtime", icon: glo, image: gloBanner },
+  { title: "M T N", description: "Recharge airtime", icon: mtn, image: mtnBanner },
 ];
 
-const Databundles = ({ onBack }) => {
+const Airtime = ({ onBack }) => {
   const [selectedService, setSelectedService] = useState(null);
   const [mobileNumber, setMobileNumber] = useState("");
-  const [planType, setPlanType] = useState("");
-  const [dataPlan, setDataPlan] = useState("");
+  const [airtimePackage, setAirtimePackage] = useState("");
+  const [customAmount, setCustomAmount] = useState("");
   const [loading, setLoading] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [errors, setErrors] = useState({});
   const [paymentMethod, setPaymentMethod] = useState("card");
 
-  // Handle service selection
+  const airtimePackages = ["₦100", "₦200", "₦500", "₦1000"];
+
   const handleServiceClick = (service) => {
     setSelectedService(service);
   };
 
-  // Handle back button click
   const handleBackClick = () => {
     if (selectedService) {
       setSelectedService(null);
-      setMobileNumber("");
-      setPlanType("");
-      setDataPlan("");
     } else {
       onBack();
     }
+    setMobileNumber("");
+    setAirtimePackage("");
+    setCustomAmount("");
   };
-  
 
   const handleProceed = () => {
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      setIsDialogOpen(true); // Open the payment popup
-    }, 3000);
+    const formErrors = validateForm();
+    if (Object.keys(formErrors).length > 0) {
+      setErrors(formErrors);
+      return;
+    }
+    setErrors({});
+    setIsDialogOpen(true); // Open the payment popup
+  };
+
+  const validateForm = () => {
+    const errors = {};
+    if (!mobileNumber) {
+      errors.mobileNumber = "Mobile number is required.";
+    }
+    if (!airtimePackage && !customAmount) {
+      errors.airtimePackage = "Airtime package or custom amount is required.";
+    }
+    return errors;
   };
 
   return (
     <div className="max-w-6xl mx-auto p-6">
-      <h1 className="text-3xl font-bold mb-6">Data Bundles</h1>
+      <h1 className="text-3xl font-bold mb-6">Airtime Recharge</h1>
 
       {/* Back Button */}
       <button
@@ -74,7 +88,7 @@ const Databundles = ({ onBack }) => {
 
       {!selectedService ? (
         <div className="bg-white rounded-xl p-6 shadow-md">
-          <h3 className="text-xl font-bold mb-4">Please choose your Service provider</h3>
+          <h3 className="text-xl font-bold mb-4">Please choose your Service Provider</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
             {services.map((service, index) => (
               <div
@@ -82,11 +96,7 @@ const Databundles = ({ onBack }) => {
                 className="flex flex-col items-center p-4 border rounded-md hover:shadow-lg cursor-pointer"
                 onClick={() => handleServiceClick(service)}
               >
-                <img 
-                  src={service.icon}
-                  alt={service.title}
-                  className="w-12 h-12 object-contain mb-2"
-                />
+                <img src={service.icon} alt={`${service.title} logo`} className="w-12 h-12" />
                 <h4 className="text-lg font-bold">{service.title}</h4>
                 <p className="text-gray-600 text-sm">{service.description}</p>
               </div>
@@ -95,7 +105,6 @@ const Databundles = ({ onBack }) => {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 min-h-[500px]">
-          {/* Left Column: Service Image or Background */}
           <div
             className="flex flex-col items-center rounded-lg justify-center bg-cover bg-center text-white"
             style={{
@@ -107,14 +116,11 @@ const Databundles = ({ onBack }) => {
             </h3>
           </div>
 
-          {/* Right Column: Form for entering details */}
           <div className="flex flex-col justify-center space-y-6">
-            <h3 className="text-xl font-bold">Enter your details</h3>
+            <h3 className="text-xl font-bold">Recharge Details</h3>
 
             {/* Mobile Number Input */}
-            <label className="block text-sm font-medium">
-              Enter your Mobile Number
-            </label>
+            <label className="block text-sm font-medium">Enter your Mobile Number</label>
             <input
               type="text"
               placeholder="Enter 11-digit mobile number"
@@ -128,62 +134,61 @@ const Databundles = ({ onBack }) => {
               <p className="text-red-500 text-sm">Mobile number is required.</p>
             )}
 
-            {/* Plan Type (Radio Buttons) */}
-            <label className="block text-sm font-medium">Select Plan Type</label>
-            <div className="flex gap-4">
-              {["SME", "Corporate", "Gifting"].map((type) => (
+            {/* Airtime Packages */}
+            <label className="block text-sm font-medium">Select Airtime Package</label>
+            <div className="grid grid-cols-2 gap-4">
+              {airtimePackages.map((pkg) => (
                 <button
-                  key={type}
-                  onClick={() => setPlanType(type)}
+                  key={pkg}
+                  onClick={() => {
+                    setAirtimePackage(pkg);
+                    setCustomAmount(""); // Clear custom amount
+                  }}
                   className={clsx(
-                    "px-4 py-2 border rounded-md transition text-sm font-bold duration-500",
-                    planType === type
+                    "px-4 py-2 border rounded-md transition duration-300 text-center",
+                    airtimePackage === pkg
                       ? "bg-blue-500 text-white"
                       : "bg-gray-200 hover:bg-gray-300"
                   )}
                 >
-                  {type}
+                  {pkg}
                 </button>
               ))}
             </div>
 
-            {/* Data Plan Dropdown */}
-            <label className="block text-sm font-medium">Select Data Plan</label>
-            <DropdownMenu.Root>
-              <DropdownMenu.Trigger asChild>
-                <button className="border p-2 rounded w-full text-left">
-                  {dataPlan || "Select a plan"}
-                </button>
-              </DropdownMenu.Trigger>
-              <DropdownMenu.Content className="w-full bg-white shadow rounded mt-2">
-                {["1GB", "2GB", "5GB", "10GB"].map((plan) => (
-                  <DropdownMenu.Item
-                    key={plan}
-                    onClick={() => setDataPlan(plan)}
-                    className="p-2 hover:bg-gray-100 cursor-pointer dropdown-item"
-                  >
-                    {plan}
-                  </DropdownMenu.Item>
-                ))}
-              </DropdownMenu.Content>
-            </DropdownMenu.Root>
+            {/* Custom Amount Input */}
+            <label className="block text-sm font-medium">Custom Amount</label>
+            <input
+              type="text"
+              placeholder="Enter custom amount"
+              value={customAmount}
+              onChange={(e) =>
+                setCustomAmount(e.target.value.replace(/\D/g, ""))
+              }
+              className="border p-2 rounded w-full"
+            />
+            {customAmount && (
+              <p className="text-green-500 text-sm">Custom amount: ₦{customAmount}</p>
+            )}
 
             {/* Proceed Button */}
             <button
               onClick={handleProceed}
-              disabled={!mobileNumber || !planType || !dataPlan || loading}
+              disabled={
+                !mobileNumber ||
+                (customAmount === "" && airtimePackage === "") ||
+                loading
+              }
               className={clsx(
                 "mt-6 px-6 py-3 rounded-md text-white font-bold text-sm transition duration-500",
-                mobileNumber && planType && dataPlan
+                mobileNumber &&
+                  (customAmount || airtimePackage) &&
+                  !loading
                   ? "bg-blue-500 hover:bg-blue-600"
                   : "bg-gray-300 cursor-not-allowed"
               )}
             >
-              {loading ? (
-                <span className="animate-pulse">Processing...</span>
-              ) : (
-                "Proceed"
-              )}
+              {loading ? <span className="animate-pulse">Processing...</span> : "Proceed"}
             </button>
           </div>
         </div>
@@ -207,8 +212,8 @@ const Databundles = ({ onBack }) => {
               <div className="grid grid-cols-2 gap-2 text-sm font-semibold text-gray-700">
                 <div>Service:</div>
                 <div>{selectedService ? selectedService.title : "N/A"}</div>
-                <div>Plan:</div>
-                <div>{dataPlan || "N/A"}</div>
+                <div>Package:</div>
+                <div>{airtimePackage || customAmount || "N/A"}</div>
                 <div>Mobile:</div>
                 <div>{mobileNumber || "N/A"}</div>
               </div>
@@ -312,4 +317,4 @@ const Databundles = ({ onBack }) => {
   );
 };
 
-export default Databundles;
+export default Airtime;

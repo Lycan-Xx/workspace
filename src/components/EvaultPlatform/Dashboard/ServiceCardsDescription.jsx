@@ -2,7 +2,7 @@ import React from "react";
 import { motion } from "framer-motion";
 import { ShoppingCart } from "lucide-react";
 
-const Services = ({ services, onServiceClick }) => {
+const ServiceCardsDescription = ({ services, onServiceClick }) => {
   return (
     <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
       {services.map((service, index) => (
@@ -22,4 +22,4 @@ const Services = ({ services, onServiceClick }) => {
   );
 };
 
-export default Services;
+export default ServiceCardsDescription;
