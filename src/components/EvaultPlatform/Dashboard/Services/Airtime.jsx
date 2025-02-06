@@ -144,30 +144,41 @@ const Airtime = ({ onBack }) => {
               )}
             </div>
 
-            {/* Airtime Packages */}
+            {/* Updated Airtime Packages */}
             <div>
               <label className="block text-sm font-medium mb-2">Select Airtime Package</label>
               <div className="grid grid-cols-2 gap-3">
                 {airtimePackages.map((pkg) => (
-                  <label key={pkg} className="flex items-center">
-                    <input
-                      type="radio"
-                      value={pkg}
-                      checked={airtimePackage === pkg && customAmount === ""}
-                      onChange={() => {
-                        setAirtimePackage(pkg);
-                        setCustomAmount("");
-                      }}
-                      disabled={customAmount !== ""}
-                      className="mr-2"
-                    />
-                    <span className="text-sm">{pkg}</span>
-                  </label>
+                  <button
+                    key={pkg}
+                    onClick={() => {
+                      setAirtimePackage(pkg);
+                      setCustomAmount("");
+                    }}
+                    disabled={customAmount !== ""}
+                    className={clsx(
+                      "py-3 px-4 rounded-lg text-sm font-medium transition-all duration-200 border-2",
+                      airtimePackage === pkg && customAmount === ""
+                        ? "border-blue-500 bg-blue-50 text-blue-700"
+                        : "border-gray-200 hover:border-blue-200 hover:bg-blue-50",
+                      customAmount !== "" && "opacity-50 cursor-not-allowed hover:bg-transparent"
+                    )}
+                  >
+                    <div className="flex flex-col items-center space-y-1">
+                      <span className="text-lg font-bold">{pkg}</span>
+                      <span className="text-xs text-gray-500">
+                        {pkg === "₦100" && "Basic"}
+                        {pkg === "₦200" && "Standard"}
+                        {pkg === "₦500" && "Plus"}
+                        {pkg === "₦1000" && "Premium"}
+                      </span>
+                    </div>
+                  </button>
                 ))}
               </div>
             </div>
 
-            {/* Custom Amount Input */}
+            {/* Custom Amount Input - Updated Styling */}
             <div>
               <label className="block text-sm font-medium mb-1">Custom Amount</label>
               <input
@@ -175,10 +186,12 @@ const Airtime = ({ onBack }) => {
                 placeholder="Enter custom amount"
                 value={customAmount}
                 onChange={handleCustomAmountChange}
-                className="border p-2 rounded w-full"
+                className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
               />
               {customAmount && (
-                <p className="text-green-500 text-xs sm:text-sm mt-1">Custom amount: ₦{customAmount}</p>
+                <p className="text-green-500 text-xs sm:text-sm mt-1">
+                  Custom amount: ₦{customAmount}
+                </p>
               )}
             </div>
 
