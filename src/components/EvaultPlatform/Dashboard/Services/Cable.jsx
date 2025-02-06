@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, HelpCircle } from "lucide-react";
 import clsx from "clsx";
-import PaymentPopup from "./PaymentPopup"; // Import PaymentPopup
+import PaymentPopup from "./PaymentPopup";
+import HelpDialog from './SchoolFees/HelpDialog'; // Fix the import path
 
 //cable tv subscription  banner imports
 
@@ -19,7 +20,7 @@ const Cable = ({ onBack }) => {
   const [errors, setErrors] = useState({});
   const [paymentMethod, setPaymentMethod] = useState("card");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [isHelpDialogOpen, setIsHelpDialogOpen] = useState(false);
+  const [isHelpOpen, setIsHelpOpen] = useState(false); // Replace isHelpDialogOpen with isHelpOpen
 
   const serviceImages = {
     GOtv: gotv,
@@ -61,176 +62,141 @@ const Cable = ({ onBack }) => {
   };
 
   return (
-    <div className="max-w-6xl mx-auto p-6">
+    <div className="max-w-6xl mx-auto p-4 sm:p-6">
       {/* Back Button */}
       <button
         className="inline-flex items-center space-x-2 text-gray-600 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded-md p-1 mb-4"
         aria-label="Back to Dashboard"
         onClick={handleBackClick}
       >
-        <ArrowLeft className="w-5 h-5" />
+        <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5" />
         <span>Back to Dashboard</span>
       </button>
 
-	{/* Main Content */}
-		<div className="container mx-auto px-4 py-8">
-		  <div className="bg-white shadow-lg rounded-lg overflow-hidden">
-			<div
-			className="w-full h-56 sm:h-64 bg-cover bg-center"
-			style={{ backgroundImage: `url(${bannerImage})` }}
-			></div>
+      {/* Main Content */}
+      <div className="bg-white shadow-lg rounded-lg overflow-hidden">
+        <div
+          className="w-full h-40 sm:h-56 bg-cover bg-center"
+          style={{ backgroundImage: `url(${bannerImage})` }}
+        />
 
-			<div className="flex flex-col lg:flex-row flex-1">
-			<div className="w-full lg:w-1/2 p-8 bg-gray-200 flex items-center justify-center">
-			  {streamingService ? (
-				<img
-				src={serviceImages[streamingService]}
-				alt={streamingService}
-				className="w-full max-h-[90%] rounded-xl shadow-lg object-cover"
-				/>
-			  ) : (
-				<p className="text-gray-600 text-center">
-				Select a streaming service to see its image.
-				</p>
-			  )}
-			</div>
+        <div className="flex flex-col lg:flex-row">
+          {/* Service Image Section */}
+          <div className="w-full lg:w-1/2 p-4 sm:p-8 bg-gray-100">
+            <div className="h-48 sm:h-64 flex items-center justify-center">
+              {streamingService ? (
+                <img
+                  src={serviceImages[streamingService]}
+                  alt={streamingService}
+                  className="max-h-full w-auto rounded-xl shadow-lg"
+                />
+              ) : (
+                <p className="text-gray-600 text-center text-sm sm:text-base">
+                  Select a streaming service to see its image.
+                </p>
+              )}
+            </div>
+          </div>
 
-			<div className="w-full lg:w-1/2 p-8 bg-white flex items-center justify-center">
-			  <div className="bg-white shadow-lg rounded-xl p-8 w-full max-w-xl">
-				<h2 className="text-3xl font-bold mb-6 text-blue-700 text-center">
-				Subscribe Now
-				</h2>
-				<p className="mb-8 text-gray-600 text-center">
-				Choose your favorite streaming service and enjoy unlimited entertainment.{" "}
-				<a href="#" className="text-blue-600 font-semibold hover:underline">
-				  Sign Up
-				</a>
-				</p>
+          {/* Form Section */}
+          <div className="w-full lg:w-1/2 p-4 sm:p-8">
+            <div className="max-w-xl mx-auto">
+              <h2 className="text-2xl sm:text-3xl font-bold mb-4 text-blue-700 text-center">
+                Subscribe Now
+              </h2>
+              
+              <div className="space-y-4">
+                {/* Form Fields */}
+                <div>
+                  <label className="block text-sm font-medium mb-1">Streaming Service</label>
+                  <select
+                    value={streamingService}
+                    onChange={(e) => setStreamingService(e.target.value)}
+                    className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                  >
+                    <option value="">Select a service</option>
+                    {Object.keys(serviceImages).map((service) => (
+                      <option key={service} value={service}>{service}</option>
+                    ))}
+                  </select>
+                </div>
 
-				<label className="block text-sm font-medium">Streaming Service</label>
-				<select
-				value={streamingService}
-				onChange={(e) => setStreamingService(e.target.value)}
-				className="border p-3 rounded w-full mb-4"
-				>
-				<option value="" disabled>
-				  Select a service
-				</option>
-				{Object.keys(serviceImages).map((service) => (
-				  <option key={service} value={service}>
-					{service}
-				  </option>
-				))}
-				</select>
-				{errors.streamingService && (
-				<p className="text-red-500 text-sm">{errors.streamingService}</p>
-				)}
+                <div>
+                  <label className="block text-sm font-medium mb-1">Subscription Plan</label>
+                  <select
+                    value={subscriptionPlan}
+                    onChange={(e) => setSubscriptionPlan(e.target.value)}
+                    className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                  >
+                    <option value="">Select a plan</option>
+                    {["Basic - $9.99", "Standard - $13.99", "Premium - $17.99"].map((plan) => (
+                      <option key={plan} value={plan}>{plan}</option>
+                    ))}
+                  </select>
+                </div>
 
-				<label className="block text-sm font-medium">Subscription Plan</label>
-				<select
-				value={subscriptionPlan}
-				onChange={(e) => setSubscriptionPlan(e.target.value)}
-				className="border p-3 rounded w-full mb-4"
-				>
-				<option value="" disabled>
-				  Select a plan
-				</option>
-				{["Basic - $9.99", "Standard - $13.99", "Premium - $17.99"].map((plan) => (
-				  <option key={plan} value={plan}>
-					{plan}
-				  </option>
-				))}
-				</select>
-				{errors.subscriptionPlan && (
-				<p className="text-red-500 text-sm">{errors.subscriptionPlan}</p>
-				)}
+                <div>
+                  <label className="block text-sm font-medium mb-1">Email Address</label>
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="Enter your email"
+                    className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
 
-				<label className="block text-sm font-medium">Email Address</label>
-				<input
-				type="email"
-				value={email}
-				onChange={(e) => setEmail(e.target.value)}
-				placeholder="Enter your email"
-				className="border p-3 rounded w-full mb-4"
-				/>
-				{errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
-
-				<button
+                <button
   onClick={handleProceed}
   disabled={!streamingService || !subscriptionPlan || !email || loading}
   className={clsx(
-    "mt-6 px-6 py-3 rounded-md text-white font-bold text-sm transition duration-500",
+    "mt-4 sm:mt-6 px-4 sm:px-6 py-2 sm:py-3 rounded-md text-white font-bold text-sm transition duration-500 w-full sm:w-auto",
     streamingService && subscriptionPlan && email && !loading
       ? "bg-blue-500 hover:bg-blue-600"
       : "bg-gray-300 cursor-not-allowed"
   )}
 >
   {loading ? (
-    <div className="flex items-center space-x-2">
-      <span className="animate-spin border-2 border-white border-t-transparent rounded-full w-5 h-5"></span>
+    <div className="flex items-center justify-center space-x-2">
+      <span className="animate-spin border-2 border-white border-t-transparent rounded-full w-4 h-4 sm:w-5 sm:h-5"></span>
       <span>Processing...</span>
     </div>
   ) : (
     "Proceed"
   )}
 </button>
-			  </div>
-			</div>
-			</div>
-		  </div>
-		</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
 
-		{/* Payment Popup Dialogue */}
-	  <PaymentPopup
-  isOpen={isDialogOpen}
-  onClose={handleDialogClose}
-  serviceDetails={{
-    streamingService: streamingService, // Ensure key name matches PaymentPopup
-    plan: subscriptionPlan, // Ensure key name matches PaymentPopup
-    email: email,
-    amount: price, // Keep consistency with other fields
-  }}
-/>
+      {/* Payment Popup Dialogue */}
+      <PaymentPopup
+        isOpen={isDialogOpen}
+        onClose={handleDialogClose}
+        serviceDetails={{
+          streamingService: streamingService, // Ensure key name matches PaymentPopup
+          plan: subscriptionPlan, // Ensure key name matches PaymentPopup
+          email: email,
+          amount: price, // Keep consistency with other fields
+        }}
+      />
 
+      {/* Fixed Help Button */}
+      <button
+        onClick={() => setIsHelpOpen(true)}
+        className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 bg-white text-blue-500 w-12 h-12 sm:w-14 sm:h-14 rounded-full shadow-lg flex items-center justify-center hover:bg-blue-50 active:bg-blue-100 transition-colors border-2 border-blue-500 z-40"
+        aria-label="Get Help"
+      >
+        <HelpCircle className="w-6 h-6 sm:w-7 sm:h-7" />
+      </button>
 
       {/* Help Dialog */}
-      <button
-        onClick={() => setIsHelpDialogOpen(!isHelpDialogOpen)}
-        className="fixed bottom-6 right-6 bg-blue-500 text-white w-14 h-14 rounded-full shadow-lg flex items-center justify-center hover:bg-blue-600"
-      >
-        ?
-      </button>
-      {isHelpDialogOpen && (
-        <div className="fixed bottom-20 right-6 bg-white shadow-lg rounded-lg p-4 w-64">
-          <h3 className="text-lg font-bold mb-2">Contact Us</h3>
-          <ul className="space-y-2">
-            <li className="flex items-center space-x-2">
-              <span>📧 Email:</span>
-              <a href="mailto:contact@streaming.com" className="text-blue-500">
-                contact@streaming.com
-              </a>
-            </li>
-            <li className="flex items-center space-x-2">
-              <span>📞 Phone:</span>
-              <a href="tel:+1234567890" className="text-blue-500">
-                +1234567890
-              </a>
-            </li>
-            <li className="flex items-center space-x-2">
-              <span>💬 Live Chat:</span>
-              <a href="/livechat" className="text-blue-500">
-                Start Chat
-              </a>
-            </li>
-          </ul>
-          <button
-            onClick={() => setIsHelpDialogOpen(false)}
-            className="mt-4 text-sm text-gray-500 underline"
-          >
-            Close
-          </button>
-        </div>
-      )}
+      <HelpDialog 
+        isOpen={isHelpOpen}
+        onClose={() => setIsHelpOpen(false)}
+      />
     </div>
   );
 };

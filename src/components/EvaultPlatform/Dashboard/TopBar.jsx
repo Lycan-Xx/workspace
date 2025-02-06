@@ -12,8 +12,6 @@ const TopBar = ({ setSelectedTab, onSettingSelect }) => {
   const [notificationOpen, setNotificationOpen] = useState(false);
   const [messageOpen, setMessageOpen] = useState(false);
   const menuRef = useRef(null);
-  const notificationRef = useRef(null);
-  const messageRef = useRef(null);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const user = useSelector((state) => state.auth.user);
@@ -30,16 +28,11 @@ const TopBar = ({ setSelectedTab, onSettingSelect }) => {
     { id: 2, sender: "System", message: "Welcome to eVault!", time: "1d ago" }
   ];
 
+  // Close the profile dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (menuRef.current && !menuRef.current.contains(event.target)) {
         setMenuOpen(false);
-      }
-      if (notificationRef.current && !notificationRef.current.contains(event.target)) {
-        setNotificationOpen(false);
-      }
-      if (messageRef.current && !messageRef.current.contains(event.target)) {
-        setMessageOpen(false);
       }
     };
 
@@ -52,12 +45,34 @@ const TopBar = ({ setSelectedTab, onSettingSelect }) => {
     navigate('/sign-in');
   };
 
-  const renderNotifications = () => (
-    <div className="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-lg py-2 z-50">
-      <div className="px-4 py-2 border-b border-gray-200">
-        <h3 className="font-semibold text-gray-900">Notifications</h3>
+  // Modal component for reuse
+  const Modal = ({ onClose, title, children }) => (
+    <div className="fixed inset-0 z-50 flex items-center justify-center">
+      {/* Backdrop */}
+      <div
+        className="absolute inset-0 bg-black opacity-50"
+        onClick={onClose}
+      ></div>
+      {/* Modal content */}
+      <div className="relative bg-white rounded-lg shadow-lg w-80 max-h-full overflow-y-auto">
+        <div className="flex justify-between items-center px-4 py-2 border-b border-gray-200">
+          <h3 className="font-semibold text-gray-900">{title}</h3>
+          <button
+            onClick={onClose}
+            className="text-gray-600 hover:text-gray-900"
+            aria-label="Close"
+          >
+            ✕
+          </button>
+        </div>
+        <div>{children}</div>
       </div>
-      <div className="max-h-96 overflow-y-auto">
+    </div>
+  );
+
+  const renderNotificationsModal = () => (
+    <Modal onClose={() => setNotificationOpen(false)} title="Notifications">
+      <div className="py-2">
         {notifications.map(notification => (
           <div key={notification.id} className="px-4 py-3 hover:bg-gray-50 cursor-pointer">
             <p className="font-medium text-gray-900">{notification.title}</p>
@@ -66,15 +81,12 @@ const TopBar = ({ setSelectedTab, onSettingSelect }) => {
           </div>
         ))}
       </div>
-    </div>
+    </Modal>
   );
 
-  const renderMessages = () => (
-    <div className="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-lg py-2 z-50">
-      <div className="px-4 py-2 border-b border-gray-200">
-        <h3 className="font-semibold text-gray-900">Messages</h3>
-      </div>
-      <div className="max-h-96 overflow-y-auto">
+  const renderMessagesModal = () => (
+    <Modal onClose={() => setMessageOpen(false)} title="Messages">
+      <div className="py-2">
         {messages.map(message => (
           <div key={message.id} className="px-4 py-3 hover:bg-gray-50 cursor-pointer">
             <p className="font-medium text-gray-900">{message.sender}</p>
@@ -83,7 +95,7 @@ const TopBar = ({ setSelectedTab, onSettingSelect }) => {
           </div>
         ))}
       </div>
-    </div>
+    </Modal>
   );
 
   return (
@@ -111,39 +123,33 @@ const TopBar = ({ setSelectedTab, onSettingSelect }) => {
 
         <div className="flex items-center space-x-4">
           <div className="flex space-x-3">
-            <div className="relative" ref={notificationRef}>
-              <button 
-                className="relative p-2 rounded-full transition-colors hover:bg-blue-700"
-                aria-label="Notifications"
-                onClick={() => {
-                  setNotificationOpen(!notificationOpen);
-                  setMessageOpen(false);
-                }}
-              >
-                <Bell className="text-white" size={24} />
-                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                  3
-                </span>
-              </button>
-              {notificationOpen && renderNotifications()}
-            </div>
+            <button 
+              className="relative p-2 rounded-full transition-colors hover:bg-blue-700"
+              aria-label="Notifications"
+              onClick={() => {
+                setNotificationOpen(true);
+                setMessageOpen(false);
+              }}
+            >
+              <Bell className="text-white" size={24} />
+              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                3
+              </span>
+            </button>
 
-            <div className="relative" ref={messageRef}>
-              <button 
-                className="relative p-2 rounded-full transition-colors hover:bg-blue-700"
-                aria-label="Messages"
-                onClick={() => {
-                  setMessageOpen(!messageOpen);
-                  setNotificationOpen(false);
-                }}
-              >
-                <Mail className="text-white" size={24} />
-                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                  2
-                </span>
-              </button>
-              {messageOpen && renderMessages()}
-            </div>
+            <button 
+              className="relative p-2 rounded-full transition-colors hover:bg-blue-700"
+              aria-label="Messages"
+              onClick={() => {
+                setMessageOpen(true);
+                setNotificationOpen(false);
+              }}
+            >
+              <Mail className="text-white" size={24} />
+              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                2
+              </span>
+            </button>
           </div>
 
           <div className="relative" ref={menuRef}>
@@ -206,14 +212,21 @@ const TopBar = ({ setSelectedTab, onSettingSelect }) => {
           </div>
         </div>
       </div>
+
+      {/* Render the modals */}
+      {notificationOpen && renderNotificationsModal()}
+      {messageOpen && renderMessagesModal()}
     </div>
   );
 };
 
 TopBar.propTypes = {
+  setSelectedTab: PropTypes.func.isRequired,
+  onSettingSelect: PropTypes.func.isRequired,
   user: PropTypes.shape({
     name: PropTypes.string,
-    email: PropTypes.string
+    email: PropTypes.string,
+    role: PropTypes.string
   }),
 };
 

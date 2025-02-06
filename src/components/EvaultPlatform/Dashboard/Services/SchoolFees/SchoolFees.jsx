@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, HelpCircle } from "lucide-react";
 import clsx from "clsx";
 import SchoolSearch from "./SchoolSearch";
 import PaymentPopup from "../PaymentPopup";
+import HelpDialog from './HelpDialog';
 
 const Carousel = ({ images, altText }) => {
 	const [currentIndex, setCurrentIndex] = useState(0);
@@ -46,6 +47,7 @@ const SchoolFees = ({ onBack }) => {
 	const [isDialogOpen, setIsDialogOpen] = useState(false);
 	const [isPaymentDialogOpen, setIsPaymentDialogOpen] = useState(false);
 	const [loading, setLoading] = useState(false);
+	const [isHelpOpen, setIsHelpOpen] = useState(false);
 
 	const handleBackClick = () => {
 		if (selectedSchool) {
@@ -71,18 +73,18 @@ const SchoolFees = ({ onBack }) => {
 	};
 
 	return (
-		<div className="max-w-6xl mx-auto p-6">
+		<div className="max-w-6xl mx-auto p-4 sm:p-6">
 	{/* Back Button */}
 		<button
 			className="inline-flex items-center space-x-2 text-gray-600 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded-md p-1 mb-4"
 			aria-label="Go back"
 			onClick={handleBackClick}
 		>
-			<ArrowLeft className="w-5 h-5" />
+			<ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5" />
 			<span>{selectedSchool ? "Back" : "Go to Dashboard"}</span>
 		</button>
 
-		<div className="grid grid-cols-1 gap-8">
+		<div className="grid grid-cols-1 gap-6 sm:gap-8">
 			{!selectedSchool && (
 			<SchoolSearch onSelectSchool={(school) => setSelectedSchool(school)} />
 			)}
@@ -90,7 +92,8 @@ const SchoolFees = ({ onBack }) => {
 			{selectedSchool && (
 			<div>
 			{/* Top Banner Section */}
-			<div className="relative">
+			<div className="relative mb-16 sm:mb-20">
+				<div className="h-48 sm:h-[400px] rounded-xl overflow-hidden">
 				<Carousel 
 				images={[
 				`https://picsum.photos/1200/400?random=${selectedSchool.name}-1`,
@@ -99,9 +102,10 @@ const SchoolFees = ({ onBack }) => {
 				]}
 				altText={selectedSchool.name}
 				/>
+				</div>
 
-				<div className="absolute -bottom-12 right-4 sm:right-8">
-				<div className="w-24 h-24 sm:w-28 sm:h-28 rounded-xl border-4 border-white overflow-hidden shadow-lg">
+				<div className="absolute -bottom-10 right-4">
+				<div className="w-20 h-20 sm:w-28 sm:h-28 rounded-xl border-4 border-white overflow-hidden shadow-lg">
 				<img
 					src={`https://picsum.photos/100?random=${selectedSchool.name}`}
 					alt={`${selectedSchool.name} Owner`}
@@ -112,117 +116,110 @@ const SchoolFees = ({ onBack }) => {
 			</div>
 
 			{/* Description */}
-						<div className="mb-8">
-							<h3 className="text-xl font-bold text-gray-800">About {selectedSchool.name}</h3>
-							<p className="mt-2 text-gray-600">{selectedSchool.description}</p>
+						<div className="mb-6 sm:mb-8 px-4 sm:px-0">
+							<h3 className="text-lg sm:text-xl font-bold text-gray-800">About {selectedSchool.name}</h3>
+							<p className="mt-2 text-sm sm:text-base text-gray-600">{selectedSchool.description}</p>
 						</div>
 
 						{/* Payment Form */}
-						<div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-12 min-h-[500px]">
+						<div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
 							{/* Left Column: Image Section */}
-							<div
-								className="rounded-lg bg-cover bg-center text-white flex flex-col items-center justify-center h-72 sm:h-96 md:h-full"
-								style={{
-									backgroundImage: `url('https://picsum.photos/600/800?random=${selectedSchool.name}')`,
-								}}
-							>
-								<h3 className="text-lg sm:text-xl md:text-2xl font-bold mb-2 md:mb-4 bg-black bg-opacity-50 p-1 md:p-2 rounded-md">
-									{selectedSchool.name}
-								</h3>
+							<div className="hidden lg:block rounded-lg overflow-hidden h-auto aspect-4/3">
+								<img
+									src={`https://picsum.photos/600/800?random=${selectedSchool.name}`}
+									alt={selectedSchool.name}
+									className="w-full h-full object-cover"
+								/>
 							</div>
 
 							{/* Payment Form Section */}
-							<div className="flex flex-col justify-center space-y-6">
+							<div className="relative space-y-4 sm:space-y-6 p-4 sm:p-6 bg-white rounded-lg shadow-sm">
 								<h3 className="text-lg sm:text-xl font-bold">Enter Payment Details</h3>
 
-								{/* Class Level Selection */}
-								<label className="block text-sm font-medium">Select Class</label>
-								<select
-									value={classLevel}
-									onChange={(e) => setClassLevel(e.target.value)}
-									className="border p-2 rounded w-full"
-								>
-									<option value="" disabled>Select class</option>
-									{["Class 1", "Class 2", "Class 3", "Class 4"].map((className) => (
-										<option key={className} value={className}>{className}</option>
-									))}
-								</select>
-
-								{/* Student Name Input */}
-								<label className="block text-sm font-medium">Student's Name</label>
-								<input
-									type="text"
-									placeholder="Enter student's name"
-									value={studentName}
-									onChange={(e) => setStudentName(e.target.value)}
-									className="border p-2 rounded w-full"
-								/>
-
-								{/* Email Address Input */}
-								<label className="block text-sm font-medium">Email Address (Optional)</label>
-								<input
-									type="email"
-									placeholder="Enter email address"
-									value={email}
-									onChange={(e) => setEmail(e.target.value)}
-									className="border p-2 rounded w-full"
-								/>
-
-								{/* Mobile Number Input */}
-								<label className="block text-sm font-medium">Phone Number (Optional)</label>
-								<input
-									type="text"
-									placeholder="Enter your phone number"
-									value={mobileNumber}
-									onChange={(e) => setMobileNumber(e.target.value)}
-									className="border p-2 rounded w-full"
-								/>
-
-								{/* Payment Purpose */}
-								<label className="block text-sm font-medium">What are you paying for (Optional)</label>
-								<input
-									type="text"
-									placeholder="Enter the payment info."
-									value={text}
-									onChange={(e) => setText(e.target.value)}
-									className="border p-2 rounded w-full"
-								/>
-
-								{/* Amount Input */}
-								<label className="block text-sm font-medium">Amount</label>
-								<input
-									type="number"
-									placeholder="Enter amount"
-									value={amount}
-									onChange={(e) => setAmount(e.target.value)}
-									className="border p-2 rounded w-full"
-								/>
-
-				{/* Proceed Button */}
-								<button
-									onClick={handleProceed}
-									disabled={!studentName || !classLevel || !amount || loading}
-									className={clsx(
-									"mt-6 px-6 py-3 rounded-md text-white font-bold text-sm transition duration-500",
-									studentName && classLevel && amount && !loading
-										? "bg-blue-500 hover:bg-blue-600"
-										: "bg-gray-300 cursor-not-allowed"
-									)}
-								>
-									{loading ? (
-									<div className="flex items-center space-x-2">
-										<span className="animate-spin border-2 border-white border-t-transparent rounded-full w-5 h-5"></span>
-										<span>Processing...</span>
+								{/* Form Fields */}
+								{["Class", "Student's Name", "Email", "Phone", "Payment Purpose", "Amount"].map((label, index) => (
+									<div key={index} className="space-y-1">
+										<label className="block text-sm font-medium text-gray-700">
+											{label} {label !== "Email" && label !== "Phone" && label !== "Payment Purpose" && <span className="text-red-500">*</span>}
+										</label>
+										{label === "Class" ? (
+											<select
+												value={classLevel}
+												onChange={(e) => setClassLevel(e.target.value)}
+												className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+											>
+												<option value="">Select class</option>
+												{["Class 1", "Class 2", "Class 3", "Class 4"].map((className) => (
+													<option key={className} value={className}>{className}</option>
+												))}
+											</select>
+										) : (
+											<input
+												type={label === "Amount" ? "number" : "text"}
+												placeholder={`Enter ${label.toLowerCase()}`}
+												value={
+													label === "Student's Name" ? studentName :
+													label === "Email" ? email :
+													label === "Phone" ? mobileNumber :
+													label === "Payment Purpose" ? text :
+													label === "Amount" ? amount : ""
+												}
+												onChange={(e) => {
+													const val = e.target.value;
+													if (label === "Student's Name") setStudentName(val);
+													else if (label === "Email") setEmail(val);
+													else if (label === "Phone") setMobileNumber(val);
+													else if (label === "Payment Purpose") setText(val);
+													else if (label === "Amount") setAmount(val);
+												}}
+												className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+											/>
+										)}
 									</div>
-									) : (
-									"Proceed"
-									)}
-								</button>
+								))}
+
+								{/* Proceed Button Container */}
+								<div className="relative pb-4 sm:pb-0">
+									<button
+										onClick={handleProceed}
+										disabled={!studentName || !classLevel || !amount || loading}
+										className={clsx(
+											"mt-4 sm:mt-6 px-4 sm:px-6 py-2 sm:py-3 rounded-md text-white font-bold text-sm transition duration-500 w-full sm:w-auto",
+											studentName && classLevel && amount && !loading
+												? "bg-blue-500 hover:bg-blue-600"
+												: "bg-gray-300 cursor-not-allowed"
+										)}
+									>
+										{loading ? (
+											<div className="flex items-center justify-center space-x-2">
+												<span className="animate-spin border-2 border-white border-t-transparent rounded-full w-4 h-4 sm:w-5 sm:h-5"></span>
+												<span>Processing...</span>
+											</div>
+										) : (
+											"Proceed"
+										)}
+									</button>
+								</div>
 								</div>
 							</div>
 							</div>
 						)}
 						</div>
+
+						{/* Fixed Help Button */}
+						<button
+							onClick={() => setIsHelpOpen(true)}
+							className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 bg-white text-blue-500 w-12 h-12 sm:w-14 sm:h-14 rounded-full shadow-lg flex items-center justify-center hover:bg-blue-50 active:bg-blue-100 transition-colors border-2 border-blue-500 z-40"
+							aria-label="Get Help"
+						>
+							<HelpCircle className="w-6 h-6 sm:w-7 sm:h-7" />
+						</button>
+
+						{/* Help Dialog */}
+						<HelpDialog 
+							isOpen={isHelpOpen}
+							onClose={() => setIsHelpOpen(false)}
+						/>
 
 						{/* Payment Popup */}
 			{isPaymentDialogOpen && (
@@ -238,49 +235,6 @@ const SchoolFees = ({ onBack }) => {
 						paymentPurpose: text,
 					}}
 				/>
-			)}
-
-			{/* Help Dialog */}
-			<button
-				onClick={() => setIsDialogOpen(!isDialogOpen)}
-				className="fixed bottom-6 right-6 bg-blue-500 text-white w-14 h-14 rounded-full shadow-lg flex items-center justify-center hover:bg-blue-600"
-			>
-				?
-			</button>
-			
-			{isDialogOpen && (
-				<div className="fixed bottom-20 right-6 bg-white shadow-lg rounded-lg p-4 w-64">
-					<h3 className="text-lg font-bold mb-2">Contact Us</h3>
-					<div className="flex flex-col space-y-2">
-						<button
-							onClick={() => window.location.href = "mailto:contact@school.com"}
-							className="border p-2 rounded-lg bg-white hover:bg-blue-300 transition duration-200 flex items-center space-x-2"
-						>
-							<span>📧</span>
-							<span>Email: contact@school.com</span>
-						</button>
-						<button
-							onClick={() => window.location.href = "tel:+1234567890"}
-							className="border p-2 rounded-lg bg-white hover:bg-blue-300 transition duration-200 flex items-center space-x-2"
-						>
-							<span>📞</span>
-							<span>Phone: +1234567890</span>
-						</button>
-						<button
-							onClick={() => window.location.href = "/livechat"}
-							className="border p-2 rounded-lg bg-white hover:bg-blue-300 transition duration-200 flex items-center space-x-2"
-						>
-							<span>💬</span>
-							<span>Live Chat</span>
-						</button>
-					</div>
-					<button
-						onClick={() => setIsDialogOpen(false)}
-						className="mt-4 text-sm text-gray-500 underline"
-					>
-						Close
-					</button>
-				</div>
 			)}
 		</div>
 	);
