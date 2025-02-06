@@ -34,5 +34,11 @@ export const settingsCategories = [
 		title: 'Help & Support',
 		description: 'Get help and contact support',
 		icon: 'HelpCircle'
+	},
+	{
+		id: 'account-upgrade',
+		title: 'Account Upgrade',
+		description: 'Upgrade your account to a business account',
+		icon: 'ArrowUp'
 	}
 ];

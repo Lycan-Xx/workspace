@@ -91,6 +91,10 @@ export const SettingsContent = ({ setting, onBack }) => {
     fontSize: 'medium',
     highContrast: false,
     reducedMotion: false,
+    // Account Upgrade Fields
+    businessName: '',
+    businessEmail: '',
+    upgradeTermsAccepted: false,
   });
 
   const handleChange = (field, value) => {
@@ -400,6 +404,62 @@ export const SettingsContent = ({ setting, onBack }) => {
             <div className="p-4 bg-gray-50 rounded-lg">
               <h3 className="font-medium mb-2">Documentation</h3>
               <a href="#" className="text-blue-600 hover:underline">View Documentation</a>
+            </div>
+          </div>
+        );
+
+      case 'account-upgrade':
+        return (
+          <div className="space-y-6 p-4">
+            <p className="text-gray-600 mb-4">
+              Upgrade to a business account. Please provide the following details to upgrade your account:
+            </p>
+            <FormField
+              label="Business Name"
+              type="text"
+              value={formState.businessName}
+              onChange={value => handleChange('businessName', value)}
+              placeholder="Enter your business name"
+              disabled={false}
+            />
+            <FormField
+              label="Business Email"
+              type="email"
+              value={formState.businessEmail}
+              onChange={value => handleChange('businessEmail', value)}
+              placeholder="Enter your business email"
+              disabled={false}
+            />
+            <div className="p-4">
+              <label className="flex items-center">
+                <input
+                  type="checkbox"
+                  checked={formState.upgradeTermsAccepted}
+                  onChange={e => handleChange('upgradeTermsAccepted', e.target.checked)}
+                  className="mr-2"
+                />
+                <span className="text-sm text-gray-700">
+                  I accept the terms and conditions for the upgrade
+                </span>
+              </label>
+            </div>
+            <div className="p-4">
+              <button
+                onClick={() => alert('Account upgraded successfully!')}
+                disabled={
+                  !formState.businessName ||
+                  !formState.businessEmail ||
+                  !formState.upgradeTermsAccepted
+                }
+                className={clsx(
+                  "w-full py-3 rounded-md text-white font-bold text-lg flex justify-center items-center transition duration-500",
+                  formState.businessName && formState.businessEmail && formState.upgradeTermsAccepted
+                    ? "bg-blue-500 hover:bg-blue-600"
+                    : "bg-gray-300 cursor-not-allowed"
+                )}
+              >
+                Upgrade Account
+              </button>
             </div>
           </div>
         );
