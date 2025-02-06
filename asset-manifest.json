@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.css": "/workspace/static/css/main.90bbb6cf.css",
-    "main.js": "/workspace/static/js/main.640bdbc5.js",
+    "main.css": "/workspace/static/css/main.f2dcdaca.css",
+    "main.js": "/workspace/static/js/main.7bef8d98.js",
     "static/media/remitaBanner.png": "/workspace/static/media/remitaBanner.9124ce76afce2f9fb87c.png",
     "static/media/airtelBanner.jpg": "/workspace/static/media/airtelBanner.baf7bdd473171c3a603c.jpg",
     "static/media/gloBanner.jpg": "/workspace/static/media/gloBanner.d2edf2151e7c08678ce8.jpg",
@@ -18,11 +18,11 @@
     "static/media/mtn.png": "/workspace/static/media/mtn.689904f7d969e63b86ff.png",
     "static/media/multichoice.jpg": "/workspace/static/media/multichoice.f1046067d79a9c4f1206.jpg",
     "index.html": "/workspace/index.html",
-    "main.90bbb6cf.css.map": "/workspace/static/css/main.90bbb6cf.css.map",
-    "main.640bdbc5.js.map": "/workspace/static/js/main.640bdbc5.js.map"
+    "main.f2dcdaca.css.map": "/workspace/static/css/main.f2dcdaca.css.map",
+    "main.7bef8d98.js.map": "/workspace/static/js/main.7bef8d98.js.map"
   },
   "entrypoints": [
-    "static/css/main.90bbb6cf.css",
-    "static/js/main.640bdbc5.js"
+    "static/css/main.f2dcdaca.css",
+    "static/js/main.7bef8d98.js"
   ]
 }
