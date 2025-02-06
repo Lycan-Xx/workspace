@@ -53,7 +53,7 @@ const Electricity = ({ onBack }) => {
   };
 
   return (
-    <div className="max-w-6xl mx-auto p-6">
+    <div className="w-full max-w-6xl mx-auto p-2 sm:p-6 overflow-hidden"> {/* Modify padding and add overflow control */}
       <h1 className="text-3xl font-bold mb-6">Electricity</h1>
       <button
         className="inline-flex items-center space-x-2 text-gray-600 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded-md p-1"

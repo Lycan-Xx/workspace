@@ -79,7 +79,7 @@ const Airtime = ({ onBack }) => {
   };
 
   return (
-    <div className="max-w-6xl mx-auto p-6">
+    <div className="w-full max-w-6xl mx-auto p-2 sm:p-6 overflow-hidden"> {/* Modify padding and add overflow control */}
       <h1 className="text-3xl font-bold mb-6">Airtime Recharge</h1>
 
       {/* Back Button */}
@@ -140,25 +140,28 @@ const Airtime = ({ onBack }) => {
               <p className="text-red-500 text-sm">{errors.mobileNumber}</p>
             )}
 
-            {/* Airtime Packages */}
-            <label className="block text-sm font-medium">Select Airtime Package</label>
-            <div className="grid grid-cols-2 gap-4">
-              {airtimePackages.map((pkg) => (
-                <label key={pkg} className="flex items-center">
-                  <input
-                    type="radio"
-                    value={pkg}
-                    checked={airtimePackage === pkg && customAmount === ""}
-                    onChange={() => {
-                      setAirtimePackage(pkg);
-                      setCustomAmount(""); // Deselect custom amount when package is selected
-                    }}
-                    disabled={customAmount !== ""} // Disable if custom amount is entered
-                  />
-                  <span className="ml-2">{pkg}</span>
-                </label>
-              ))}
-            </div>
+          {/* Airtime Packages */}
+<label className="block text-sm font-medium text-gray-700">Select Airtime Package</label>
+<div className="grid grid-cols-2 gap-4 mt-2">
+  {airtimePackages.map((pkg) => (
+    <button
+      key={pkg}
+      className={`px-4 py-2 text-lg font-semibold border border-blue-500 rounded-lg 
+        transition duration-300 ${
+          airtimePackage === pkg && customAmount === ""
+            ? "bg-blue-500 text-white"
+            : "bg-white text-blue-500 hover:bg-blue-500 hover:text-white"
+        }`}
+      onClick={() => {
+        setAirtimePackage(pkg);
+        setCustomAmount(""); // Deselect custom amount when package is selected
+      }}
+      disabled={customAmount !== ""}
+    >
+      {pkg}
+    </button>
+  ))}
+</div>
 
             {/* Custom Amount Input */}
             <label className="block text-sm font-medium">Custom Amount</label>

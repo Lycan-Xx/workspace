@@ -82,7 +82,7 @@ const Databundles = ({ onBack }) => {
   };
 
   return (
-    <div className="max-w-6xl mx-auto p-6">
+    <div className="w-full max-w-6xl mx-auto p-2 sm:p-6 overflow-hidden"> {/* Modify padding and add overflow control */}
       <h1 className="text-3xl font-bold mb-6">Data Bundles</h1>
 
       {/* Back Button */}
