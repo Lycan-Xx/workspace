@@ -1,11 +1,24 @@
 import React from 'react';
 import { createPortal } from 'react-dom';
 import { X } from 'lucide-react';
+import { FaEnvelope, FaPhone, FaComments } from 'react-icons/fa';
 
 const contactOptions = [
-  { icon: "📧", text: "Email: contact@school.com", action: "mailto:contact@school.com" },
-  { icon: "📞", text: "Phone: +1234567890", action: "tel:+1234567890" },
-  { icon: "💬", text: "Live Chat", action: "/livechat" }
+  { 
+    icon: <FaEnvelope className="w-5 h-5" />, 
+    text: "Email: contact@school.com", 
+    action: "mailto:contact@school.com" 
+  },
+  { 
+    icon: <FaPhone className="w-5 h-5" />, 
+    text: "Phone: +1234567890", 
+    action: "tel:+1234567890" 
+  },
+  { 
+    icon: <FaComments className="w-5 h-5" />, 
+    text: "Live Chat", 
+    action: "/livechat" 
+  }
 ];
 
 const HelpDialog = ({ isOpen, onClose }) => {
@@ -40,7 +53,7 @@ const HelpDialog = ({ isOpen, onClose }) => {
                   href={option.action}
                   className="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-50 active:bg-gray-100 transition-colors group"
                 >
-                  <span className="text-xl group-hover:scale-110 transition-transform">
+                  <span className="text-blue-500 group-hover:text-blue-600 group-hover:scale-110 transition-all duration-200">
                     {option.icon}
                   </span>
                   <span className="text-sm text-gray-700 group-hover:text-gray-900">

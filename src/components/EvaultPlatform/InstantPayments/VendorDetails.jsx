@@ -1,6 +1,38 @@
-import React, { useState } from "react";
-import { ArrowLeft } from "lucide-react";
-import clsx from "clsx"; // Ensure you have clsx installed if you're using it
+import React, { useState, useEffect } from "react";
+import { ArrowLeft, HelpCircle } from "lucide-react";
+import clsx from "clsx";
+import HelpDialog from "../Dashboard/Services/SchoolFees/HelpDialog";
+
+const Carousel = ({ images, altText }) => {
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
+    }, 5000);
+
+    return () => clearInterval(timer);
+  }, [images.length]);
+
+  return (
+    <div className="relative w-full h-[400px] overflow-hidden rounded-xl">
+      {images.map((image, index) => (
+        <div
+          key={image}
+          className={`absolute w-full h-full transition-opacity duration-500 ease-in-out ${
+            index === currentIndex ? 'opacity-100' : 'opacity-0'
+          }`}
+        >
+          <img
+            src={image}
+            alt={`${altText} - ${index + 1}`}
+            className="w-full h-full object-cover rounded-xl"
+          />
+        </div>
+      ))}
+    </div>
+  );
+};
 
 const VendorDetails = ({ vendor, onBack }) => {
   const [classLevel, setClassLevel] = useState("");
@@ -23,37 +55,32 @@ const VendorDetails = ({ vendor, onBack }) => {
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-100">
-      {/* Navbar Section */}
-      <div className="bg-white shadow-md p-4">
-        <div className="container mx-auto flex items-center justify-between">
-          <button
-            onClick={onBack}
-            className="flex items-center text-gray-600 hover:text-blue-600 transition"
-          >
-            <ArrowLeft className="w-5 h-5 mr-2" />
-            Back
-          </button>
-          <h1 className="text-xl font-bold text-blue-600">{vendor.name}</h1>
-        </div>
-      </div>
+      {/* Back Button */}
+      <button
+        className="inline-flex items-center space-x-2 text-gray-600 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded-md p-1 mb-4 m-4"
+        aria-label="Go back"
+        onClick={onBack}
+      >
+        <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5" />
+        <span>Back</span>
+      </button>
 
-      {/* Main Content */}
       <div className="container mx-auto px-4 py-8">
         <div className="bg-white shadow-lg rounded-lg overflow-hidden">
-          {/* Banner Section */}
-          <div
-            className="w-full h-56 sm:h-64 bg-cover bg-center relative"
-            style={{
-              backgroundImage: `url('https://picsum.photos/1200/400?random=${vendor.name}')`,
-            }}
-          >
-            <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-              <h2 className="text-3xl sm:text-4xl text-white font-bold">{vendor.name}</h2>
+          {/* Banner Section with Carousel */}
+          <div className="relative mb-16 sm:mb-20">
+            <div className="h-48 sm:h-[400px] rounded-xl overflow-hidden">
+              <Carousel 
+                images={[
+                  `https://picsum.photos/1200/400?random=${vendor.name}-1`,
+                  `https://picsum.photos/1200/400?random=${vendor.name}-2`,
+                  `https://picsum.photos/1200/400?random=${vendor.name}-3`
+                ]}
+                altText={vendor.name}
+              />
             </div>
-
-            {/* Profile Picture Positioned to the Right */}
-            <div className="absolute -bottom-12 right-4 sm:right-8">
-              <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-xl border-4 border-white overflow-hidden shadow-lg">
+            <div className="absolute -bottom-10 right-4">
+              <div className="w-20 h-20 sm:w-28 sm:h-28 rounded-xl border-4 border-white overflow-hidden shadow-lg">
                 <img
                   src={`https://picsum.photos/100?random=${vendor.name}`}
                   alt={`${vendor.name} Owner`}
@@ -66,95 +93,83 @@ const VendorDetails = ({ vendor, onBack }) => {
           {/* Form Content */}
           <div className="px-6 py-8">
             {/* Description */}
-            <div className="mb-8">
-              <h3 className="text-xl font-bold text-gray-800">About {vendor.name}</h3>
-              <p className="mt-2 text-gray-600">{vendor.description}</p>
+            <div className="mb-6 sm:mb-8">
+              <h3 className="text-lg sm:text-xl font-bold text-gray-800">About {vendor.name}</h3>
+              <p className="mt-2 text-sm sm:text-base text-gray-600">{vendor.description}</p>
             </div>
 
             {/* Responsive Form Layout */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-              {/* Image Section */}
-              <div
-                className="rounded-lg bg-cover bg-center h-72 sm:h-96 shadow-md"
-                style={{
-                  backgroundImage: `url('https://picsum.photos/600/800?random=${vendor.name}')`,
-                }}
-              ></div>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
+              {/* Left Column: Image Section */}
+              <div className="hidden lg:block rounded-lg overflow-hidden h-auto aspect-4/3">
+                <img
+                  src={`https://picsum.photos/600/800?random=${vendor.name}`}
+                  alt={vendor.name}
+                  className="w-full h-full object-cover"
+                />
+              </div>
 
               {/* Payment Form Section */}
-              <div className="flex flex-col justify-center space-y-6">
+              <div className="relative space-y-4 sm:space-y-6 p-4 sm:p-6 bg-white rounded-lg shadow-sm">
                 <h3 className="text-lg sm:text-xl font-bold">Enter Payment Details</h3>
 
-                {/* Class Level Selection */}
-                <label className="block text-sm font-medium">Select Class</label>
-                <select
-                  value={classLevel}
-                  onChange={(e) => setClassLevel(e.target.value)}
-                  className="border p-2 rounded w-full"
-                >
-                  <option value="" disabled>
-                    Select class
-                  </option>
-                  {["Class 1", "Class 2", "Class 3", "Class 4"].map((className) => (
-                    <option key={className} value={className}>
-                      {className}
-                    </option>
-                  ))}
-                </select>
-
-                {/* Student Name Input */}
-                <label className="block text-sm font-medium">Student's Name</label>
-                <input
-                  type="text"
-                  placeholder="Enter student's name"
-                  value={studentName}
-                  onChange={(e) => setStudentName(e.target.value)}
-                  className="border p-2 rounded w-full"
-                />
-
-                {/* Email Address Input */}
-                <label className="block text-sm font-medium">Email Address (Optional)</label>
-                <input
-                  type="email"
-                  placeholder="Enter email address"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="border p-2 rounded w-full"
-                />
-
-                {/* Payment Purpose */}
-                <label className="block text-sm font-medium">What are you paying for (Optional)</label>
-                <input
-                  type="text"
-                  placeholder="Enter the payment info."
-                  value={text}
-                  onChange={(e) => setText(e.target.value)}
-                  className="border p-2 rounded w-full"
-                />
-
-                {/* Amount Input */}
-                <label className="block text-sm font-medium">Amount</label>
-                <input
-                  type="number"
-                  placeholder="Enter amount"
-                  value={amount}
-                  onChange={(e) => setAmount(e.target.value)}
-                  className="border p-2 rounded w-full"
-                />
+                {/* Form Fields */}
+                {["Class", "Student's Name", "Email", "Phone", "Payment Purpose", "Amount"].map((label, index) => (
+                  <div key={index} className="space-y-1">
+                    <label className="block text-sm font-medium text-gray-700">
+                      {label} {label !== "Email" && label !== "Phone" && label !== "Payment Purpose" && <span className="text-red-500">*</span>}
+                    </label>
+                    {label === "Class" ? (
+                      <select
+                        value={classLevel}
+                        onChange={(e) => setClassLevel(e.target.value)}
+                        className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      >
+                        <option value="">Select class</option>
+                        {["Class 1", "Class 2", "Class 3", "Class 4"].map((className) => (
+                          <option key={className} value={className}>{className}</option>
+                        ))}
+                      </select>
+                    ) : (
+                      <input
+                        type={label === "Amount" ? "number" : "text"}
+                        placeholder={`Enter ${label.toLowerCase()}`}
+                        value={
+                          label === "Student's Name" ? studentName :
+                          label === "Email" ? email :
+                          label === "Phone" ? "" :  // Add state for phone if needed
+                          label === "Payment Purpose" ? text :
+                          label === "Amount" ? amount : ""
+                        }
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          if (label === "Student's Name") setStudentName(val);
+                          else if (label === "Email") setEmail(val);
+                          else if (label === "Payment Purpose") setText(val);
+                          else if (label === "Amount") setAmount(val);
+                        }}
+                        className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      />
+                    )}
+                  </div>
+                ))}
 
                 {/* Proceed Button */}
                 <button
                   onClick={handleProceed}
                   disabled={!studentName || !classLevel || !amount || loading}
                   className={clsx(
-                    "mt-6 px-6 py-3 rounded-md text-white font-bold text-sm transition duration-500",
-                    studentName && classLevel && amount
+                    "mt-4 sm:mt-6 px-4 sm:px-6 py-2 sm:py-3 rounded-md text-white font-bold text-sm transition duration-500 w-full sm:w-auto",
+                    studentName && classLevel && amount && !loading
                       ? "bg-blue-500 hover:bg-blue-600"
                       : "bg-gray-300 cursor-not-allowed"
                   )}
                 >
                   {loading ? (
-                    <span className="animate-pulse">Processing...</span>
+                    <div className="flex items-center justify-center space-x-2">
+                      <span className="animate-spin border-2 border-white border-t-transparent rounded-full w-4 h-4 sm:w-5 sm:h-5"></span>
+                      <span>Processing...</span>
+                    </div>
                   ) : (
                     "Proceed"
                   )}
@@ -167,38 +182,18 @@ const VendorDetails = ({ vendor, onBack }) => {
 
       {/* Help Button */}
       <button
-        onClick={() => setIsDialogOpen(!isDialogOpen)}
-        className="fixed bottom-6 right-6 bg-blue-500 text-white w-14 h-14 rounded-full shadow-lg flex items-center justify-center hover:bg-blue-600"
+        onClick={() => setIsDialogOpen(true)}
+        className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 bg-white text-blue-500 w-12 h-12 sm:w-14 sm:h-14 rounded-full shadow-lg flex items-center justify-center hover:bg-blue-50 active:bg-blue-100 transition-colors border-2 border-blue-500 z-40"
+        aria-label="Get Help"
       >
-        ?
+        <HelpCircle className="w-6 h-6 sm:w-7 sm:h-7" />
       </button>
 
-      {/* Contact Us Dialog */}
-      {isDialogOpen && (
-        <div className="fixed bottom-20 right-6 bg-white shadow-lg rounded-lg p-4 w-64">
-          <h3 className="text-lg font-bold mb-2">Contact Us</h3>
-          <ul className="space-y-2">
-            <li className="flex items-center space-x-2">
-              <span>📧 Email:</span>
-              <a href="mailto:contact@school.com" className="text-blue-500">contact@school.com</a>
-            </li>
-            <li className="flex items-center space-x-2">
-              <span>📞 Phone:</span>
-              <a href="tel:+1234567890" className="text-blue-500">+1234567890</a>
-            </li>
-            <li className="flex items-center space-x-2">
-              <span>💬 Live Chat:</span>
-              <a href="/livechat" className="text-blue-500">Start Chat</a>
-            </li>
-          </ul>
-          <button
-            onClick={() => setIsDialogOpen(false)}
-            className="mt-4 text-sm text-gray-500 underline"
-          >
-            Close
-          </button>
-        </div>
-      )}
+      {/* Help Dialog */}
+      <HelpDialog 
+        isOpen={isDialogOpen}
+        onClose={() => setIsDialogOpen(false)}
+      />
     </div>
   );
 };
