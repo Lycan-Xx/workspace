@@ -79,117 +79,123 @@ const Airtime = ({ onBack }) => {
   };
 
   return (
-    <div className="w-full max-w-6xl mx-auto p-2 sm:p-6 overflow-hidden"> {/* Modify padding and add overflow control */}
-      <h1 className="text-3xl font-bold mb-6">Airtime Recharge</h1>
+    <div className="max-w-6xl mx-auto p-4 sm:p-6">
+      <h1 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-6">Airtime Recharge</h1>
 
       {/* Back Button */}
       <button
-        className="inline-flex items-center space-x-2 text-gray-600 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded-md p-1"
+        className="inline-flex items-center space-x-2 text-gray-600 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded-md p-1 mb-4"
         aria-label="Go back"
         onClick={handleBackClick}
       >
-        <ArrowLeft className="w-5 h-5" />
+        <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5" />
         <span>{selectedService ? "Back" : "Go to Dashboard"}</span>
       </button>
 
       {!selectedService ? (
-        <div className="bg-white rounded-xl p-6 shadow-md">
-          <h3 className="text-xl font-bold mb-4">Please choose your Service Provider</h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+        <div className="bg-white rounded-xl p-4 sm:p-6 shadow-md">
+          <h3 className="text-lg sm:text-xl font-bold mb-4">Please choose your Service Provider</h3>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-6">
             {services.map((service, index) => (
               <div
                 key={index}
-                className="flex flex-col items-center p-4 border rounded-md hover:shadow-lg cursor-pointer"
+                className="flex flex-col items-center p-3 sm:p-4 border rounded-md hover:shadow-lg cursor-pointer transition-shadow"
                 onClick={() => handleServiceClick(service)}
               >
-                <img src={service.icon} alt={`${service.title} logo`} className="w-12 h-12" />
-                <h4 className="text-lg font-bold">{service.title}</h4>
-                <p className="text-gray-600 text-sm">{service.description}</p>
+                <img 
+                  src={service.icon} 
+                  alt={`${service.title} logo`} 
+                  className="w-8 h-8 sm:w-12 sm:h-12 mb-2" 
+                />
+                <h4 className="text-base sm:text-lg font-bold text-center">{service.title}</h4>
+                <p className="text-gray-600 text-xs sm:text-sm text-center">{service.description}</p>
               </div>
             ))}
           </div>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 min-h-[500px]">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-8 min-h-[400px] sm:min-h-[500px]">
           <div
-            className="flex flex-col items-center rounded-lg justify-center bg-cover bg-center text-white"
+            className="flex flex-col items-center rounded-lg justify-center bg-cover bg-center text-white h-48 sm:h-auto"
             style={{
               backgroundImage: `url(${selectedService.image})`,
             }}
           >
-            <h3 className="text-2xl font-bold mb-4 bg-black bg-opacity-50 p-2 rounded-md">
+            <h3 className="text-xl sm:text-2xl font-bold mb-4 bg-black bg-opacity-50 p-2 rounded-md">
               {selectedService.title}
             </h3>
           </div>
 
-          <div className="flex flex-col justify-center space-y-6">
-            <h3 className="text-xl font-bold">Recharge Details</h3>
+          <div className="flex flex-col justify-center space-y-4 sm:space-y-6 p-4">
+            <h3 className="text-lg sm:text-xl font-bold">Recharge Details</h3>
 
             {/* Mobile Number Input */}
-            <label className="block text-sm font-medium">Enter your Mobile Number</label>
-            <input
-              type="text"
-              placeholder="Enter 11-digit mobile number"
-              value={mobileNumber}
-              onChange={(e) =>
-                setMobileNumber(e.target.value.replace(/\D/g, "").slice(0, 11))
-              }
-              className="border p-2 rounded w-full"
-            />
-            {errors.mobileNumber && (
-              <p className="text-red-500 text-sm">{errors.mobileNumber}</p>
-            )}
+            <div>
+              <label className="block text-sm font-medium mb-1">Enter your Mobile Number</label>
+              <input
+                type="tel"
+                placeholder="Enter 11-digit mobile number"
+                value={mobileNumber}
+                onChange={(e) => setMobileNumber(e.target.value.replace(/\D/g, "").slice(0, 11))}
+                className="border p-2 rounded w-full"
+              />
+              {errors.mobileNumber && (
+                <p className="text-red-500 text-xs sm:text-sm mt-1">{errors.mobileNumber}</p>
+              )}
+            </div>
 
-          {/* Airtime Packages */}
-<label className="block text-sm font-medium text-gray-700">Select Airtime Package</label>
-<div className="grid grid-cols-2 gap-4 mt-2">
-  {airtimePackages.map((pkg) => (
-    <button
-      key={pkg}
-      className={`px-4 py-2 text-lg font-semibold border border-blue-500 rounded-lg 
-        transition duration-300 ${
-          airtimePackage === pkg && customAmount === ""
-            ? "bg-blue-500 text-white"
-            : "bg-white text-blue-500 hover:bg-blue-500 hover:text-white"
-        }`}
-      onClick={() => {
-        setAirtimePackage(pkg);
-        setCustomAmount(""); // Deselect custom amount when package is selected
-      }}
-      disabled={customAmount !== ""}
-    >
-      {pkg}
-    </button>
-  ))}
-</div>
+            {/* Airtime Packages */}
+            <div>
+              <label className="block text-sm font-medium mb-2">Select Airtime Package</label>
+              <div className="grid grid-cols-2 gap-3">
+                {airtimePackages.map((pkg) => (
+                  <label key={pkg} className="flex items-center">
+                    <input
+                      type="radio"
+                      value={pkg}
+                      checked={airtimePackage === pkg && customAmount === ""}
+                      onChange={() => {
+                        setAirtimePackage(pkg);
+                        setCustomAmount("");
+                      }}
+                      disabled={customAmount !== ""}
+                      className="mr-2"
+                    />
+                    <span className="text-sm">{pkg}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
 
             {/* Custom Amount Input */}
-            <label className="block text-sm font-medium">Custom Amount</label>
-            <input
-              type="text"
-              placeholder="Enter custom amount"
-              value={customAmount}
-              onChange={handleCustomAmountChange}
-              className="border p-2 rounded w-full"
-            />
-            {customAmount && (
-              <p className="text-green-500 text-sm">Custom amount: ₦{customAmount}</p>
-            )}
+            <div>
+              <label className="block text-sm font-medium mb-1">Custom Amount</label>
+              <input
+                type="text"
+                placeholder="Enter custom amount"
+                value={customAmount}
+                onChange={handleCustomAmountChange}
+                className="border p-2 rounded w-full"
+              />
+              {customAmount && (
+                <p className="text-green-500 text-xs sm:text-sm mt-1">Custom amount: ₦{customAmount}</p>
+              )}
+            </div>
 
             {/* Proceed Button */}
             <button
               onClick={handleProceed}
               disabled={!mobileNumber || (!customAmount && !airtimePackage) || loading}
               className={clsx(
-                "mt-6 px-6 py-3 rounded-md text-white font-bold text-sm transition duration-500",
+                "mt-4 sm:mt-6 px-4 sm:px-6 py-2 sm:py-3 rounded-md text-white font-bold text-sm transition duration-500 w-full sm:w-auto",
                 mobileNumber && (customAmount || airtimePackage) && !loading
                   ? "bg-blue-500 hover:bg-blue-600"
                   : "bg-gray-300 cursor-not-allowed"
               )}
             >
               {loading ? (
-                <div className="flex items-center space-x-2">
-                  <span className="animate-spin border-2 border-white border-t-transparent rounded-full w-5 h-5"></span>
+                <div className="flex items-center justify-center space-x-2">
+                  <span className="animate-spin border-2 border-white border-t-transparent rounded-full w-4 h-4 sm:w-5 sm:h-5"></span>
                   <span>Processing...</span>
                 </div>
               ) : (

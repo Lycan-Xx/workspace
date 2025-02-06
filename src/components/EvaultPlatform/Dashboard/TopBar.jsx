@@ -28,7 +28,7 @@ const TopBar = ({ setSelectedTab, onSettingSelect }) => {
     { id: 2, sender: 'System', message: 'Welcome to eVault!', time: '1d ago' },
   ];
 
-  // Close the menu when clicking outside
+  // Close the profile dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (menuRef.current && !menuRef.current.contains(event.target)) {
@@ -45,68 +45,57 @@ const TopBar = ({ setSelectedTab, onSettingSelect }) => {
     navigate('/sign-in');
   };
 
-  // Render the Notifications modal
-  const renderNotificationsModal = () => (
-    <div
-      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
-      onClick={() => setNotificationOpen(false)}
-    >
+  // Modal component for reuse
+  const Modal = ({ onClose, title, children }) => (
+    <div className="fixed inset-0 z-50 flex items-center justify-center">
+      {/* Backdrop */}
       <div
-        className="bg-white w-80 rounded-lg shadow-lg py-2"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="flex items-center justify-between px-4 py-2 border-b border-gray-200">
-          <h3 className="font-semibold text-gray-900">Notifications</h3>
+        className="absolute inset-0 bg-black opacity-50"
+        onClick={onClose}
+      ></div>
+      {/* Modal content */}
+      <div className="relative bg-white rounded-lg shadow-lg w-80 max-h-full overflow-y-auto">
+        <div className="flex justify-between items-center px-4 py-2 border-b border-gray-200">
+          <h3 className="font-semibold text-gray-900">{title}</h3>
           <button
-            onClick={() => setNotificationOpen(false)}
-            className="text-gray-500 hover:text-gray-700"
+            onClick={onClose}
+            className="text-gray-600 hover:text-gray-900"
+            aria-label="Close"
           >
-            <X size={16} />
+            ✕
           </button>
         </div>
-        <div className="max-h-96 overflow-y-auto">
-          {notifications.map((notification) => (
-            <div key={notification.id} className="px-4 py-3 hover:bg-gray-50 cursor-pointer">
-              <p className="font-medium text-gray-900">{notification.title}</p>
-              <p className="text-sm text-gray-600">{notification.message}</p>
-              <p className="text-xs text-gray-500 mt-1">{notification.time}</p>
-            </div>
-          ))}
-        </div>
+        <div>{children}</div>
       </div>
     </div>
   );
 
-  // Render the Messages modal
-  const renderMessagesModal = () => (
-    <div
-      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
-      onClick={() => setMessageOpen(false)}
-    >
-      <div
-        className="bg-white w-80 rounded-lg shadow-lg py-2"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="flex items-center justify-between px-4 py-2 border-b border-gray-200">
-          <h3 className="font-semibold text-gray-900">Messages</h3>
-          <button
-            onClick={() => setMessageOpen(false)}
-            className="text-gray-500 hover:text-gray-700"
-          >
-            <X size={16} />
-          </button>
-        </div>
-        <div className="max-h-96 overflow-y-auto">
-          {messages.map((message) => (
-            <div key={message.id} className="px-4 py-3 hover:bg-gray-50 cursor-pointer">
-              <p className="font-medium text-gray-900">{message.sender}</p>
-              <p className="text-sm text-gray-600">{message.message}</p>
-              <p className="text-xs text-gray-500 mt-1">{message.time}</p>
-            </div>
-          ))}
-        </div>
+  const renderNotificationsModal = () => (
+    <Modal onClose={() => setNotificationOpen(false)} title="Notifications">
+      <div className="py-2">
+        {notifications.map(notification => (
+          <div key={notification.id} className="px-4 py-3 hover:bg-gray-50 cursor-pointer">
+            <p className="font-medium text-gray-900">{notification.title}</p>
+            <p className="text-sm text-gray-600">{notification.message}</p>
+            <p className="text-xs text-gray-500 mt-1">{notification.time}</p>
+          </div>
+        ))}
       </div>
-    </div>
+    </Modal>
+  );
+
+  const renderMessagesModal = () => (
+    <Modal onClose={() => setMessageOpen(false)} title="Messages">
+      <div className="py-2">
+        {messages.map(message => (
+          <div key={message.id} className="px-4 py-3 hover:bg-gray-50 cursor-pointer">
+            <p className="font-medium text-gray-900">{message.sender}</p>
+            <p className="text-sm text-gray-600">{message.message}</p>
+            <p className="text-xs text-gray-500 mt-1">{message.time}</p>
+          </div>
+        ))}
+      </div>
+    </Modal>
   );
 
   return (
@@ -133,36 +122,36 @@ const TopBar = ({ setSelectedTab, onSettingSelect }) => {
             </button>
           </div>
 
-          <div className="flex items-center space-x-4">
-            <div className="flex space-x-3">
-              <button
-                className="relative p-2 rounded-full transition-colors hover:bg-blue-700"
-                aria-label="Notifications"
-                onClick={() => {
-                  setNotificationOpen(!notificationOpen);
-                  setMessageOpen(false);
-                }}
-              >
-                <Bell className="text-white" size={24} />
-                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                  3
-                </span>
-              </button>
+        <div className="flex items-center space-x-4">
+          <div className="flex space-x-3">
+            <button 
+              className="relative p-2 rounded-full transition-colors hover:bg-blue-700"
+              aria-label="Notifications"
+              onClick={() => {
+                setNotificationOpen(true);
+                setMessageOpen(false);
+              }}
+            >
+              <Bell className="text-white" size={24} />
+              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                3
+              </span>
+            </button>
 
-              <button
-                className="relative p-2 rounded-full transition-colors hover:bg-blue-700"
-                aria-label="Messages"
-                onClick={() => {
-                  setMessageOpen(!messageOpen);
-                  setNotificationOpen(false);
-                }}
-              >
-                <Mail className="text-white" size={24} />
-                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                  2
-                </span>
-              </button>
-            </div>
+            <button 
+              className="relative p-2 rounded-full transition-colors hover:bg-blue-700"
+              aria-label="Messages"
+              onClick={() => {
+                setMessageOpen(true);
+                setNotificationOpen(false);
+              }}
+            >
+              <Mail className="text-white" size={24} />
+              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                2
+              </span>
+            </button>
+          </div>
 
             <div className="relative" ref={menuRef}>
               <button
@@ -226,7 +215,7 @@ const TopBar = ({ setSelectedTab, onSettingSelect }) => {
         </div>
       </div>
 
-      {/* Modals */}
+      {/* Render the modals */}
       {notificationOpen && renderNotificationsModal()}
       {messageOpen && renderMessagesModal()}
     </div>
@@ -239,7 +228,7 @@ TopBar.propTypes = {
   user: PropTypes.shape({
     name: PropTypes.string,
     email: PropTypes.string,
-    role: PropTypes.string,
+    role: PropTypes.string
   }),
 };
 
