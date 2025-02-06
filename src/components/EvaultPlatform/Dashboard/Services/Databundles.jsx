@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { ArrowLeft } from "lucide-react";
-import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import clsx from "clsx";
 import PaymentPopup from "./PaymentPopup"; // Import PaymentPopup
 
@@ -24,13 +23,33 @@ const services = [
   { title: "M T N", description: "M T N", icon: mtn, image: mtnBanner },
 ];
 
+// Add dataPlans object
+const dataPlans = {
+  SME: [
+    { id: 'sme1', name: '1GB SME Data', price: '300' },
+    { id: 'sme2', name: '2GB SME Data', price: '600' },
+    { id: 'sme3', name: '5GB SME Data', price: '1500' },
+  ],
+  Corporate: [
+    { id: 'corp1', name: '1GB Corporate Data', price: '400' },
+    { id: 'corp2', name: '2GB Corporate Data', price: '800' },
+    { id: 'corp3', name: '5GB Corporate Data', price: '2000' },
+  ],
+  Gifting: [
+    { id: 'gift1', name: '1GB Gift Data', price: '350' },
+    { id: 'gift2', name: '2GB Gift Data', price: '700' },
+    { id: 'gift3', name: '5GB Gift Data', price: '1750' },
+  ]
+};
+
 const Databundles = ({ onBack }) => {
   const [selectedService, setSelectedService] = useState(null);
   const [mobileNumber, setMobileNumber] = useState("");
   const [planType, setPlanType] = useState("");
   const [dataPlan, setDataPlan] = useState("");
   const [loading, setLoading] = useState(false);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isPaymentDialogOpen, setIsPaymentDialogOpen] = useState(false);
+  const [paymentDetails, setPaymentDetails] = useState({});
 
   // Handle service selection
   const handleServiceClick = (service) => {
@@ -51,11 +70,15 @@ const Databundles = ({ onBack }) => {
   
 
   const handleProceed = () => {
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      setIsDialogOpen(true); // Open the payment popup
-    }, 3000);
+    setIsPaymentDialogOpen(true);
+    const selectedPlanDetails = dataPlans[planType].find(plan => plan.id === dataPlan);
+    
+    setPaymentDetails({
+      mobile: mobileNumber,
+      plan: selectedPlanDetails.name,
+      price: selectedPlanDetails.price,
+      service: selectedService.title
+    });
   };
 
   return (
@@ -122,11 +145,8 @@ const Databundles = ({ onBack }) => {
               onChange={(e) =>
                 setMobileNumber(e.target.value.replace(/\D/g, "").slice(0, 11))
               }
-              className="border p-2 rounded w-full"
+              className="border border-gray-300 p-2 rounded w-full focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             />
-            {!mobileNumber && (
-              <p className="text-red-500 text-sm">Mobile number is required.</p>
-            )}
 
             {/* Plan Type (Radio Buttons) */}
             <label className="block text-sm font-medium">Select Plan Type</label>
@@ -148,25 +168,21 @@ const Databundles = ({ onBack }) => {
             </div>
 
             {/* Data Plan Dropdown */}
-            <label className="block text-sm font-medium">Select Data Plan</label>
-            <DropdownMenu.Root>
-              <DropdownMenu.Trigger asChild>
-                <button className="border p-2 rounded w-full text-left">
-                  {dataPlan || "Select a plan"}
-                </button>
-              </DropdownMenu.Trigger>
-              <DropdownMenu.Content className="w-full bg-white shadow rounded mt-2">
-                {["1GB", "2GB", "5GB", "10GB"].map((plan) => (
-                  <DropdownMenu.Item
-                    key={plan}
-                    onClick={() => setDataPlan(plan)}
-                    className="p-2 hover:bg-gray-100 cursor-pointer dropdown-item"
-                  >
-                    {plan}
-                  </DropdownMenu.Item>
-                ))}
-              </DropdownMenu.Content>
-            </DropdownMenu.Root>
+            <label className="block text-sm font-medium mt-4">
+              Select Data Plan
+            </label>
+            <select
+              value={dataPlan}
+              onChange={(e) => setDataPlan(e.target.value)}
+              className="border border-gray-300 p-2 rounded w-full focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            >
+              <option value="">Choose a plan</option>
+              {planType && dataPlans[planType]?.map((plan) => (
+                <option key={plan.id} value={plan.id}>
+                  {plan.name} - ₦{plan.price}
+                </option>
+              ))}
+            </select>
 
             {/* Proceed Button */}
             <button
@@ -191,16 +207,18 @@ const Databundles = ({ onBack }) => {
           </div>
         </div>
       )}
-      <PaymentPopup
-        isOpen={isDialogOpen}
-        onClose={() => setIsDialogOpen(false)}
-        serviceDetails={{
-          service: selectedService ? selectedService.title : "",
-          plan: dataPlan,
-          mobile: mobileNumber,
-          email: "", // Add email if needed
-        }}
-      />
+      {isPaymentDialogOpen && (
+        <PaymentPopup
+          isOpen={isPaymentDialogOpen}
+          onClose={() => setIsPaymentDialogOpen(false)}
+          serviceDetails={{
+            mobile: mobileNumber,
+            plan: dataPlans[planType].find(plan => plan.id === dataPlan)?.name,
+            price: dataPlans[planType].find(plan => plan.id === dataPlan)?.price,
+            service: selectedService.title
+          }}
+        />
+      )}
     </div>
   );
 };

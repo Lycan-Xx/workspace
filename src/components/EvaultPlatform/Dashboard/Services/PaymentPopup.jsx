@@ -45,7 +45,8 @@ const PaymentPopup = ({ isOpen, onClose, serviceDetails }) => {
     if (serviceDetails.mobile && !serviceDetails.meterId) {
       fields.push(
         { label: "Mobile Number", value: serviceDetails.mobile },
-        { label: "Package", value: serviceDetails.plan }
+        { label: "Package", value: serviceDetails.plan },
+        { label: "Price", value: `₦${serviceDetails.price}` }
       );
     }
 
