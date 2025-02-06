@@ -13,7 +13,7 @@ import {
 } from "react-icons/fa";
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { logout } from '../store/authSlice';
+import { logout } from './store/authSlice';
 
 const Sidebar = ({ user, selectedTab, setSelectedTab, setIsSidebarCollapsed }) => {
   const [isCollapsed, setIsCollapsed] = useState(false);

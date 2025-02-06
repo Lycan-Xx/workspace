@@ -3,7 +3,7 @@ import { Bell, Mail, Eye, EyeOff, User, Settings, LogOut } from 'lucide-react';
 import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { logout } from '../store/authSlice';
+import { logout } from './store/authSlice';
 
 const TopBar = () => {
   const [showBalance, setShowBalance] = useState(true);
