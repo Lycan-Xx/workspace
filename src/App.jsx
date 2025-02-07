@@ -5,11 +5,11 @@ import { store } from './components/EvaultPlatform/store/store';
 import "./index.css";
 
 function App() {
-  return (
-    <Provider store={store}>
-      <PlatformRoute />
-    </Provider>
-  );
+	return (
+		<Provider store={store}>
+			<PlatformRoute />
+		</Provider>
+	);
 }
 
 export default App

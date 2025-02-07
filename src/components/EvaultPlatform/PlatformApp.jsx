@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useTransition, animated, config } from '@react-spring/web'; // Add this import
+import { useTransition, animated, config } from '@react-spring/web'; 
 import { useLocation } from 'react-router-dom';
 import MainLayout from "./layout/MainLayout";
 import Navbar from "./Navbar";
@@ -8,10 +8,10 @@ import SignIn from "./signin/SignIn";
 import ConfigureSecurity from "./security/ConfigureSecurity";
 import Dashboard from "./Dashboard/Dashboard";
 import VendorDetails from "./InstantPayments/VendorDetails";
-import Databundles from "./Dashboard/Databundles";
-import Airtime from "./Dashboard/Airtime";
-import Electricity from "./Dashboard/Electricity";
-import Cable from "./Dashboard/Cable";
+import Databundles from "./Dashboard/Services/Databundles";
+import Airtime from "./Dashboard/Services/Airtime";
+import Electricity from "./Dashboard/Services/Electricity";
+import Cable from "./Dashboard/Services/Cable";
 import InstantPayments from "./InstantPayments/InstantPayments";
 
 function App({ initialView = "instant-payments", onBack }) {
@@ -47,7 +47,7 @@ function App({ initialView = "instant-payments", onBack }) {
   });
 
   const renderComponent = () => {
-    console.log('Current view:', currentView); // Add this
+    console.log('Current view:', currentView); 
     switch (currentView) {
       case "instant-payments":
         return (
@@ -59,7 +59,10 @@ function App({ initialView = "instant-payments", onBack }) {
       case "sign-in":
         return (
           <SignIn
-            onContinue={() => handleNavigation("configure-security")}
+            onContinue={() => {
+              localStorage.setItem('isAuthenticated', 'true');
+              window.location.href = '/dashboard';
+            }}
             onSignUp={() => handleNavigation("sign-up")}
           />
         );
@@ -68,8 +71,14 @@ function App({ initialView = "instant-payments", onBack }) {
       case "configure-security":
         return (
           <ConfigureSecurity
-            onSkip={() => handleNavigation("dashboard")}
-            onComplete={() => handleNavigation("dashboard")}
+            onSkip={() => {
+              localStorage.setItem('isAuthenticated', 'true');
+              window.location.href = '/dashboard';
+            }}
+            onComplete={() => {
+              localStorage.setItem('isAuthenticated', 'true');
+              window.location.href = '/dashboard';
+            }}
           />
         );
       case "vendor-details":
@@ -111,7 +120,7 @@ function App({ initialView = "instant-payments", onBack }) {
               height: "100%"
             }}
           >
-            {renderComponent()} {/* This should match the current view */}
+            {renderComponent()} 
           </animated.div>
         ))}
       </MainLayout>
