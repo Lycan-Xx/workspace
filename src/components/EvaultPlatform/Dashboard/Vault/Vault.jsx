@@ -6,6 +6,7 @@ import { FaStamp } from "react-icons/fa";
 import CategoryCard from './vault-contents/CategoryCard';
 import FileList from './vault-contents/FileList';
 import UploadModal from './vault-contents/UploadModal';
+import PinVerificationModal from '../../common/PinVerificationModal';
 
 function Vault() {
   const [categories] = useState([
@@ -41,6 +42,14 @@ function Vault() {
     ],
   });
 
+  const [isPinVerified, setIsPinVerified] = useState(false);
+  const [showPinModal, setShowPinModal] = useState(true);
+
+  const handlePinVerification = () => {
+    setIsPinVerified(true);
+    setShowPinModal(false);
+  };
+
   const handleFileUpload = (formData) => {
     const { name, description, category, subcategory, passphrase, file } = formData;
     
@@ -62,7 +71,15 @@ function Vault() {
 
   return (
     <div className="min-h-screen bg-gray-100">
-      <div className="max-w-7xl mx-auto p-4 sm:p-6">
+      <PinVerificationModal
+        isOpen={showPinModal}
+        onClose={() => setShowPinModal(false)}
+        onVerify={handlePinVerification}
+      />
+      
+      <div className={`max-w-7xl mx-auto p-4 sm:p-6 transition-all duration-300 ${
+        !isPinVerified ? 'blur-md pointer-events-none' : ''
+      }`}>
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-3">
             <FaVault className="text-blue-500 text-3xl" />
