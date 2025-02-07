@@ -16,16 +16,17 @@ const Portfolio = () => {
       case "info":
       default:
         return (
-          <div className="space-y-4 md:space-y-6">
+          <div className="space-y-4 md:space-y-6 w-full">
             <PersonalInfo />
             
-            <div className="bg-white rounded-xl shadow-sm p-4 md:p-6">
-              <h2 className="text-xl md:text-2xl font-bold text-gray-800 mb-4 md:mb-6">Services & Payments</h2>
+            <div className="bg-white rounded-xl shadow-sm p-3 md:p-4 overflow-x-hidden">
               <Services />
             </div>
 
-            <div className="bg-white rounded-xl shadow-sm p-4 md:p-6">
-              <h2 className="text-xl md:text-2xl font-bold text-gray-800 mb-4 md:mb-6">Transaction History</h2>
+            <div className="bg-white rounded-xl shadow-sm p-3 md:p-6 overflow-x-hidden">
+              <h2 className="text-xl md:text-2xl font-bold text-gray-800 mb-4 md:mb-6">
+                Transaction History
+              </h2>
               <HistoryList />
             </div>
           </div>
@@ -35,13 +36,15 @@ const Portfolio = () => {
 
   return (
     <AccountsProvider>
-      <div className="portfolio">
-        <div className="max-w-7xl mx-auto p-4 md:p-8">
-          <TabNavigation 
-            currentView={currentView} 
-            setCurrentView={setCurrentView}
-          />
-          {renderContent()}
+      <div className="portfolio min-w-0 w-full">
+        <div className="max-w-7xl mx-auto px-2 sm:px-4 md:px-8 overflow-x-hidden">
+          <div className="w-full">
+            <TabNavigation 
+              currentView={currentView} 
+              setCurrentView={setCurrentView}
+            />
+            {renderContent()}
+          </div>
         </div>
       </div>
     </AccountsProvider>

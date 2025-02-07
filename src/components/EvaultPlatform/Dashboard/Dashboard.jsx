@@ -3,17 +3,17 @@ import { useSpring, animated } from "react-spring";
 import Sidebar from "../Dashboard/SideBar";
 import TopBar from "./TopBar";
 import PaymentCards from "../Dashboard/PaymentCard";
-import Services from "./Services";
+import ServiceCardsDescription from "./ServiceCardsDescription";
 import Trade from "./Trade";
 import Vault from "./Vault/Vault";
 import Settings from "./SettingsApp";
 import TabContent from "./TabContents/TabContent";
-import Databundles from "./Databundles";
-import Schoolfees from "./SchoolFees/Schoolfees";
-import Airtime from "./Airtime";
-import Electricity from "./Electricity";
-import Remita from "./Remita";
-import Cable from "./Cable";
+import Databundles from "./Services/Databundles";
+import SchoolFees from "./Services/SchoolFees/SchoolFees";
+import Airtime from "./Services/Airtime";
+import Electricity from "./Services/Electricity";
+import Remita from "./Services/Remita";
+import Cable from "./Services/Cable";
 import Portfolio from "./Portfolio/Portfolio";
 import DepositForm from "./TabContents/DepositForm";
 import TransferForm from "./TabContents/TransferForm";
@@ -27,6 +27,7 @@ const Dashboard = () => {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [showTransferForm, setShowTransferForm] = useState(false);
   const [showVirtualCardRequest, setShowVirtualCardRequest] = useState(false);
+  const [selectedSetting, setSelectedSetting] = useState(null);
 
   // Move card data state to Dashboard
   const [cardData, setCardData] = useState([
@@ -50,7 +51,7 @@ const Dashboard = () => {
       title: "School Fees Payment",
       description: "Pay school fees",
       icon: <i className="fas fa-school text-orange-500 text-3xl"></i>,
-      component: "Schoolfees",
+      component: "SchoolFees",
     },
     {
       title: "Airtime Recharge",
@@ -76,13 +77,6 @@ const Dashboard = () => {
       icon: <i className="fas fa-tv text-red-500 text-3xl"></i>,
       component: "Cable",
     },
-  ];
-
-  const menuItems = [
-    { name: "Dashboard", icon: <FaTachometerAlt color="#4CAF50" />, color: "#4CAF50" },
-    { name: "Vault", icon: <FaLock color="#FF9800" />, color: "#FF9800" },
-    { name: "Portfolio", icon: <FaWallet color="#2196F3" />, color: "#2196F3" },
-    { name: "Settings", icon: <FaCogs color="#9C27B0" />, color: "#9C27B0" },
   ];
 
   const handleServiceClick = (service) => {
@@ -117,8 +111,8 @@ const Dashboard = () => {
     switch (selectedService) {
       case "Databundles":
         return <Databundles onBack={handleBack} />;
-      case "Schoolfees":
-        return <Schoolfees onBack={handleBack} />;
+      case "SchoolFees":
+        return <SchoolFees onBack={handleBack} />;
       case "Airtime":
         return <Airtime onBack={handleBack} />;
       case "Electricity":
@@ -192,7 +186,7 @@ const Dashboard = () => {
           <span className="font-bold text-lg">Transfer Funds</span>
         </button>
         <div className="bg-white border rounded-lg p-4 my-4">
-          <Services
+          <ServiceCardsDescription
             services={services}
             onServiceClick={handleServiceClick}
             className="grid grid-cols-2 md:grid-cols-3 gap-4"
@@ -214,6 +208,7 @@ const Dashboard = () => {
         selectedTab={selectedTab}
         setSelectedTab={setSelectedTab}
         setIsSidebarCollapsed={setIsSidebarCollapsed}
+        user={undefined} // Declare user as undefined since it has not been declared
         className="relative z-10"
       />
 
@@ -222,7 +217,14 @@ const Dashboard = () => {
           isSidebarCollapsed ? "md:ml-20" : "md:ml-64"
         }`}
       >
-        <TopBar />
+        <TopBar 
+          setSelectedTab={setSelectedTab} 
+          onSettingSelect={(setting) => {
+            setSelectedTab('Settings');
+            // You'll need to add state management for selected setting
+            setSelectedSetting(setting);
+          }}
+        />
         <animated.div style={homeSpring}>
           {selectedTab === "Dashboard" && renderContent()}
         </animated.div>
@@ -236,6 +238,14 @@ const Dashboard = () => {
           />
         )}
       </div>
+	  <div>
+	  {showVirtualCardRequest && (
+          <VirtualCardRequest 
+            onClose={() => setShowVirtualCardRequest(false)}
+            addCard={handleAddCard}
+          />
+        )}
+	  </div>
     </div>
   );
 };
