@@ -18,7 +18,7 @@ const testimonials = [
 	  {
 		name: 'Sarah Johnson',
 		role: 'Business Owner',
-		text: "Since switching to eVault, managing my business finances has become effortless. Their digital wallet feature is a game-changer for daily transactions.",
+		text: "Since switching to eVault, managing my business finances has become effortless. Their digital vault feature is a game-changer for daily transactions.",
 		image: "https://picsum.photos/200/200?random=5"
 	  },
 	  {

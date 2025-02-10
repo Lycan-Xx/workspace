@@ -120,26 +120,28 @@ export const SettingsContent = ({ setting, onBack }) => {
   const renderHeader = () => (
     <div className="flex justify-between items-center mb-6">
       <h2 className="text-2xl font-bold text-gray-900">{setting.title}</h2>
-      <button
-        onClick={() => isEditing ? handleSave() : setIsEditing(true)}
-        className={`flex items-center px-4 py-2 rounded-lg ${
-          isEditing 
-            ? 'bg-green-600 hover:bg-green-700 text-white' 
-            : 'bg-blue-600 hover:bg-blue-700 text-white'
-        }`}
-      >
-        {isEditing ? (
-          <>
-            <Save className="w-4 h-4 mr-2" />
-            Save Changes
-          </>
-        ) : (
-          <>
-            <Edit2 className="w-4 h-4 mr-2" />
-            Edit Profile
-          </>
-        )}
-      </button>
+      {setting.id === 'account' && (
+        <button
+          onClick={() => isEditing ? handleSave() : setIsEditing(true)}
+          className={`flex items-center px-4 py-2 rounded-lg ${
+            isEditing 
+              ? 'bg-green-600 hover:bg-green-700 text-white' 
+              : 'bg-blue-600 hover:bg-blue-700 text-white'
+          }`}
+        >
+          {isEditing ? (
+            <>
+              <Save className="w-4 h-4 mr-2" />
+              Save Changes
+            </>
+          ) : (
+            <>
+              <Edit2 className="w-4 h-4 mr-2" />
+              Edit Profile
+            </>
+          )}
+        </button>
+      )}
     </div>
   );
 

@@ -38,7 +38,7 @@ export default DepositForm
 //       )}
 
 //       <h4 className="text-2xl font-bold flex items-center">
-//         <Layers className="w-6 h-6 mr-2 text-gray-600" /> Top Up up your wallet
+//         <Layers className="w-6 h-6 mr-2 text-gray-600" /> Top Up up your vault
 //       </h4>
 
 //       <form onSubmit={handleSubmit} className="space-y-4">

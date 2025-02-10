@@ -136,7 +136,7 @@ const Dashboard = () => {
         return <Portfolio />;
       case "Settings":
         return <Settings />;
-      case "Wallet Top Up":
+      case "Vault Top Up":
         return <DepositForm />;
       case "Transfer":
         return <TransferForm />;

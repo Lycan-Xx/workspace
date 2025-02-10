@@ -103,10 +103,10 @@ const PaymentPopup = ({ isOpen, onClose, serviceDetails }) => {
           </div>
         </div>
 
-        {/* Wallet Payment Section */}
+        {/* Vault Payment Section */}
         <div className="mt-6">
           <div>
-            <h3 className="text-lg font-semibold text-gray-800 mb-2">Wallet Payment</h3>
+            <h3 className="text-lg font-semibold text-gray-800 mb-2">Vault Payment</h3>
             <p className="text-sm text-gray-600 mb-6">
               Enter your 6-digit security PIN to confirm payment
             </p>
