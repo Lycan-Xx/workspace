@@ -104,7 +104,7 @@ const TopBar = ({ setSelectedTab, onSettingSelect }) => {
         <div className="flex items-center justify-between flex-wrap gap-2">
           <div className="flex items-center space-x-2">
             <div className="text-white font-bold">
-              <span className="text-sm md:text-base">Wallet Balance:</span>
+              <span className="text-sm md:text-base">Vault Balance:</span>
               <span className="ml-2 text-lg md:text-xl">
                 {showBalance ? '₦467,038.98' : '₦ * * * * *'}
               </span>

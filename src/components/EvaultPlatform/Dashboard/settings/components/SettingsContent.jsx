@@ -411,9 +411,6 @@ export const SettingsContent = ({ setting, onBack }) => {
       case 'account-upgrade':
         return (
           <div className="space-y-6 p-4">
-            <p className="text-gray-600 mb-4">
-              Upgrade to a business account. Please provide the following details to upgrade your account:
-            </p>
             <FormField
               label="Business Name"
               type="text"
