@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Search, SlidersHorizontal } from 'lucide-react';
-import VendorList from './VendorList/VendorList';
-import CategoryGrid from './CategoryGrid';
+import VendorList from './VendorList/VendorList.jsx';  // Fix import
+import CategoryGrid from './CategoryGrid.jsx';
 
 const InstantPayments = ({ onSelectVendor, onNavigate }) => {
   const [searchQuery, setSearchQuery] = useState('');

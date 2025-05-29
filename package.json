@@ -25,7 +25,6 @@
 		"@testing-library/react": "^13.4.0",
 		"@testing-library/user-event": "^13.5.0",
 		"classnames": "^2.5.1",
-		"cra-template": "1.2.0",
 		"es-abstract": "^1.23.7",
 		"framer-motion": "^11.15.0",
 		"lucide-react": "^0.468.0",
@@ -36,7 +35,6 @@
 		"react-intersection-observer": "^9.14.0",
 		"react-redux": "^9.2.0",
 		"react-router-dom": "^7.0.2",
-		"react-scripts": "5.0.1",
 		"react-spring": "^9.7.4",
 		"react-toastify": "^11.0.2",
 		"source-map-loader": "^5.0.0",
@@ -46,18 +44,9 @@
 		"zod": "^3.23.8"
 	},
 	"scripts": {
-		"start": "react-scripts start",
-		"build": "react-scripts build",
-		"test": "react-scripts test",
-		"eject": "react-scripts eject",
-		"predeploy": "npm run build",
-		"deploy": "gh-pages -d build"
-	},
-	"eslintConfig": {
-		"extends": [
-			"react-app",
-			"react-app/jest"
-		]
+		"dev": "vite",
+		"build": "vite build",
+		"preview": "vite preview"
 	},
 	"browserslist": {
 		"production": [
@@ -72,6 +61,7 @@
 		]
 	},
 	"devDependencies": {
+		"@vitejs/plugin-react": "^4.5.0",
 		"autoprefixer": "^10.4.20",
 		"eslint": "^8.57.1",
 		"eslint-config-prettier": "^9.1.0",
@@ -80,8 +70,7 @@
 		"gh-pages": "^6.3.0",
 		"postcss": "^8.4.49",
 		"prettier": "^3.4.2",
-		"tailwindcss": "^3.4.17"
+		"tailwindcss": "^3.4.17",
+		"vite": "^6.3.5"
 	}
 }
-
-

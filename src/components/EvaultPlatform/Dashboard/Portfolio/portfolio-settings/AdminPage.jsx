@@ -23,7 +23,7 @@ import {
   Delete as DeleteIcon,
   Power as PowerIcon,
 } from "@mui/icons-material";
-import Accounts from "./Services/Accounts";
+import Accounts from "./Services/Accounts.jsx";
 import { toast, ToastContainer } from 'react-toastify';
 import Chip from "@mui/material/Chip";
 import 'react-toastify/dist/ReactToastify.css';

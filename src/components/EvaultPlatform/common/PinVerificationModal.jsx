@@ -56,7 +56,6 @@ const PinVerificationModal = ({ isOpen, onClose, onVerify }) => {
             left: 0,
             right: 0,
             bottom: 0,
-            minHeight: '100vh',
             minHeight: '100dvh' // For mobile browsers with dynamic viewport
           }}
         >

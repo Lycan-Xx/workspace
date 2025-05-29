@@ -17,7 +17,7 @@ import {
 } from "@mui/material";
 import { Add, Edit, Delete } from "@mui/icons-material";
 import { motion } from "framer-motion";
-import { useServiceManagement } from "./hooks/useServiceManagement";
+import { useAccountManagement } from "./hooks/useAccountManagement.js";
 
 const categories = {
 	Restaurants: ["Fast Food", "Fine Dining", "Cafes"],
@@ -31,7 +31,7 @@ const Services = () => {
 	const [selectedCategory, setSelectedCategory] = useState("");
 	const [selectedSubCategory, setSelectedSubCategory] = useState("");
 
-	const serviceManagement = useServiceManagement([]);
+	const serviceManagement = useAccountManagement([]);
 
 	const {
 		services,
