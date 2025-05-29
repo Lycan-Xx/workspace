@@ -1,42 +1,32 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { setSecurityVerified } from '../../EvaultPlatform/store/authSlice';
 import ProgressBar from './ProgressBar';
 import InitialStep from './InitialStep';
-import BvnStep from './BvnStep';
+import LoadingStep from './LoadingStep';
+import LocationStep from './LocationStep';
 import SuccessStep from './SuccessStep';
 
 const ConfigureSecurity = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [step, setStep] = useState(1);
-  const [bvn, setBvn] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [isSuccess, setIsSuccess] = useState(false);
+  const [verificationData, setVerificationData] = useState(null);
+  const [locationData, setLocationData] = useState(null);
 
-  const validateBvn = (value) => /^\d{11}$/.test(value);
-
-  const handleBvnChange = (e) => {
-    const value = e.target.value.replace(/\D/g, '').slice(0, 11);
-    setBvn(value);
-    if (error) setError('');
+  const handleInitialStepComplete = (data) => {
+    setVerificationData(data);
+    setStep(2);
   };
 
-  const handleVerify = () => {
-    if (!validateBvn(bvn)) {
-      setError('Please enter a valid 11-digit BVN');
-      return;
-    }
+  const handleLoadingComplete = () => {
+    setStep(3);
+  };
 
-    setIsLoading(true);
-    // Simulate verification process
-    setTimeout(() => {
-      setIsLoading(false);
-      setIsSuccess(true);
-      setStep(3);
-    }, 2000);
+  const handleLocationComplete = (data) => {
+    setLocationData(data);
+    setStep(4);
   };
 
   const handleCompletion = () => {
@@ -49,34 +39,32 @@ const ConfigureSecurity = () => {
     navigate('/dashboard');
   };
 
-  useEffect(() => {
-    if (step === 3 && !isSuccess) {
-      setStep(2);
-    }
-  }, [step, isSuccess]);
-
   const renderStep = () => {
     switch (step) {
       case 1:
         return (
           <InitialStep
-            onNext={() => setStep(2)}
+            onNext={handleInitialStepComplete}
             onSkip={handleSkip}
           />
         );
       case 2:
         return (
-          <BvnStep
-            bvn={bvn}
-            error={error}
-            isLoading={isLoading}
-            onChange={handleBvnChange}
-            onVerify={handleVerify}
+          <LoadingStep
+            onAnimationComplete={handleLoadingComplete}
           />
         );
       case 3:
         return (
+          <LocationStep
+            onComplete={handleLocationComplete}
+          />
+        );
+      case 4:
+        return (
           <SuccessStep
+            verificationData={verificationData}
+            locationData={locationData}
             onComplete={handleCompletion}
           />
         );
@@ -86,11 +74,13 @@ const ConfigureSecurity = () => {
   };
 
   return (
-    <div className="w-full max-w-lg mx-auto p-8 bg-white rounded-xl shadow-lg">
-      <div className="relative">
-        <ProgressBar currentStep={step} totalSteps={3} />
-        <div className="pt-8">
-          {renderStep()}
+    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100 flex items-center justify-center p-4">
+      <div className="w-full max-w-lg bg-white rounded-xl shadow-lg">
+        <div className="relative p-8">
+          <ProgressBar currentStep={step} totalSteps={4} />
+          <div className="pt-8">
+            {renderStep()}
+          </div>
         </div>
       </div>
     </div>
