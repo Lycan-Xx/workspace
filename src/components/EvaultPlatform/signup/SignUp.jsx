@@ -55,10 +55,6 @@ function DataInputStep({ accountType, step, onSubmit, onBack }) {
     lastname: "",
     email: "",
     phone: "",
-    gender: "",
-    dob: "",
-    address: "",
-    state: "",
     businessName: "",
     rcNumber: "",
     nin: "",
@@ -85,10 +81,7 @@ function DataInputStep({ accountType, step, onSubmit, onBack }) {
       if (!formData.lastname) newErrors.lastname = "Last name is required.";
       if (!formData.email) newErrors.email = "Email is required.";
       if (!formData.phone) newErrors.phone = "Phone number is required.";
-      if (!formData.gender) newErrors.gender = "Gender is required.";
-      if (!formData.dob) newErrors.dob = "Date of birth is required.";
-      if (!formData.address) newErrors.address = "Address is required.";
-      if (!formData.state) newErrors.state = "State is required.";
+      // Removed validation for gender, dob, address, and state
     } else if (accountType === "Business") {
       if (!formData.businessName) newErrors.businessName = "Business name is required.";
       if (!formData.email) newErrors.email = "Email is required.";
@@ -173,44 +166,7 @@ function DataInputStep({ accountType, step, onSubmit, onBack }) {
               className="w-full px-4 py-2 border border-gray-400 rounded-lg"
             />
             {errors.phone && <p className="text-red-500">{errors.phone}</p>}
-            <select
-              name="gender"
-              value={formData.gender}
-              onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-400 rounded-lg"
-            >
-              <option value="">Select Gender</option>
-              <option value="Male">Male</option>
-              <option value="Female">Female</option>
-            </select>
-            {errors.gender && <p className="text-red-500">{errors.gender}</p>}
-            <input
-              type="date"
-              name="dob"
-              placeholder="Date of Birth"
-              value={formData.dob}
-              onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-400 rounded-lg"
-            />
-            {errors.dob && <p className="text-red-500">{errors.dob}</p>}
-            <input
-              type="text"
-              name="address"
-              placeholder="Address"
-              value={formData.address}
-              onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-400 rounded-lg"
-            />
-            {errors.address && <p className="text-red-500">{errors.address}</p>}
-            <input
-              type="text"
-              name="state"
-              placeholder="State"
-              value={formData.state}
-              onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-400 rounded-lg"
-            />
-            {errors.state && <p className="text-red-500">{errors.state}</p>}
+            {/* Removed input fields for gender, dob, address, and state */}
           </>
         )}
         {step === 1 && accountType === "Business" && (

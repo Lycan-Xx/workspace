@@ -18,7 +18,7 @@ import Portfolio from "./Portfolio/Portfolio";
 import DepositForm from "./TabContents/DepositForm";
 import TransferForm from "./TabContents/TransferForm";
 import HistoryList from "./TabContents/HistoryList";
-import { FaExchangeAlt, FaTachometerAlt, FaLock, FaWallet, FaCogs } from "react-icons/fa";
+import { FaExchangeAlt, FaTachometerAlt, FaLock, FaWallet, FaCogs, FaGlobe, FaSchool, FaPhoneAlt, FaBolt, FaReceipt, FaTv } from "react-icons/fa";
 import VirtualCardRequest from "./VirtualCardRequest";
 
 const Dashboard = () => {
@@ -44,37 +44,37 @@ const Dashboard = () => {
     {
       title: "Data Bundles",
       description: "Purchase data",
-      icon: <i className="fas fa-globe text-blue-500 text-3xl"></i>,
+      icon: <FaGlobe className="text-blue-500 text-3xl" />,
       component: "Databundles",
     },
     {
       title: "School Fees Payment",
       description: "Pay school fees",
-      icon: <i className="fas fa-school text-orange-500 text-3xl"></i>,
+      icon: <FaSchool className="text-orange-500 text-3xl" />,
       component: "SchoolFees",
     },
     {
       title: "Airtime Recharge",
       description: "Top up airtime",
-      icon: <i className="fas fa-phone-alt text-green-500 text-3xl"></i>,
+      icon: <FaPhoneAlt className="text-green-500 text-3xl" />,
       component: "Airtime",
     },
     {
       title: "Electricity",
       description: "Buy power units",
-      icon: <i className="fas fa-bolt text-yellow-500 text-3xl"></i>,
+      icon: <FaBolt className="text-yellow-500 text-3xl" />,
       component: "Electricity",
     },
     {
       title: "Remita Payments",
       description: "Remita services",
-      icon: <i className="fas fa-receipt text-purple-500 text-3xl"></i>,
+      icon: <FaReceipt className="text-purple-500 text-3xl" />,
       component: "Remita",
     },
     {
       title: "Cable Subscriptions",
       description: "Subscribe to cable",
-      icon: <i className="fas fa-tv text-red-500 text-3xl"></i>,
+      icon: <FaTv className="text-red-500 text-3xl" />,
       component: "Cable",
     },
   ];
