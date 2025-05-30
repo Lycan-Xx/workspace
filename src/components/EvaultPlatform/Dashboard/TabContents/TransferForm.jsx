@@ -116,7 +116,7 @@ const TransferForm = ({ onBack }) => {
             </span>
             Confirm Transfer
           </h3>
-          
+
           <div className="mb-6 grid gap-2 bg-gray-50 p-4 rounded-lg">
             <div className="grid grid-cols-2 gap-2">
               <span className="text-gray-600">Bank:</span>
@@ -129,7 +129,7 @@ const TransferForm = ({ onBack }) => {
               <span className="font-medium">{user?.name || 'Unknown'}</span>
             </div>
           </div>
-  
+
           <div className="mb-6">
             <label className="block text-sm font-medium text-gray-700 mb-3">
               Enter 6-digit PIN
@@ -150,7 +150,7 @@ const TransferForm = ({ onBack }) => {
               ))}
             </div>
           </div>
-  
+
           <button
             onClick={handlePinSubmit}
             className="w-full py-3.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-all duration-200"
@@ -163,7 +163,7 @@ const TransferForm = ({ onBack }) => {
   };
 
   return (
-    <div className="max-w-2xl mx-auto p-4 sm:p-6">
+    <div className="max-w-2xl mx-auto bg-white p-4 md:p-6 rounded-lg shadow-sm">
       <button
         className="flex items-center gap-2 text-gray-600 hover:text-gray-800 group mb-8"
         onClick={onBack}

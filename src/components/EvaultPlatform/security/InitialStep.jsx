@@ -36,27 +36,27 @@ const InitialStep = ({ onNext, onSkip }) => {
         <p className="text-gray-600">Choose your preferred verification method</p>
       </div>
       <div className="w-full space-y-6">
-        <div className="flex justify-center space-x-8">
-          <label className="flex items-center space-x-2 cursor-pointer">
-            <input
-              type="radio"
-              value="BVN"
-              checked={verificationMethod === 'BVN'}
-              onChange={(e) => setVerificationMethod(e.target.value)}
-              className="w-4 h-4 text-[#025798] border-gray-300 focus:ring-[#025798]"
-            />
-            <span className="text-gray-700">BVN</span>
-          </label>
-          <label className="flex items-center space-x-2 cursor-pointer">
-            <input
-              type="radio"
-              value="NIN"
-              checked={verificationMethod === 'NIN'}
-              onChange={(e) => setVerificationMethod(e.target.value)}
-              className="w-4 h-4 text-[#025798] border-gray-300 focus:ring-[#025798]"
-            />
-            <span className="text-gray-700">NIN</span>
-          </label>
+        <div className="flex justify-center space-x-6">
+          <button
+            onClick={() => setVerificationMethod('BVN')}
+            className={`px-6 py-2 rounded-xl text-[1.2rem] flex items-center justify-center transition duration-400 ease-in ${
+              verificationMethod === 'BVN'
+                ? 'bg-[#025798] text-white border-[1.5px] border-[#025798]'
+                : 'bg-white text-[#025798] hover:bg-[#025798] hover:text-white border-[1.5px] border-[#025798]'
+            }`}
+          >
+            BVN
+          </button>
+          <button
+            onClick={() => setVerificationMethod('NIN')}
+            className={`px-6 py-2 rounded-xl text-[1.2rem] flex items-center justify-center transition duration-400 ease-in ${
+              verificationMethod === 'NIN'
+                ? 'bg-[#025798] text-white border-[1.5px] border-[#025798]'
+                : 'bg-white text-[#025798] hover:bg-[#025798] hover:text-white border-[1.5px] border-[#025798]'
+            }`}
+          >
+            NIN
+          </button>
         </div>
         <div className="relative">
           <input
