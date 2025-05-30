@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { UserPlus, Mail, Check } from "lucide-react";
 
@@ -18,28 +19,28 @@ function ProgressiveLine({ currentStep, totalSteps }) {
 // Account Type Step Component
 function AccountTypeStep({ onSelect }) {
   return (
-    <div className="space-y-4 transition-opacity duration-500 mb-4">
+    <div className="space-y-6 transition-opacity duration-500">
       <h3 className="text-xl font-medium text-center text-gray-700">
         Please Choose an Account Type
       </h3>
-      <div className="flex justify-center space-x-4 gap-6">
+      <div className="flex flex-col sm:flex-row justify-center gap-4 sm:gap-6">
         <button
           onClick={() => onSelect("Personal")}
-          className="p-6 w-[180px] border-2 border-gray-200 rounded-2xl hover:border-[#025798] focus:outline-none focus:ring-2 focus:ring-[#025798] transition-colors flex flex-col items-center"
+          className="p-6 w-full sm:w-[180px] border-2 border-gray-300 rounded-lg hover:border-[#025798] focus:outline-none focus:ring-2 focus:ring-[#025798]/20 transition-all flex flex-col items-center"
         >
-          <UserPlus className="mb-2" size={40} strokeWidth={1.5} />
+          <UserPlus className="mb-3" size={40} strokeWidth={1.5} />
           <h4 className="text-xl font-medium mb-2 text-gray-800">Personal</h4>
-          <p className="text-lg text-gray-600 text-center">
+          <p className="text-sm text-gray-600 text-center">
             For individual use and personal finances
           </p>
         </button>
         <button
           onClick={() => onSelect("Business")}
-          className="p-6 w-[180px] border-2 border-gray-200 rounded-2xl hover:border-[#025798] focus:outline-none focus:ring-2 focus:ring-[#025798] transition-colors flex flex-col items-center"
+          className="p-6 w-full sm:w-[180px] border-2 border-gray-300 rounded-lg hover:border-[#025798] focus:outline-none focus:ring-2 focus:ring-[#025798]/20 transition-all flex flex-col items-center"
         >
-          <Mail className="mb-2" size={40} strokeWidth={1.5} />
+          <Mail className="mb-3" size={40} strokeWidth={1.5} />
           <h4 className="text-xl font-medium mb-2 text-gray-800">Business</h4>
-          <p className="text-lg text-gray-600 text-center">
+          <p className="text-sm text-gray-600 text-center">
             For companies and business operations
           </p>
         </button>
@@ -81,7 +82,6 @@ function DataInputStep({ accountType, step, onSubmit, onBack }) {
       if (!formData.lastname) newErrors.lastname = "Last name is required.";
       if (!formData.email) newErrors.email = "Email is required.";
       if (!formData.phone) newErrors.phone = "Phone number is required.";
-      // Removed validation for gender, dob, address, and state
     } else if (accountType === "Business") {
       if (!formData.businessName) newErrors.businessName = "Business name is required.";
       if (!formData.email) newErrors.email = "Email is required.";
@@ -124,28 +124,28 @@ function DataInputStep({ accountType, step, onSubmit, onBack }) {
       <form className="space-y-4">
         {step === 1 && accountType === "Personal" && (
           <>
-            <div className="flex space-x-4">
-              <div className="w-1/2">
+            <div className="flex flex-col sm:flex-row gap-4">
+              <div className="flex-1">
                 <input
                   type="text"
                   name="firstname"
                   placeholder="First Name"
                   value={formData.firstname}
                   onChange={handleChange}
-                  className="w-full px-4 py-2 border border-gray-400 rounded-lg"
+                  className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-[#025798] focus:ring-2 focus:ring-[#025798]/20 transition-all outline-none"
                 />
-                {errors.firstname && <p className="text-red-500">{errors.firstname}</p>}
+                {errors.firstname && <p className="text-red-500 text-sm mt-1">{errors.firstname}</p>}
               </div>
-              <div className="w-1/2">
+              <div className="flex-1">
                 <input
                   type="text"
                   name="lastname"
                   placeholder="Last Name"
                   value={formData.lastname}
                   onChange={handleChange}
-                  className="w-full px-4 py-2 border border-gray-400 rounded-lg"
+                  className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-[#025798] focus:ring-2 focus:ring-[#025798]/20 transition-all outline-none"
                 />
-                {errors.lastname && <p className="text-red-500">{errors.lastname}</p>}
+                {errors.lastname && <p className="text-red-500 text-sm mt-1">{errors.lastname}</p>}
               </div>
             </div>
             <input
@@ -154,19 +154,18 @@ function DataInputStep({ accountType, step, onSubmit, onBack }) {
               placeholder="Email Address"
               value={formData.email}
               onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-400 rounded-lg"
+              className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-[#025798] focus:ring-2 focus:ring-[#025798]/20 transition-all outline-none"
             />
-            {errors.email && <p className="text-red-500">{errors.email}</p>}
+            {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
             <input
               type="tel"
               name="phone"
               placeholder="Phone Number"
               value={formData.phone}
               onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-400 rounded-lg"
+              className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-[#025798] focus:ring-2 focus:ring-[#025798]/20 transition-all outline-none"
             />
-            {errors.phone && <p className="text-red-500">{errors.phone}</p>}
-            {/* Removed input fields for gender, dob, address, and state */}
+            {errors.phone && <p className="text-red-500 text-sm mt-1">{errors.phone}</p>}
           </>
         )}
         {step === 1 && accountType === "Business" && (
@@ -177,36 +176,36 @@ function DataInputStep({ accountType, step, onSubmit, onBack }) {
               placeholder="Business Name"
               value={formData.businessName}
               onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-400 rounded-lg"
+              className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-[#025798] focus:ring-2 focus:ring-[#025798]/20 transition-all outline-none"
             />
-            {errors.businessName && <p className="text-red-500">{errors.businessName}</p>}
+            {errors.businessName && <p className="text-red-500 text-sm mt-1">{errors.businessName}</p>}
             <input
               type="email"
               name="email"
               placeholder="Email Address"
               value={formData.email}
               onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-400 rounded-lg"
+              className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-[#025798] focus:ring-2 focus:ring-[#025798]/20 transition-all outline-none"
             />
-            {errors.email && <p className="text-red-500">{errors.email}</p>}
+            {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
             <input
               type="text"
               name="rcNumber"
               placeholder="RC Number"
               value={formData.rcNumber}
               onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-400 rounded-lg"
+              className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-[#025798] focus:ring-2 focus:ring-[#025798]/20 transition-all outline-none"
             />
-            {errors.rcNumber && <p className="text-red-500">{errors.rcNumber}</p>}
+            {errors.rcNumber && <p className="text-red-500 text-sm mt-1">{errors.rcNumber}</p>}
             <input
               type="text"
               name="nin"
               placeholder="NIN"
               value={formData.nin}
               onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-400 rounded-lg"
+              className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-[#025798] focus:ring-2 focus:ring-[#025798]/20 transition-all outline-none"
             />
-            {errors.nin && <p className="text-red-500">{errors.nin}</p>}
+            {errors.nin && <p className="text-red-500 text-sm mt-1">{errors.nin}</p>}
           </>
         )}
         {step === 2 && (
@@ -217,49 +216,49 @@ function DataInputStep({ accountType, step, onSubmit, onBack }) {
               placeholder="Password"
               value={formData.password}
               onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-400 rounded-lg"
+              className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-[#025798] focus:ring-2 focus:ring-[#025798]/20 transition-all outline-none"
             />
-            {errors.password && <p className="text-red-500">{errors.password}</p>}
+            {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password}</p>}
             <input
               type="password"
               name="confirmPassword"
               placeholder="Confirm Password"
               value={formData.confirmPassword}
               onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-400 rounded-lg"
+              className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-[#025798] focus:ring-2 focus:ring-[#025798]/20 transition-all outline-none"
             />
-            {errors.confirmPassword && <p className="text-red-500">{errors.confirmPassword}</p>}
+            {errors.confirmPassword && <p className="text-red-500 text-sm mt-1">{errors.confirmPassword}</p>}
             <input
               type="text"
               name="vaultPhrase"
               placeholder="Vault Phrase/PIN"
               value={formData.vaultPhrase}
               onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-400 rounded-lg"
+              className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-[#025798] focus:ring-2 focus:ring-[#025798]/20 transition-all outline-none"
             />
-            {errors.vaultPhrase && <p className="text-red-500">{errors.vaultPhrase}</p>}
+            {errors.vaultPhrase && <p className="text-red-500 text-sm mt-1">{errors.vaultPhrase}</p>}
             <input
               type="text"
               name="referralCode"
               placeholder="Referral Code (Optional)"
               value={formData.referralCode}
               onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-400 rounded-lg"
+              className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-[#025798] focus:ring-2 focus:ring-[#025798]/20 transition-all outline-none"
             />
           </>
         )}
-        <div className="flex justify-between">
+        <div className="flex flex-col sm:flex-row justify-between gap-4 pt-4">
           <button
             type="button"
             onClick={onBack}
-            className="px-4 py-2 bg-gray-300 text-gray-800 rounded-lg"
+            className="px-6 py-3 bg-gray-300 text-gray-800 rounded-lg font-medium hover:bg-gray-400 transition duration-300"
           >
             Back
           </button>
           <button
             type="submit"
             onClick={handleContinue}
-            className="px-4 py-2 bg-[#025798] text-white rounded-lg"
+            className="px-6 py-3 bg-[#025798] text-white rounded-lg font-medium hover:bg-[#025798]/90 transition duration-300"
           >
             {step === 2 ? "Submit" : "Continue"}
           </button>
@@ -281,7 +280,7 @@ function SuccessStep({ accountType }) {
         Your {accountType} account has been successfully created.
       </p>
       <button
-        className="mt-8 px-4 py-2 bg-[#025798] text-white rounded-lg"
+        className="mt-8 px-6 py-3 bg-[#025798] text-white rounded-lg font-medium hover:bg-[#025798]/90 transition duration-300"
         onClick={() => window.location.reload()}
       >
         Sign In
@@ -324,8 +323,8 @@ export default function SignUp() {
   };
 
   return (
-    <div className="bg-white w-full max-w-[36rem] rounded-2xl shadow-2xl p-14 mx-auto mt-10">
-      <h2 className="text-3xl font-bold text-gray-800 mb-6 text-center">
+    <div className="bg-white w-full max-w-lg rounded-2xl shadow-2xl p-6 sm:p-8 lg:p-10 mx-auto">
+      <h2 className="text-2xl lg:text-3xl font-bold text-gray-800 mb-6 text-center">
         Create Your Account
       </h2>
 

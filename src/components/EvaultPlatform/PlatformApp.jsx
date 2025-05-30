@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { useTransition, animated, config } from '@react-spring/web'; 
 import { useLocation } from 'react-router-dom';
-import MainLayout from "./layout/MainLayout";
 import Navbar from "./Navbar";
 import SignUp from "./signup/SignUp";
 import SignIn from "./signin/SignIn";
@@ -13,6 +12,8 @@ import Airtime from "./Dashboard/Services/Airtime";
 import Electricity from "./Dashboard/Services/Electricity";
 import Cable from "./Dashboard/Services/Cable";
 import InstantPayments from "./InstantPayments/InstantPayments";
+import MainLayout from "./layout/MainLayout";
+import Footer from "./Footer";
 
 function App({ initialView = "instant-payments", onBack }) {
   const location = useLocation();
@@ -45,6 +46,9 @@ function App({ initialView = "instant-payments", onBack }) {
     config: config.gentle,
     immediate: false,
   });
+
+  // Auth views that need special layout
+  const isAuthView = ["sign-in", "sign-up", "configure-security"].includes(currentView);
 
   const renderComponent = () => {
     console.log('Current view:', currentView); 
@@ -111,18 +115,26 @@ function App({ initialView = "instant-payments", onBack }) {
   return (
     <>
       <Navbar onNavigate={handleNavigation} currentView={currentView} />
-      <MainLayout>
-        {transitions((style, item) => (
-          <animated.div 
-            style={{
-              ...style,
-              width: "100%",
-              height: "100%"
-            }}
-          >
-            {renderComponent()} 
-          </animated.div>
-        ))}
+      <MainLayout isAuthView={isAuthView}>
+        <div className={`
+          ${isAuthView 
+            ? 'max-w-2xl mx-auto p-4 lg:p-8 flex items-center justify-center min-h-[calc(100vh-3.5rem)]' 
+            : 'max-w-4xl mx-auto p-4 lg:p-8'
+          }
+        `}>
+          {transitions((style, item) => (
+            <animated.div 
+              style={{
+                ...style,
+                width: "100%",
+                height: isAuthView ? "auto" : "100%"
+              }}
+              className={isAuthView ? "flex items-center justify-center" : ""}
+            >
+              {renderComponent()} 
+            </animated.div>
+          ))}
+        </div>
       </MainLayout>
     </>
   );
