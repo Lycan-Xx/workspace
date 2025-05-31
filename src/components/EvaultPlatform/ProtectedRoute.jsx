@@ -1,12 +1,11 @@
 import React from 'react';
 import { Navigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
 const ProtectedRoute = ({ children }) => {
-  // In a real-world scenario, you'd have more robust authentication check
-  const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true';
+  const { isAuthenticated } = useSelector(state => state.auth);
 
   if (!isAuthenticated) {
-    // Redirect to sign-in if not authenticated
     return <Navigate to="/sign-in" replace />;
   }
 
@@ -14,3 +13,11 @@ const ProtectedRoute = ({ children }) => {
 };
 
 export default ProtectedRoute;
+
+
+
+// - i will want to add token expiration and refresh token logic for better security. 
+// These could be done by:
+// 1. Adding an expiration timestamp to the stored auth state
+// 2. Implementing refresh token logic
+// 3. Adding automatic logout when the token expires

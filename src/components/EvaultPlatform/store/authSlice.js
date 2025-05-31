@@ -9,12 +9,30 @@ const users = [
 	{ email: 'yellow@mail.com', password: 'word', name: 'Yellow Corp', role: 'business' }
 ];
 
-const initialState = {
-	user: null,
-	isAuthenticated: false,
-	securityVerified: false,
-	error: null
+// Load initial state from localStorage
+const loadState = () => {
+  try {
+    const serializedState = localStorage.getItem('authState');
+    if (serializedState === null) {
+      return {
+        user: null,
+        isAuthenticated: false,
+        securityVerified: false,
+        error: null
+      };
+    }
+    return JSON.parse(serializedState);
+  } catch (err) {
+    return {
+      user: null,
+      isAuthenticated: false,
+      securityVerified: false,
+      error: null
+    };
+  }
 };
+
+const initialState = loadState();
 
 const authSlice = createSlice({
 	name: 'auth',
@@ -24,20 +42,28 @@ const authSlice = createSlice({
 			state.user = action.payload;
 			state.isAuthenticated = true;
 			state.error = null;
+      // Save to localStorage
+      localStorage.setItem('authState', JSON.stringify(state));
 		},
 		loginFailure: (state, action) => {
 			state.user = null;
 			state.isAuthenticated = false;
 			state.error = action.payload;
+      // Clear localStorage
+      localStorage.removeItem('authState');
 		},
 		logout: (state) => {
 			state.user = null;
 			state.isAuthenticated = false;
 			state.securityVerified = false;
 			state.error = null;
+      // Clear localStorage
+      localStorage.removeItem('authState');
 		},
 		setSecurityVerified: (state, action) => {
 			state.securityVerified = action.payload;
+      // Update localStorage
+      localStorage.setItem('authState', JSON.stringify(state));
 		}
 	}
 });
