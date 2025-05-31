@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
-import { ArrowLeft, Upload, CheckCircle, XCircle, Edit2, Save } from 'lucide-react';
+import { useSelector } from 'react-redux';
+import { ArrowLeft, Upload, CheckCircle, XCircle, Edit2, Save, Star } from 'lucide-react';
 import { clsx } from 'clsx';
 import { westAfricanCountries, statesByCountry } from '../data/locations';
 
@@ -64,6 +65,8 @@ export const FormField = ({
 export const SettingsContent = ({ setting, onBack }) => {
   const fileInputRef = useRef(null);
   const [isEditing, setIsEditing] = useState(false);
+  const userRole = useSelector(state => state.auth.user?.role);
+  
   const [formState, setFormState] = useState({
     // Account & Biodata
     profilePicture: 'https://images.unsplash.com/photo-1633332755192-727a05c4013d?auto=format&fit=crop&q=80&w=200&h=200',
@@ -411,54 +414,146 @@ export const SettingsContent = ({ setting, onBack }) => {
         );
 
       case 'account-upgrade':
+        const tiers = [
+          { 
+            id: 1, 
+            name: 'Tier 1', 
+            features: [
+              'Basic account features',
+              'Up to ₦50,000 daily transfer limit',
+              'Basic support'
+            ],
+            price: 'Free'
+          },
+          {
+            id: 2,
+            name: 'Tier 2',
+            features: [
+              'Increased daily transfer limit up to ₦200,000',
+              'Priority support',
+              'Virtual card access',
+              'Bill payments'
+            ],
+            price: '₦1,000/month'
+          },
+          {
+            id: 3,
+            name: 'Tier 3',
+            features: [
+              'Unlimited daily transfers',
+              'Premium support 24/7',
+              'Multiple virtual cards',
+              'Investment opportunities',
+              'Business tools access'
+            ],
+            price: '₦2,500/month'
+          }
+        ];
+
+        if (userRole === 'business') {
+          return (
+            <div className="space-y-6 p-4">
+              <FormField
+                label="Business Name"
+                type="text"
+                value={formState.businessName}
+                onChange={value => handleChange('businessName', value)}
+                placeholder="Enter your business name"
+                disabled={false}
+              />
+              <FormField
+                label="Business Email"
+                type="email"
+                value={formState.businessEmail}
+                onChange={value => handleChange('businessEmail', value)}
+                placeholder="Enter your business email"
+                disabled={false}
+              />
+              <div className="p-4">
+                <label className="flex items-center">
+                  <input
+                    type="checkbox"
+                    checked={formState.upgradeTermsAccepted}
+                    onChange={e => handleChange('upgradeTermsAccepted', e.target.checked)}
+                    className="mr-2"
+                  />
+                  <span className="text-sm text-gray-700">
+                    I accept the terms and conditions for the upgrade
+                  </span>
+                </label>
+              </div>
+              <div className="p-4">
+                <button
+                  onClick={() => alert('Account upgraded successfully!')}
+                  disabled={
+                    !formState.businessName ||
+                    !formState.businessEmail ||
+                    !formState.upgradeTermsAccepted
+                  }
+                  className={clsx(
+                    "w-full py-3 rounded-md text-white font-bold text-lg flex justify-center items-center transition duration-500",
+                    formState.businessName && formState.businessEmail && formState.upgradeTermsAccepted
+                      ? "bg-blue-500 hover:bg-blue-600"
+                      : "bg-gray-300 cursor-not-allowed"
+                  )}
+                >
+                  Upgrade Account
+                </button>
+              </div>
+            </div>
+          );
+        }
+        
+        // Personal account tiers interface
         return (
           <div className="space-y-6 p-4">
-            <FormField
-              label="Business Name"
-              type="text"
-              value={formState.businessName}
-              onChange={value => handleChange('businessName', value)}
-              placeholder="Enter your business name"
-              disabled={false}
-            />
-            <FormField
-              label="Business Email"
-              type="email"
-              value={formState.businessEmail}
-              onChange={value => handleChange('businessEmail', value)}
-              placeholder="Enter your business email"
-              disabled={false}
-            />
-            <div className="p-4">
-              <label className="flex items-center">
-                <input
-                  type="checkbox"
-                  checked={formState.upgradeTermsAccepted}
-                  onChange={e => handleChange('upgradeTermsAccepted', e.target.checked)}
-                  className="mr-2"
-                />
-                <span className="text-sm text-gray-700">
-                  I accept the terms and conditions for the upgrade
-                </span>
-              </label>
-            </div>
-            <div className="p-4">
-              <button
-                onClick={() => alert('Account upgraded successfully!')}
-                disabled={
-                  !formState.businessName ||
-                  !formState.businessEmail ||
-                  !formState.upgradeTermsAccepted
-                }
-                className={clsx(
-                  "w-full py-3 rounded-md text-white font-bold text-lg flex justify-center items-center transition duration-500",
-                  formState.businessName && formState.businessEmail && formState.upgradeTermsAccepted
-                    ? "bg-blue-500 hover:bg-blue-600"
-                    : "bg-gray-300 cursor-not-allowed"
-                )}
-              >
-                Upgrade Account
-              </button>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {tiers.map((tier) => (
+                <div 
+                  key={tier.id}
+                  className={clsx(
+                    "rounded-xl border p-6 space-y-4",
+                    tier.id === 2 ? "border-blue-500 shadow-lg" : "border-gray-200"
+                  )}
+                >
+                  <div className="text-center">
+                    <div className="flex items-center justify-center mb-2">
+                      <Star 
+                        className={clsx(
+                          "w-8 h-8",
+                          tier.id === 1 ? "text-gray-400" :
+                          tier.id === 2 ? "text-blue-500" :
+                          "text-purple-500"
+                        )}
+                        fill="currentColor" 
+                      />
+                    </div>
+                    <h3 className="text-xl font-bold">{tier.name}</h3>
+                    <p className="text-2xl font-bold mt-2 text-gray-900">{tier.price}</p>
+                  </div>
+                  <div className="space-y-2">
+                    {tier.features.map((feature, index) => (
+                      <div key={index} className="flex items-center">
+                        <CheckCircle className="w-5 h-5 text-green-500 mr-2" />
+                        <span className="text-gray-600 text-sm">{feature}</span>
+                      </div>
+                    ))}
+                  </div>
+                  <button
+                    onClick={() => alert(`Upgrading to ${tier.name}...`)}
+                    className={clsx(
+                      "w-full py-2 rounded-lg font-medium mt-4 transition-colors",
+                      tier.id === 1 
+                        ? "bg-gray-100 text-gray-800 hover:bg-gray-200"
+                        : tier.id === 2
+                        ? "bg-blue-500 text-white hover:bg-blue-600"
+                        : "bg-purple-500 text-white hover:bg-purple-600"
+                    )}
+                  >
+                    {tier.id === 1 ? 'Current Plan' : 'Upgrade'}
+                  </button>
+                </div>
+              ))}
             </div>
           </div>
         );

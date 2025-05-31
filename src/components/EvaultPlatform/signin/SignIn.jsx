@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useDispatch, useSelector } from 'react-redux';
 import { login } from '../store/authSlice';
 import { Eye, EyeOff, Mail } from "lucide-react";
+import { useNavigate } from 'react-router-dom';
 
 function SuccessStep({ onContinue }) {
   return (
@@ -29,6 +30,7 @@ export default function SignIn({ onContinue, onSignUp }) {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const error = useSelector(state => state.auth.error);
 
   const Steps = {
@@ -40,7 +42,8 @@ export default function SignIn({ onContinue, onSignUp }) {
     e.preventDefault();
     const success = await dispatch(login({ email, password }));
     if (success) {
-      setCurrentStep(Steps.SUCCESS);
+      // Directly navigate to dashboard instead of security
+      navigate('/dashboard');
     }
   };
 
