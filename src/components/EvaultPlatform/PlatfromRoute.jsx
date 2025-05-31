@@ -1,51 +1,51 @@
 import React, { useEffect } from 'react';
-import { HashRouter, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
+import { HashRouter, Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import PlatformApp from './PlatformApp';
 import Dashboard from './Dashboard/Dashboard';
 import ConfigureSecurity from './security/ConfigureSecurity';
 
 const PrivateRoute = ({ children }) => {
-  const { isAuthenticated, securityVerified } = useSelector(state => state.auth);
+  const { isAuthenticated } = useSelector(state => state.auth);
   const navigate = useNavigate();
+  const location = useLocation();
+  const isUpgradeSecurityCheck = location.pathname === '/security' && location.state?.fromUpgrade;
 
   useEffect(() => {
     if (!isAuthenticated) {
       navigate('/sign-in');
-    } else if (!securityVerified) {
-      navigate('/security');
     }
-  }, [isAuthenticated, securityVerified, navigate]);
+  }, [isAuthenticated, navigate]);
 
-  return isAuthenticated && securityVerified ? children : null;
+  return isAuthenticated ? children : null;
 };
 
 const SecurityRoute = ({ children }) => {
-  const { isAuthenticated, securityVerified } = useSelector(state => state.auth);
+  const { isAuthenticated } = useSelector(state => state.auth);
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     if (!isAuthenticated) {
       navigate('/sign-in');
-    } else if (securityVerified) {
+    } else if (!location.state?.fromUpgrade) {
+      // If not coming from upgrade flow, redirect to dashboard
       navigate('/dashboard');
     }
-  }, [isAuthenticated, securityVerified, navigate]);
+  }, [isAuthenticated, navigate, location]);
 
-  return isAuthenticated && !securityVerified ? children : null;
+  return isAuthenticated ? children : null;
 };
 
 const PublicRoute = ({ children }) => {
-  const { isAuthenticated, securityVerified } = useSelector(state => state.auth);
+  const { isAuthenticated } = useSelector(state => state.auth);
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (isAuthenticated && securityVerified) {
+    if (isAuthenticated) {
       navigate('/dashboard');
-    } else if (isAuthenticated && !securityVerified) {
-      navigate('/security');
     }
-  }, [isAuthenticated, securityVerified, navigate]);
+  }, [isAuthenticated, navigate]);
 
   return !isAuthenticated ? children : null;
 };

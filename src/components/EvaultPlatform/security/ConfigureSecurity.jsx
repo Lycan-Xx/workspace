@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import { setSecurityVerified } from '../../EvaultPlatform/store/authSlice';
 import ProgressBar from './ProgressBar';
 import InitialStep from './InitialStep';
 import LoadingStep from './LoadingStep';
@@ -10,10 +9,12 @@ import SuccessStep from './SuccessStep';
 
 const ConfigureSecurity = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const dispatch = useDispatch();
   const [step, setStep] = useState(1);
   const [verificationData, setVerificationData] = useState(null);
   const [locationData, setLocationData] = useState(null);
+  const { fromUpgrade, upgradeToTier } = location.state || {};
 
   const handleInitialStepComplete = (data) => {
     setVerificationData(data);
@@ -30,12 +31,25 @@ const ConfigureSecurity = () => {
   };
 
   const handleCompletion = () => {
-    dispatch(setSecurityVerified(true));
-    navigate('/dashboard');
+    if (fromUpgrade) {
+      // Navigate back to settings with successful upgrade
+      navigate('/settings', { 
+        state: { 
+          upgradedToTier: upgradeToTier,
+          verificationComplete: true 
+        } 
+      });
+    } else {
+      navigate('/dashboard');
+    }
   };
 
   const handleSkip = () => {
-    dispatch(setSecurityVerified(true));
+    // Don't allow skipping during upgrade flow
+    if (fromUpgrade) {
+      navigate('/settings');
+      return;
+    }
     navigate('/dashboard');
   };
 

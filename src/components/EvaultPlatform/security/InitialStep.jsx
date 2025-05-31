@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Shield, AlertCircle } from 'lucide-react';
+import { useLocation } from 'react-router-dom';
 import SecurityStep from './SecurityStep';
 
 const InitialStep = ({ onNext, onSkip }) => {
   const [verificationMethod, setVerificationMethod] = useState('BVN');
   const [inputValue, setInputValue] = useState('');
   const [error, setError] = useState('');
+  const location = useLocation();
+  const isUpgradeFlow = location.state?.fromUpgrade;
 
   const handleInputChange = (e) => {
     const value = e.target.value.replace(/\D/g, '').slice(0, 11);
@@ -32,8 +35,14 @@ const InitialStep = ({ onNext, onSkip }) => {
         />
       </div>
       <div className="text-center space-y-4">
-        <h2 className="text-2xl font-bold text-gray-800">Verify Your Identity</h2>
-        <p className="text-gray-600">Choose your preferred verification method</p>
+        <h2 className="text-2xl font-bold text-gray-800">
+          {isUpgradeFlow ? 'Verify Identity for Account Upgrade' : 'Verify Your Identity'}
+        </h2>
+        <p className="text-gray-600">
+          {isUpgradeFlow 
+            ? 'To upgrade your account, please verify your identity using one of the following methods'
+            : 'Choose your preferred verification method'}
+        </p>
       </div>
       <div className="w-full space-y-6">
         <div className="flex justify-center space-x-6">
@@ -77,12 +86,14 @@ const InitialStep = ({ onNext, onSkip }) => {
         </div>
       </div>
       <div className="flex justify-between w-full mt-8">
-        <button
-          onClick={onSkip}
-          className="px-6 py-2 text-gray-600 hover:text-[#025798] border rounded-xl transition-colors"
-        >
-          Skip for now
-        </button>
+        {!isUpgradeFlow && (
+          <button
+            onClick={onSkip}
+            className="px-6 py-2 text-gray-600 hover:text-[#025798] border rounded-xl transition-colors"
+          >
+            Skip for now
+          </button>
+        )}
         <button
           onClick={handleVerify}
           disabled={inputValue.length !== 11}

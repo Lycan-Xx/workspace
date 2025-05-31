@@ -1,8 +1,10 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { ArrowLeft, Upload, CheckCircle, XCircle, Edit2, Save, Star } from 'lucide-react';
 import { clsx } from 'clsx';
 import { westAfricanCountries, statesByCountry } from '../data/locations';
+import { useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 export const FormField = ({ 
   label, 
@@ -66,6 +68,18 @@ export const SettingsContent = ({ setting, onBack }) => {
   const fileInputRef = useRef(null);
   const [isEditing, setIsEditing] = useState(false);
   const userRole = useSelector(state => state.auth.user?.role);
+  const navigate = useNavigate();
+  const location = useLocation();
+  
+  // Handle successful upgrade return from security verification
+  useEffect(() => {
+    if (location.state?.verificationComplete && location.state?.upgradedToTier) {
+      // Update the tier state if verification was successful
+      setCurrentTier(location.state.upgradedToTier);
+      // Clear the location state to prevent re-updating on re-renders
+      navigate('/settings', { replace: true });
+    }
+  }, [location.state, navigate]);
   
   const [formState, setFormState] = useState({
     // Account & Biodata
@@ -504,56 +518,88 @@ export const SettingsContent = ({ setting, onBack }) => {
           );
         }
         
-        // Personal account tiers interface
+        // Personal account tiers interface (stateful, with banner and upgrade restrictions)
+        const [currentTier, setCurrentTier] = useState(1);
+
+        const currentTierObj = tiers.find(t => t.id === currentTier);
+
         return (
           <div className="space-y-6 p-4">
+            {/* Current Tier Banner */}
+            <div className="mb-6 p-4 rounded-lg bg-blue-50 border border-blue-200 flex items-center">
+              <Star className={clsx("w-8 h-8 mr-4",
+                currentTier === 1 ? "text-gray-400" :
+                currentTier === 2 ? "text-blue-500" :
+                "text-purple-500"
+              )} fill="currentColor" />
+              <div>
+                <div className="font-bold text-lg text-blue-900">Current Tier: {currentTierObj.name}</div>
+                <div className="text-gray-700 text-sm mt-1">{currentTierObj.features.join(', ')}</div>
+              </div>
+            </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {tiers.map((tier) => (
-                <div 
-                  key={tier.id}
-                  className={clsx(
-                    "rounded-xl border p-6 space-y-4",
-                    tier.id === 2 ? "border-blue-500 shadow-lg" : "border-gray-200"
-                  )}
-                >
-                  <div className="text-center">
-                    <div className="flex items-center justify-center mb-2">
-                      <Star 
-                        className={clsx(
-                          "w-8 h-8",
-                          tier.id === 1 ? "text-gray-400" :
-                          tier.id === 2 ? "text-blue-500" :
-                          "text-purple-500"
-                        )}
-                        fill="currentColor" 
-                      />
-                    </div>
-                    <h3 className="text-xl font-bold">{tier.name}</h3>
-                    <p className="text-2xl font-bold mt-2 text-gray-900">{tier.price}</p>
-                  </div>
-                  <div className="space-y-2">
-                    {tier.features.map((feature, index) => (
-                      <div key={index} className="flex items-center">
-                        <CheckCircle className="w-5 h-5 text-green-500 mr-2" />
-                        <span className="text-gray-600 text-sm">{feature}</span>
-                      </div>
-                    ))}
-                  </div>
-                  <button
-                    onClick={() => alert(`Upgrading to ${tier.name}...`)}
+              {tiers.map((tier) => {
+                // Only allow upgrade to the next tier
+                const isCurrent = tier.id === currentTier;
+                const isNext = tier.id === currentTier + 1;
+                return (
+                  <div 
+                    key={tier.id}
                     className={clsx(
-                      "w-full py-2 rounded-lg font-medium mt-4 transition-colors",
-                      tier.id === 1 
-                        ? "bg-gray-100 text-gray-800 hover:bg-gray-200"
-                        : tier.id === 2
-                        ? "bg-blue-500 text-white hover:bg-blue-600"
-                        : "bg-purple-500 text-white hover:bg-purple-600"
+                      "rounded-xl border p-6 space-y-4",
+                      isCurrent ? "border-blue-500 shadow-lg" : "border-gray-200"
                     )}
                   >
-                    {tier.id === 1 ? 'Current Plan' : 'Upgrade'}
-                  </button>
-                </div>
-              ))}
+                    <div className="text-center">
+                      <div className="flex items-center justify-center mb-2">
+                        <Star 
+                          className={clsx(
+                            "w-8 h-8",
+                            tier.id === 1 ? "text-gray-400" :
+                            tier.id === 2 ? "text-blue-500" :
+                            "text-purple-500"
+                          )}
+                          fill="currentColor" 
+                        />
+                      </div>
+                      <h3 className="text-xl font-bold">{tier.name}</h3>
+                      <p className="text-2xl font-bold mt-2 text-gray-900">{tier.price}</p>
+                    </div>
+                    <div className="space-y-2">
+                      {tier.features.map((feature, index) => (
+                        <div key={index} className="flex items-center">
+                          <CheckCircle className="w-5 h-5 text-green-500 mr-2" />
+                          <span className="text-gray-600 text-sm">{feature}</span>
+                        </div>
+                      ))}
+                    </div>
+                    <button
+                      onClick={() => {
+                        if (isNext) {
+                          // Navigate to security verification first
+                          navigate('/security', { 
+                            state: { 
+                              upgradeToTier: tier.id,
+                              fromUpgrade: true
+                            } 
+                          });
+                        }
+                      }}
+                      disabled={!isNext}
+                      className={clsx(
+                        "w-full py-2 rounded-lg font-medium mt-4 transition-colors",
+                        isCurrent
+                          ? "bg-gray-100 text-gray-800 cursor-default"
+                          : isNext
+                          ? "bg-blue-500 text-white hover:bg-blue-600"
+                          : "bg-gray-200 text-gray-400 cursor-not-allowed"
+                      )}
+                    >
+                      {isCurrent ? 'Current Plan' : isNext ? 'Upgrade' : 'Locked'}
+                    </button>
+                  </div>
+                );
+              })}
             </div>
           </div>
         );
