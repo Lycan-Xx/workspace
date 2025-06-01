@@ -50,7 +50,8 @@ const Sidebar = ({ user, selectedTab, setSelectedTab, setIsSidebarCollapsed }) =
 
   const handleLogout = () => {
     dispatch(logout());
-    navigate('/sign-in');
+    // Clear any other state or storage if needed
+    navigate('/sign-in', { replace: true }); // Using replace to prevent going back to dashboard
   };
 
   const SidebarContent = () => (

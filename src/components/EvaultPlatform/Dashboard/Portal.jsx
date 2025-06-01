@@ -1,6 +1,5 @@
-
-import { useEffect, useState } from 'react';
-import { createPortal } from 'react-dom';
+import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 
 const Portal = ({ children }) => {
   const [mounted, setMounted] = useState(false);
@@ -8,14 +7,14 @@ const Portal = ({ children }) => {
 
   useEffect(() => {
     // Create or get the portal root element
-    let root = document.getElementById('portal-root');
-    
+    let root = document.getElementById("portal-root");
+
     if (!root) {
-      root = document.createElement('div');
-      root.id = 'portal-root';
+      root = document.createElement("div");
+      root.id = "portal-root";
       document.body.appendChild(root);
     }
-    
+
     setPortalRoot(root);
     setMounted(true);
 

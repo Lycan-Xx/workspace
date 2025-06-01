@@ -4,7 +4,14 @@ import HomeContent from "./layout/HomeContent";
 import ContentRenderer from "./layout/ContentRenderer";
 import TransferForm from "./TabContents/TransferForm";
 import VirtualCardRequest from "./VirtualCardRequest";
-import { FaGlobe, FaSchool, FaPhoneAlt, FaBolt, FaReceipt, FaTv } from "react-icons/fa";
+import {
+  FaGlobe,
+  FaSchool,
+  FaPhoneAlt,
+  FaBolt,
+  FaReceipt,
+  FaTv,
+} from "react-icons/fa";
 
 // Service components
 import Databundles from "./Services/Databundles";
@@ -96,12 +103,12 @@ const Dashboard = () => {
   };
 
   const handleAddCard = (newCard) => {
-    setCardData(prevCards => [...prevCards, newCard]);
+    setCardData((prevCards) => [...prevCards, newCard]);
     setShowVirtualCardRequest(false);
   };
 
   const handleSettingSelect = (setting) => {
-    setSelectedTab('Settings');
+    setSelectedTab("Settings");
     setSelectedSetting(setting);
   };
 
@@ -158,8 +165,8 @@ const Dashboard = () => {
           cardData={cardData}
           setCardData={setCardData}
         />
-        <ContentRenderer 
-          selectedTab={selectedTab} 
+        <ContentRenderer
+          selectedTab={selectedTab}
           selectedSetting={selectedSetting}
         />
       </>
@@ -180,7 +187,7 @@ const Dashboard = () => {
 
       {/* Modals */}
       {showVirtualCardRequest && (
-        <VirtualCardRequest 
+        <VirtualCardRequest
           onClose={() => setShowVirtualCardRequest(false)}
           addCard={handleAddCard}
         />

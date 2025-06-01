@@ -2,7 +2,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { CheckCircle, User, Calendar, MapPin } from 'lucide-react';
-import SecurityStep from './SecurityStep';
+import SecurityStep from '../shared/SecurityStep';
 
 const BvnSuccessStep = ({ verifiedData, onContinue }) => {
   // Mock verified data (in real implementation, this would come from BVN verification API)

@@ -13,7 +13,8 @@ import { clsx } from "clsx";
 import { westAfricanCountries, statesByCountry } from "../data/locations";
 import { useLocation } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import Tier2Upgrade from "../../../security/Tier2Upgrade";
+import Tier2Upgrade from "../../../account-upgrades/tier2/Tier2Upgrade";
+import Tier3Upgrade from "../../../account-upgrades/tier3/Tier3Upgrade";
 
 export const FormField = ({
   label,
@@ -31,6 +32,16 @@ export const FormField = ({
     disabled && "bg-gray-50 cursor-not-allowed opacity-75",
   );
 
+  // Ensure value is handled correctly based on type
+  const getSafeValue = () => {
+    if (type === "toggle") {
+      return Boolean(value);
+    }
+    return value !== null && value !== undefined ? String(value) : '';
+  };
+
+  const safeValue = getSafeValue();
+
   switch (type) {
     case "select":
       return (
@@ -40,17 +51,33 @@ export const FormField = ({
           </label>
           <select
             className={inputClasses}
-            value={value}
+            value={String(safeValue)}
             onChange={(e) => onChange(e.target.value)}
             disabled={disabled}
           >
             <option value="">Select {label}</option>
-            {options.map((option) => (
+            {options && options.map((option) => (
               <option key={option.value} value={option.value}>
                 {option.label}
               </option>
             ))}
           </select>
+        </div>
+      );
+
+    case "toggle":
+      return (
+        <div className="p-4">
+          <label className="flex items-center justify-between">
+            <span className="text-sm font-medium text-gray-700">{label}</span>
+            <input
+              type="checkbox"
+              checked={safeValue}
+              onChange={(e) => onChange(e.target.checked)}
+              disabled={disabled}
+              className="ml-2"
+            />
+          </label>
         </div>
       );
 
@@ -63,7 +90,7 @@ export const FormField = ({
           <input
             type={type}
             className={inputClasses}
-            value={value}
+            value={String(safeValue)}
             onChange={(e) => onChange(e.target.value)}
             placeholder={placeholder}
             disabled={disabled}
@@ -77,6 +104,7 @@ export const SettingsContent = ({ setting, onBack }) => {
   const fileInputRef = useRef(null);
   const [isEditing, setIsEditing] = useState(false);
   const [showTier2Upgrade, setShowTier2Upgrade] = useState(false);
+  const [showTier3Upgrade, setShowTier3Upgrade] = useState(false);
   const [currentTier, setCurrentTier] = useState(1);
   const userRole = useSelector((state) => state.auth.user?.role);
   const navigate = useNavigate();
@@ -158,6 +186,17 @@ export const SettingsContent = ({ setting, onBack }) => {
 
   const handleTier2UpgradeCancel = () => {
     setShowTier2Upgrade(false);
+  };
+
+        const handleTier3UpgradeComplete = (upgradeData) => {
+    console.log('Tier 3 upgrade completed:', upgradeData);
+    setCurrentTier(3);
+    setShowTier3Upgrade(false);
+    // You can save the upgrade data to your backend here
+  };
+
+  const handleTier3UpgradeCancel = () => {
+    setShowTier3Upgrade(false);
   };
 
   const renderHeader = () => (
@@ -643,14 +682,9 @@ export const SettingsContent = ({ setting, onBack }) => {
                           if (tier.id === 2) {
                             // Start Tier 2 upgrade flow
                             setShowTier2Upgrade(true);
-                          } else {
-                            // Navigate to security verification for other tiers
-                            navigate("/security", {
-                              state: {
-                                upgradeToTier: tier.id,
-                                fromUpgrade: true,
-                              },
-                            });
+                          } else if (tier.id === 3) {
+                            // Start Tier 3 upgrade flow
+                            setShowTier3Upgrade(true);
                           }
                         }
                       }}
@@ -688,6 +722,11 @@ export const SettingsContent = ({ setting, onBack }) => {
         <Tier2Upgrade
           onComplete={handleTier2UpgradeComplete}
           onCancel={handleTier2UpgradeCancel}
+        />
+      ) : showTier3Upgrade ? (
+        <Tier3Upgrade
+          onComplete={handleTier3UpgradeComplete}
+          onCancel={handleTier3UpgradeCancel}
         />
       ) : (
         <>

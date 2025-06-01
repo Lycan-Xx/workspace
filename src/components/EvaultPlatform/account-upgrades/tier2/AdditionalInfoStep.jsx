@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { User } from 'lucide-react';
-import SecurityStep from './SecurityStep';
+import SecurityStep from '../shared/SecurityStep';
 
 const AdditionalInfoStep = ({ onComplete }) => {
   const [dateOfBirth, setDateOfBirth] = useState('');

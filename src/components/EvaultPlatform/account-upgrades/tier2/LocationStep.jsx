@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { MapPin } from 'lucide-react';
-import SecurityStep from './SecurityStep';
-import { nigerianStates } from './nigerianStatesData';
+import { nigerianStates } from "../shared/nigerianStatesData";
+import SecurityStep from "../shared/SecurityStep";
 
 const LocationStep = ({ onComplete }) => {
   const [state, setState] = useState('');
@@ -29,12 +29,12 @@ const LocationStep = ({ onComplete }) => {
 
   return (
     <SecurityStep>
-      <div className="w-16 h-16 text-[#025798]">
+      <div className="w-32 h-32 text-[#025798]">
         <MapPin className="w-full h-full" />
       </div>
       <div className="text-center space-y-4">
-        <h2 className="text-2xl font-bold text-gray-800">Location Details</h2>
-        <p className="text-gray-600">Please provide your location information</p>
+        <h2 className="text-2xl font-bold text-gray-800">Location Information</h2>
+        <p className="text-gray-600">Please provide your location details</p>
       </div>
       <div className="w-full space-y-4">
         <select
@@ -53,7 +53,6 @@ const LocationStep = ({ onComplete }) => {
         <select
           value={lga}
           onChange={(e) => setLga(e.target.value)}
-          disabled={!state}
           className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#025798]"
         >
           <option value="">Select LGA</option>

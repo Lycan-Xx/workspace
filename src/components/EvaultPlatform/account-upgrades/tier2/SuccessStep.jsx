@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { CheckCircle } from 'lucide-react';
-import SecurityStep from './SecurityStep';
+import SecurityStep from '../shared/SecurityStep';
 
 const SuccessStep = ({ verificationData, locationData, onComplete }) => (
   <SecurityStep>
