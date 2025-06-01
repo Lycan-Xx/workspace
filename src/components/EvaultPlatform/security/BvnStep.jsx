@@ -16,8 +16,7 @@ const BvnStep = ({ bvn, error, isLoading, onChange, onVerify }) => (
       <div className="relative">
         <input
           type="text"
-          value={bvn}
-          onChange={onChange}
+          value={bvn}          onChange={(e) => onChange(e.target.value)}
           placeholder="Enter 11-digit BVN"
           className={`w-full px-4 py-3 border ${
             error ? 'border-red-500' : 'border-gray-300'

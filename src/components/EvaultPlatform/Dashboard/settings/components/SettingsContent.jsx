@@ -1,29 +1,38 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { useSelector } from 'react-redux';
-import { ArrowLeft, Upload, CheckCircle, XCircle, Edit2, Save, Star } from 'lucide-react';
-import { clsx } from 'clsx';
-import { westAfricanCountries, statesByCountry } from '../data/locations';
-import { useLocation } from 'react-router-dom';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useRef, useEffect } from "react";
+import { useSelector } from "react-redux";
+import {
+  ArrowLeft,
+  Upload,
+  CheckCircle,
+  XCircle,
+  Edit2,
+  Save,
+  Star,
+} from "lucide-react";
+import { clsx } from "clsx";
+import { westAfricanCountries, statesByCountry } from "../data/locations";
+import { useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import Tier2Upgrade from "../../../security/Tier2Upgrade";
 
-export const FormField = ({ 
-  label, 
-  type, 
-  value, 
-  onChange, 
-  options, 
+export const FormField = ({
+  label,
+  type,
+  value,
+  onChange,
+  options,
   placeholder,
-  disabled = false 
+  disabled = false,
 }) => {
   const inputClasses = clsx(
-    'w-full p-4 border border-gray-300 rounded-lg',
-    'focus:ring-2 focus:ring-blue-500 focus:border-blue-500',
-    'transition-colors duration-200',
-    disabled && 'bg-gray-50 cursor-not-allowed opacity-75'
+    "w-full p-4 border border-gray-300 rounded-lg",
+    "focus:ring-2 focus:ring-blue-500 focus:border-blue-500",
+    "transition-colors duration-200",
+    disabled && "bg-gray-50 cursor-not-allowed opacity-75",
   );
 
   switch (type) {
-    case 'select':
+    case "select":
       return (
         <div className="p-4">
           <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -32,11 +41,11 @@ export const FormField = ({
           <select
             className={inputClasses}
             value={value}
-            onChange={e => onChange(e.target.value)}
+            onChange={(e) => onChange(e.target.value)}
             disabled={disabled}
           >
             <option value="">Select {label}</option>
-            {options.map(option => (
+            {options.map((option) => (
               <option key={option.value} value={option.value}>
                 {option.label}
               </option>
@@ -44,7 +53,7 @@ export const FormField = ({
           </select>
         </div>
       );
-    
+
     default:
       return (
         <div className="p-4">
@@ -55,7 +64,7 @@ export const FormField = ({
             type={type}
             className={inputClasses}
             value={value}
-            onChange={e => onChange(e.target.value)}
+            onChange={(e) => onChange(e.target.value)}
             placeholder={placeholder}
             disabled={disabled}
           />
@@ -67,55 +76,61 @@ export const FormField = ({
 export const SettingsContent = ({ setting, onBack }) => {
   const fileInputRef = useRef(null);
   const [isEditing, setIsEditing] = useState(false);
-  const userRole = useSelector(state => state.auth.user?.role);
+  const [showTier2Upgrade, setShowTier2Upgrade] = useState(false);
+  const [currentTier, setCurrentTier] = useState(1);
+  const userRole = useSelector((state) => state.auth.user?.role);
   const navigate = useNavigate();
   const location = useLocation();
-  
+
   // Handle successful upgrade return from security verification
   useEffect(() => {
-    if (location.state?.verificationComplete && location.state?.upgradedToTier) {
+    if (
+      location.state?.verificationComplete &&
+      location.state?.upgradedToTier
+    ) {
       // Update the tier state if verification was successful
       setCurrentTier(location.state.upgradedToTier);
       // Clear the location state to prevent re-updating on re-renders
-      navigate('/settings', { replace: true });
+      navigate("/settings", { replace: true });
     }
   }, [location.state, navigate]);
-  
+
   const [formState, setFormState] = useState({
     // Account & Biodata
-    profilePicture: 'https://images.unsplash.com/photo-1633332755192-727a05c4013d?auto=format&fit=crop&q=80&w=200&h=200',
-    fullName: '',
-    email: '',
-    phone: '',
-    dateOfBirth: '',
-    gender: 'prefer-not-to-say',
-    address: '',
-    state: '',
-    country: '',
+    profilePicture:
+      "https://images.unsplash.com/photo-1633332755192-727a05c4013d?auto=format&fit=crop&q=80&w=200&h=200",
+    fullName: "",
+    email: "",
+    phone: "",
+    dateOfBirth: "",
+    gender: "prefer-not-to-say",
+    address: "",
+    state: "",
+    country: "",
     bvnVerified: false,
     ninVerified: true,
     // Security
-    currentPassword: '',
-    newPassword: '',
+    currentPassword: "",
+    newPassword: "",
     twoFactor: false,
     // Notifications
     emailNotifications: true,
     pushNotifications: false,
     marketingEmails: false,
     // Payment
-    paymentMethod: 'card',
+    paymentMethod: "card",
     // Accessibility
-    fontSize: 'medium',
+    fontSize: "medium",
     highContrast: false,
     reducedMotion: false,
     // Account Upgrade Fields
-    businessName: '',
-    businessEmail: '',
+    businessName: "",
+    businessEmail: "",
     upgradeTermsAccepted: false,
   });
 
   const handleChange = (field, value) => {
-    setFormState(prev => ({ ...prev, [field]: value }));
+    setFormState((prev) => ({ ...prev, [field]: value }));
   };
 
   const handleImageUpload = (event) => {
@@ -123,7 +138,7 @@ export const SettingsContent = ({ setting, onBack }) => {
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        handleChange('profilePicture', reader.result);
+        handleChange("profilePicture", reader.result);
       };
       reader.readAsDataURL(file);
     }
@@ -134,16 +149,27 @@ export const SettingsContent = ({ setting, onBack }) => {
     setIsEditing(false);
   };
 
+  const handleTier2UpgradeComplete = (upgradeData) => {
+    console.log('Tier 2 upgrade completed:', upgradeData);
+    setCurrentTier(2);
+    setShowTier2Upgrade(false);
+    // You can save the upgrade data to your backend here
+  };
+
+  const handleTier2UpgradeCancel = () => {
+    setShowTier2Upgrade(false);
+  };
+
   const renderHeader = () => (
     <div className="flex justify-between items-center mb-6">
       <h2 className="text-2xl font-bold text-gray-900">{setting.title}</h2>
-      {setting.id === 'account' && (
+      {setting.id === "account" && (
         <button
-          onClick={() => isEditing ? handleSave() : setIsEditing(true)}
+          onClick={() => (isEditing ? handleSave() : setIsEditing(true))}
           className={`flex items-center px-4 py-2 rounded-lg ${
-            isEditing 
-              ? 'bg-green-600 hover:bg-green-700 text-white' 
-              : 'bg-blue-600 hover:bg-blue-700 text-white'
+            isEditing
+              ? "bg-green-600 hover:bg-green-700 text-white"
+              : "bg-blue-600 hover:bg-blue-700 text-white"
           }`}
         >
           {isEditing ? (
@@ -164,12 +190,14 @@ export const SettingsContent = ({ setting, onBack }) => {
 
   const renderContent = () => {
     switch (setting.id) {
-      case 'account':
+      case "account":
         return (
           <div className="space-y-6">
             {/* Profile Picture Section */}
             <div className="p-4">
-              <label className="block text-sm font-medium text-gray-700 mb-4">Profile Picture</label>
+              <label className="block text-sm font-medium text-gray-700 mb-4">
+                Profile Picture
+              </label>
               <div className="flex items-center space-x-6">
                 <div className="relative">
                   <img
@@ -204,7 +232,7 @@ export const SettingsContent = ({ setting, onBack }) => {
               label="Full Name"
               type="text"
               value={formState.fullName}
-              onChange={value => handleChange('fullName', value)}
+              onChange={(value) => handleChange("fullName", value)}
               placeholder="Enter your full name"
               disabled={!isEditing}
             />
@@ -212,7 +240,7 @@ export const SettingsContent = ({ setting, onBack }) => {
               label="Email Address"
               type="email"
               value={formState.email}
-              onChange={value => handleChange('email', value)}
+              onChange={(value) => handleChange("email", value)}
               placeholder="Enter your email"
               disabled={!isEditing}
             />
@@ -220,7 +248,7 @@ export const SettingsContent = ({ setting, onBack }) => {
               label="Phone Number"
               type="tel"
               value={formState.phone}
-              onChange={value => handleChange('phone', value)}
+              onChange={(value) => handleChange("phone", value)}
               placeholder="Enter your phone number"
               disabled={!isEditing}
             />
@@ -228,18 +256,18 @@ export const SettingsContent = ({ setting, onBack }) => {
               label="Date of Birth"
               type="date"
               value={formState.dateOfBirth}
-              onChange={value => handleChange('dateOfBirth', value)}
+              onChange={(value) => handleChange("dateOfBirth", value)}
               disabled={!isEditing}
             />
             <FormField
               label="Gender"
               type="select"
               value={formState.gender}
-              onChange={value => handleChange('gender', value)}
+              onChange={(value) => handleChange("gender", value)}
               options={[
-                { label: 'Male', value: 'male' },
-                { label: 'Female', value: 'female' },
-                { label: 'Prefer not to say', value: 'prefer-not-to-say' }
+                { label: "Male", value: "male" },
+                { label: "Female", value: "female" },
+                { label: "Prefer not to say", value: "prefer-not-to-say" },
               ]}
               disabled={!isEditing}
             />
@@ -247,7 +275,7 @@ export const SettingsContent = ({ setting, onBack }) => {
               label="Address"
               type="text"
               value={formState.address}
-              onChange={value => handleChange('address', value)}
+              onChange={(value) => handleChange("address", value)}
               placeholder="Enter your address"
               disabled={!isEditing}
             />
@@ -255,9 +283,9 @@ export const SettingsContent = ({ setting, onBack }) => {
               label="Country"
               type="select"
               value={formState.country}
-              onChange={value => {
-                handleChange('country', value);
-                handleChange('state', ''); // Reset state when country changes
+              onChange={(value) => {
+                handleChange("country", value);
+                handleChange("state", ""); // Reset state when country changes
               }}
               options={westAfricanCountries}
               disabled={!isEditing}
@@ -266,22 +294,30 @@ export const SettingsContent = ({ setting, onBack }) => {
               label="State/Region"
               type="select"
               value={formState.state}
-              onChange={value => handleChange('state', value)}
+              onChange={(value) => handleChange("state", value)}
               options={statesByCountry[formState.country] || []}
               disabled={!isEditing || !formState.country}
             />
 
             {/* ID Verification Status */}
             <div className="p-4">
-              <h3 className="text-lg font-medium text-gray-900 mb-4">ID Verification Status</h3>
+              <h3 className="text-lg font-medium text-gray-900 mb-4">
+                ID Verification Status
+              </h3>
               <div className="space-y-4">
-                <div className={clsx(
-                  'flex items-center justify-between p-4 rounded-lg',
-                  formState.bvnVerified ? 'bg-green-50' : 'bg-red-50'
-                )}>
+                <div
+                  className={clsx(
+                    "flex items-center justify-between p-4 rounded-lg",
+                    formState.bvnVerified ? "bg-green-50" : "bg-red-50",
+                  )}
+                >
                   <div>
-                    <h4 className="font-medium text-gray-900">BVN Verification</h4>
-                    <p className="text-sm text-gray-600">Bank Verification Number status</p>
+                    <h4 className="font-medium text-gray-900">
+                      BVN Verification
+                    </h4>
+                    <p className="text-sm text-gray-600">
+                      Bank Verification Number status
+                    </p>
                   </div>
                   {formState.bvnVerified ? (
                     <CheckCircle className="w-6 h-6 text-green-600" />
@@ -289,13 +325,19 @@ export const SettingsContent = ({ setting, onBack }) => {
                     <XCircle className="w-6 h-6 text-red-600" />
                   )}
                 </div>
-                <div className={clsx(
-                  'flex items-center justify-between p-4 rounded-lg',
-                  formState.ninVerified ? 'bg-green-50' : 'bg-red-50'
-                )}>
+                <div
+                  className={clsx(
+                    "flex items-center justify-between p-4 rounded-lg",
+                    formState.ninVerified ? "bg-green-50" : "bg-red-50",
+                  )}
+                >
                   <div>
-                    <h4 className="font-medium text-gray-900">NIN Verification</h4>
-                    <p className="text-sm text-gray-600">National Identity Number status</p>
+                    <h4 className="font-medium text-gray-900">
+                      NIN Verification
+                    </h4>
+                    <p className="text-sm text-gray-600">
+                      National Identity Number status
+                    </p>
                   </div>
                   {formState.ninVerified ? (
                     <CheckCircle className="w-6 h-6 text-green-600" />
@@ -308,14 +350,14 @@ export const SettingsContent = ({ setting, onBack }) => {
           </div>
         );
 
-      case 'security':
+      case "security":
         return (
           <>
             <FormField
               label="Current Password"
               type="password"
               value={formState.currentPassword}
-              onChange={value => handleChange('currentPassword', value)}
+              onChange={(value) => handleChange("currentPassword", value)}
               placeholder="Enter current password"
               disabled={!isEditing}
             />
@@ -323,7 +365,7 @@ export const SettingsContent = ({ setting, onBack }) => {
               label="New Password"
               type="password"
               value={formState.newPassword}
-              onChange={value => handleChange('newPassword', value)}
+              onChange={(value) => handleChange("newPassword", value)}
               placeholder="Enter new password"
               disabled={!isEditing}
             />
@@ -331,67 +373,67 @@ export const SettingsContent = ({ setting, onBack }) => {
               label="Two-Factor Authentication"
               type="toggle"
               value={formState.twoFactor}
-              onChange={value => handleChange('twoFactor', value)}
+              onChange={(value) => handleChange("twoFactor", value)}
               disabled={!isEditing}
             />
           </>
         );
 
-      case 'notifications':
+      case "notifications":
         return (
           <>
             <FormField
               label="Email Notifications"
               type="toggle"
               value={formState.emailNotifications}
-              onChange={value => handleChange('emailNotifications', value)}
+              onChange={(value) => handleChange("emailNotifications", value)}
               disabled={!isEditing}
             />
             <FormField
               label="Push Notifications"
               type="toggle"
               value={formState.pushNotifications}
-              onChange={value => handleChange('pushNotifications', value)}
+              onChange={(value) => handleChange("pushNotifications", value)}
               disabled={!isEditing}
             />
             <FormField
               label="Marketing Emails"
               type="toggle"
               value={formState.marketingEmails}
-              onChange={value => handleChange('marketingEmails', value)}
+              onChange={(value) => handleChange("marketingEmails", value)}
               disabled={!isEditing}
             />
           </>
         );
 
-      case 'payment':
+      case "payment":
         return (
           <FormField
             label="Default Payment Method"
             type="select"
             value={formState.paymentMethod}
-            onChange={value => handleChange('paymentMethod', value)}
+            onChange={(value) => handleChange("paymentMethod", value)}
             options={[
-              { label: 'Credit Card', value: 'card' },
-              { label: 'PayPal', value: 'paypal' },
-              { label: 'Bank Transfer', value: 'bank' },
+              { label: "Credit Card", value: "card" },
+              { label: "PayPal", value: "paypal" },
+              { label: "Bank Transfer", value: "bank" },
             ]}
             disabled={!isEditing}
           />
         );
 
-      case 'accessibility':
+      case "accessibility":
         return (
           <>
             <FormField
               label="Font Size"
               type="select"
               value={formState.fontSize}
-              onChange={value => handleChange('fontSize', value)}
+              onChange={(value) => handleChange("fontSize", value)}
               options={[
-                { label: 'Small', value: 'small' },
-                { label: 'Medium', value: 'medium' },
-                { label: 'Large', value: 'large' },
+                { label: "Small", value: "small" },
+                { label: "Medium", value: "medium" },
+                { label: "Large", value: "large" },
               ]}
               disabled={!isEditing}
             />
@@ -399,20 +441,20 @@ export const SettingsContent = ({ setting, onBack }) => {
               label="High Contrast"
               type="toggle"
               value={formState.highContrast}
-              onChange={value => handleChange('highContrast', value)}
+              onChange={(value) => handleChange("highContrast", value)}
               disabled={!isEditing}
             />
             <FormField
               label="Reduced Motion"
               type="toggle"
               value={formState.reducedMotion}
-              onChange={value => handleChange('reducedMotion', value)}
+              onChange={(value) => handleChange("reducedMotion", value)}
               disabled={!isEditing}
             />
           </>
         );
 
-      case 'help':
+      case "help":
         return (
           <div className="space-y-6">
             <div className="p-4 bg-gray-50 rounded-lg">
@@ -422,56 +464,58 @@ export const SettingsContent = ({ setting, onBack }) => {
             </div>
             <div className="p-4 bg-gray-50 rounded-lg">
               <h3 className="font-medium mb-2">Documentation</h3>
-              <a href="#" className="text-blue-600 hover:underline">View Documentation</a>
+              <a href="#" className="text-blue-600 hover:underline">
+                View Documentation
+              </a>
             </div>
           </div>
         );
 
-      case 'account-upgrade':
+      case "account-upgrade":
         const tiers = [
-          { 
-            id: 1, 
-            name: 'Tier 1', 
+          {
+            id: 1,
+            name: "Tier 1",
             features: [
-              'Basic account features',
-              'Up to ₦50,000 daily transfer limit',
-              'Basic support'
+              "Basic account features",
+              "Up to ₦50,000 daily transfer limit",
+              "Basic support",
             ],
-            price: 'Free'
+            price: "Free",
           },
           {
             id: 2,
-            name: 'Tier 2',
+            name: "Tier 2",
             features: [
-              'Increased daily transfer limit up to ₦200,000',
-              'Priority support',
-              'Virtual card access',
-              'Bill payments'
+              "Increased daily transfer limit up to ₦200,000",
+              "Priority support",
+              "Virtual card access",
+              "Bill payments",
             ],
-            price: '₦1,000/month'
+            price: "₦1,000/month",
           },
           {
             id: 3,
-            name: 'Tier 3',
+            name: "Tier 3",
             features: [
-              'Unlimited daily transfers',
-              'Premium support 24/7',
-              'Multiple virtual cards',
-              'Investment opportunities',
-              'Business tools access'
+              "Unlimited daily transfers",
+              "Premium support 24/7",
+              "Multiple virtual cards",
+              "Investment opportunities",
+              "Business tools access",
             ],
-            price: '₦2,500/month'
-          }
+            price: "₦2,500/month",
+          },
         ];
 
-        if (userRole === 'business') {
+        if (userRole === "business") {
           return (
             <div className="space-y-6 p-4">
               <FormField
                 label="Business Name"
                 type="text"
                 value={formState.businessName}
-                onChange={value => handleChange('businessName', value)}
+                onChange={(value) => handleChange("businessName", value)}
                 placeholder="Enter your business name"
                 disabled={false}
               />
@@ -479,7 +523,7 @@ export const SettingsContent = ({ setting, onBack }) => {
                 label="Business Email"
                 type="email"
                 value={formState.businessEmail}
-                onChange={value => handleChange('businessEmail', value)}
+                onChange={(value) => handleChange("businessEmail", value)}
                 placeholder="Enter your business email"
                 disabled={false}
               />
@@ -488,7 +532,9 @@ export const SettingsContent = ({ setting, onBack }) => {
                   <input
                     type="checkbox"
                     checked={formState.upgradeTermsAccepted}
-                    onChange={e => handleChange('upgradeTermsAccepted', e.target.checked)}
+                    onChange={(e) =>
+                      handleChange("upgradeTermsAccepted", e.target.checked)
+                    }
                     className="mr-2"
                   />
                   <span className="text-sm text-gray-700">
@@ -498,7 +544,7 @@ export const SettingsContent = ({ setting, onBack }) => {
               </div>
               <div className="p-4">
                 <button
-                  onClick={() => alert('Account upgraded successfully!')}
+                  onClick={() => alert("Account upgraded successfully!")}
                   disabled={
                     !formState.businessName ||
                     !formState.businessEmail ||
@@ -506,9 +552,11 @@ export const SettingsContent = ({ setting, onBack }) => {
                   }
                   className={clsx(
                     "w-full py-3 rounded-md text-white font-bold text-lg flex justify-center items-center transition duration-500",
-                    formState.businessName && formState.businessEmail && formState.upgradeTermsAccepted
+                    formState.businessName &&
+                      formState.businessEmail &&
+                      formState.upgradeTermsAccepted
                       ? "bg-blue-500 hover:bg-blue-600"
-                      : "bg-gray-300 cursor-not-allowed"
+                      : "bg-gray-300 cursor-not-allowed",
                   )}
                 >
                   Upgrade Account
@@ -517,24 +565,32 @@ export const SettingsContent = ({ setting, onBack }) => {
             </div>
           );
         }
-        
-        // Personal account tiers interface (stateful, with banner and upgrade restrictions)
-        const [currentTier, setCurrentTier] = useState(1);
 
-        const currentTierObj = tiers.find(t => t.id === currentTier);
+        // Personal account tiers interface (stateful, with banner and upgrade restrictions)
+        const currentTierObj = tiers.find((t) => t.id === currentTier);
 
         return (
           <div className="space-y-6 p-4">
             {/* Current Tier Banner */}
             <div className="mb-6 p-4 rounded-lg bg-blue-50 border border-blue-200 flex items-center">
-              <Star className={clsx("w-8 h-8 mr-4",
-                currentTier === 1 ? "text-gray-400" :
-                currentTier === 2 ? "text-blue-500" :
-                "text-purple-500"
-              )} fill="currentColor" />
+              <Star
+                className={clsx(
+                  "w-8 h-8 mr-4",
+                  currentTier === 1
+                    ? "text-gray-400"
+                    : currentTier === 2
+                      ? "text-blue-500"
+                      : "text-purple-500",
+                )}
+                fill="currentColor"
+              />
               <div>
-                <div className="font-bold text-lg text-blue-900">Current Tier: {currentTierObj.name}</div>
-                <div className="text-gray-700 text-sm mt-1">{currentTierObj.features.join(', ')}</div>
+                <div className="font-bold text-lg text-blue-900">
+                  Current Tier: {currentTierObj.name}
+                </div>
+                <div className="text-gray-700 text-sm mt-1">
+                  {currentTierObj.features.join(", ")}
+                </div>
               </div>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -543,46 +599,59 @@ export const SettingsContent = ({ setting, onBack }) => {
                 const isCurrent = tier.id === currentTier;
                 const isNext = tier.id === currentTier + 1;
                 return (
-                  <div 
+                  <div
                     key={tier.id}
                     className={clsx(
                       "rounded-xl border p-6 space-y-4",
-                      isCurrent ? "border-blue-500 shadow-lg" : "border-gray-200"
+                      isCurrent
+                        ? "border-blue-500 shadow-lg"
+                        : "border-gray-200",
                     )}
                   >
                     <div className="text-center">
                       <div className="flex items-center justify-center mb-2">
-                        <Star 
+                        <Star
                           className={clsx(
                             "w-8 h-8",
-                            tier.id === 1 ? "text-gray-400" :
-                            tier.id === 2 ? "text-blue-500" :
-                            "text-purple-500"
+                            tier.id === 1
+                              ? "text-gray-400"
+                              : tier.id === 2
+                                ? "text-blue-500"
+                                : "text-purple-500",
                           )}
-                          fill="currentColor" 
+                          fill="currentColor"
                         />
                       </div>
                       <h3 className="text-xl font-bold">{tier.name}</h3>
-                      <p className="text-2xl font-bold mt-2 text-gray-900">{tier.price}</p>
+                      <p className="text-2xl font-bold mt-2 text-gray-900">
+                        {tier.price}
+                      </p>
                     </div>
                     <div className="space-y-2">
                       {tier.features.map((feature, index) => (
                         <div key={index} className="flex items-center">
                           <CheckCircle className="w-5 h-5 text-green-500 mr-2" />
-                          <span className="text-gray-600 text-sm">{feature}</span>
+                          <span className="text-gray-600 text-sm">
+                            {feature}
+                          </span>
                         </div>
                       ))}
                     </div>
                     <button
                       onClick={() => {
                         if (isNext) {
-                          // Navigate to security verification first
-                          navigate('/security', { 
-                            state: { 
-                              upgradeToTier: tier.id,
-                              fromUpgrade: true
-                            } 
-                          });
+                          if (tier.id === 2) {
+                            // Start Tier 2 upgrade flow
+                            setShowTier2Upgrade(true);
+                          } else {
+                            // Navigate to security verification for other tiers
+                            navigate("/security", {
+                              state: {
+                                upgradeToTier: tier.id,
+                                fromUpgrade: true,
+                              },
+                            });
+                          }
                         }
                       }}
                       disabled={!isNext}
@@ -591,11 +660,15 @@ export const SettingsContent = ({ setting, onBack }) => {
                         isCurrent
                           ? "bg-gray-100 text-gray-800 cursor-default"
                           : isNext
-                          ? "bg-blue-500 text-white hover:bg-blue-600"
-                          : "bg-gray-200 text-gray-400 cursor-not-allowed"
+                            ? "bg-blue-500 text-white hover:bg-blue-600"
+                            : "bg-gray-200 text-gray-400 cursor-not-allowed",
                       )}
                     >
-                      {isCurrent ? 'Current Plan' : isNext ? 'Upgrade' : 'Locked'}
+                      {isCurrent
+                        ? "Current Plan"
+                        : isNext
+                          ? "Upgrade"
+                          : "Locked"}
                     </button>
                   </div>
                 );
@@ -611,24 +684,31 @@ export const SettingsContent = ({ setting, onBack }) => {
 
   return (
     <div>
-      <button
-        onClick={onBack}
-        className="mb-6 inline-flex items-center text-gray-600 hover:text-gray-900"
-      >
-        <ArrowLeft className="w-5 h-5 mr-2" />
-        Back to Settings
-      </button>
-      
-      <div className="bg-white rounded-xl shadow-sm">
-        <div className="p-8 border-b border-gray-200">
-          {renderHeader()}
-          <p className="text-gray-600 mt-2">{setting.description}</p>
-        </div>
-        
-        <div className="divide-y divide-gray-200">
-          {renderContent()}
-        </div>
-      </div>
+      {showTier2Upgrade ? (
+        <Tier2Upgrade
+          onComplete={handleTier2UpgradeComplete}
+          onCancel={handleTier2UpgradeCancel}
+        />
+      ) : (
+        <>
+          <button
+            onClick={onBack}
+            className="mb-6 inline-flex items-center text-gray-600 hover:text-gray-900"
+          >
+            <ArrowLeft className="w-5 h-5 mr-2" />
+            Back to Settings
+          </button>
+
+          <div className="bg-white rounded-xl shadow-sm">
+            <div className="p-8 border-b border-gray-200">
+              {renderHeader()}
+              <p className="text-gray-600 mt-2">{setting.description}</p>
+            </div>
+
+            <div className="divide-y divide-gray-200">{renderContent()}</div>
+          </div>
+        </>
+      )}
     </div>
   );
 };
