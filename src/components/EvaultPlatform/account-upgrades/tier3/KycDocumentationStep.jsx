@@ -2,7 +2,7 @@
 import React, { useState, useRef } from "react";
 import PropTypes from "prop-types";
 import { Camera, CheckCircle, SkipForward, User } from "lucide-react";
-import SecurityStep from "./SecurityStep";
+import SecurityStep from "../shared/SecurityStep";
 
 const KycDocumentationStep = ({ verifiedData, onComplete }) => {
   const [capturedImage, setCapturedImage] = useState(null);

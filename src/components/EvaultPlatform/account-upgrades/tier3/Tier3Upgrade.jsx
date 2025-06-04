@@ -2,36 +2,39 @@ import React, { useState } from "react";
 import PropTypes from "prop-types";
 import { useNavigate } from "react-router-dom";
 import LoadingStep from "../shared/LoadingStep";
-import BusinessKycStep from "./BusinessKycStep";
-import LocationStep from "../tier2/LocationStep";
+import IdVerificationStep from "./IdVerificationStep";
+import KycDocumentationStep from "./KycDocumentationStep";
 import Tier3SuccessStep from "./Tier3SuccessStep";
 
 const Tier3Upgrade = ({ onComplete, onCancel }) => {
   const navigate = useNavigate();
-  const [currentStep, setCurrentStep] = useState("kyc");
+  const [currentStep, setCurrentStep] = useState("id-verification");
   const [kycData, setKycData] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [verificationData, setVerificationData] = useState({});
-  const [locationData, setLocationData] = useState({});
 
-  const handleKycComplete = (data) => {
-    setKycData(data);
+  const handleIdVerification = (idType, idNumber, document) => {
     setIsLoading(true);
     setCurrentStep("loading");
 
     // Simulate API verification
     setTimeout(() => {
       setVerificationData({
-        method: "Business KYC",
-        value: data.businessRegistration,
+        idType,
+        idNumber,
+        documentUrl: URL.createObjectURL(document),
         verified: true,
+        name: "John Doe", // This would come from the API
+        dateOfBirth: "1990-01-01", // This would come from the API
+        dateOfIssuance: "2020-01-01", // This would come from the API
+        expiryDate: "2025-01-01", // This would come from the API
       });
-      setCurrentStep("location");
+      setCurrentStep("kyc");
     }, 3000);
   };
 
-  const handleLocationComplete = (data) => {
-    setLocationData(data);
+  const handleKycComplete = (data) => {
+    setKycData(data);
     setCurrentStep("success");
   };
 
@@ -39,29 +42,30 @@ const Tier3Upgrade = ({ onComplete, onCancel }) => {
     onComplete({
       tier: 3,
       verificationData,
-      locationData,
       kycData,
     });
   };
 
   const renderStep = () => {
     switch (currentStep) {
-      case "kyc":
+      case "id-verification":
         return (
-          <BusinessKycStep
-            onComplete={handleKycComplete}
+          <IdVerificationStep
+            onVerify={handleIdVerification}
+            isLoading={isLoading}
           />
         );
       case "loading":
         return (
           <LoadingStep
-            onAnimationComplete={() => setCurrentStep("location")}
+            onAnimationComplete={() => setIsLoading(false)}
           />
         );
-      case "location":
+      case "kyc":
         return (
-          <LocationStep
-            onComplete={handleLocationComplete}
+          <KycDocumentationStep
+            verifiedData={verificationData}
+            onComplete={handleKycComplete}
           />
         );
       case "success":
@@ -86,7 +90,7 @@ const Tier3Upgrade = ({ onComplete, onCancel }) => {
               className="h-full bg-[#025798]"
               style={{
                 width: `${
-                  ((["kyc", "loading", "location", "success"].indexOf(currentStep) + 1) / 4) * 100
+                  ((["id-verification", "loading", "kyc", "success"].indexOf(currentStep) + 1) / 4) * 100
                 }%`,
                 transition: "width 0.5s ease-in-out",
               }}

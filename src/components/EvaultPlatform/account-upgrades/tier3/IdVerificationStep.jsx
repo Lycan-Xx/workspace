@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
 import { CreditCard, Upload, AlertCircle, Check } from "lucide-react";
-import SecurityStep from "./SecurityStep";
+import SecurityStep from "../shared/SecurityStep";
 
 const IdVerificationStep = ({ onVerify, isLoading }) => {
   const [selectedIdType, setSelectedIdType] = useState("");
