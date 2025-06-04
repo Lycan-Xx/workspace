@@ -15,6 +15,9 @@ import { useLocation } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import Tier2Upgrade from "../../../account-upgrades/tier2/Tier2Upgrade";
 import Tier3Upgrade from "../../../account-upgrades/tier3/Tier3Upgrade";
+import BusinessKycStep from "../../../account-upgrades/business-upgrade/BusinessKycStep";
+import LoadingStep from "../../../account-upgrades/shared/LoadingStep";
+import BusinessSuccessStep from "../../../account-upgrades/business-upgrade/BusinessSuccessStep";
 
 export const FormField = ({
   label,
@@ -106,6 +109,10 @@ export const SettingsContent = ({ setting, onBack }) => {
   const [showTier2Upgrade, setShowTier2Upgrade] = useState(false);
   const [showTier3Upgrade, setShowTier3Upgrade] = useState(false);
   const [currentTier, setCurrentTier] = useState(1);
+  const [showBusinessKYC, setShowBusinessKYC] = useState(false);
+  const [businessKYCData, setBusinessKYCData] = useState(null);
+  const [showBusinessSuccess, setShowBusinessSuccess] = useState(false);
+  const [isBusinessLoading, setIsBusinessLoading] = useState(false);
   const userRole = useSelector((state) => state.auth.user?.role);
   const navigate = useNavigate();
   const location = useLocation();
@@ -197,6 +204,31 @@ export const SettingsContent = ({ setting, onBack }) => {
 
   const handleTier3UpgradeCancel = () => {
     setShowTier3Upgrade(false);
+  };
+
+  const handleBusinessUpgradeStart = () => {
+    if (formState.businessName && formState.businessEmail && formState.upgradeTermsAccepted) {
+      setShowBusinessKYC(true);
+    }
+  };
+
+  const handleBusinessKYCComplete = (data) => {
+    setBusinessKYCData(data);
+    setShowBusinessKYC(false);
+    setIsBusinessLoading(true);
+    
+    // Simulate API call
+    setTimeout(() => {
+      setIsBusinessLoading(false);
+      setShowBusinessSuccess(true);
+    }, 3000);
+  };
+
+  const handleBusinessUpgradeComplete = () => {
+    // Handle final completion
+    setShowBusinessSuccess(false);
+    // You might want to refresh the page or update the UI
+    window.location.reload();
   };
 
   const renderHeader = () => (
@@ -548,6 +580,31 @@ export const SettingsContent = ({ setting, onBack }) => {
         ];
 
         if (userRole === "business") {
+          if (showBusinessKYC) {
+            return (
+              <BusinessKycStep
+                onComplete={handleBusinessKYCComplete}
+              />
+            );
+          }
+
+          if (isBusinessLoading) {
+            return (
+              <LoadingStep
+                onAnimationComplete={() => setIsBusinessLoading(false)}
+              />
+            );
+          }
+
+          if (showBusinessSuccess) {
+            return (
+              <BusinessSuccessStep
+                businessData={businessKYCData}
+                onComplete={handleBusinessUpgradeComplete}
+              />
+            );
+          }
+
           return (
             <div className="space-y-6 p-4">
               <FormField
@@ -583,7 +640,7 @@ export const SettingsContent = ({ setting, onBack }) => {
               </div>
               <div className="p-4">
                 <button
-                  onClick={() => alert("Account upgraded successfully!")}
+                  onClick={handleBusinessUpgradeStart}
                   disabled={
                     !formState.businessName ||
                     !formState.businessEmail ||
@@ -598,7 +655,7 @@ export const SettingsContent = ({ setting, onBack }) => {
                       : "bg-gray-300 cursor-not-allowed",
                   )}
                 >
-                  Upgrade Account
+                  Start Business Verification
                 </button>
               </div>
             </div>
