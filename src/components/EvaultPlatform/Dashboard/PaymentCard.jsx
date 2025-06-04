@@ -29,25 +29,35 @@ const PaymentCards = ({ onRequestCard, cards, setCards }) => {
 
   return (
     <animated.div style={cardSpring} className="relative mb-6">
-      {/* Desktop View */}
-      <div className="hidden md:grid md:grid-cols-3 gap-4">
-        {cards.map((card, index) => (
-          <PaymentCard key={index} card={card} />
-        ))}
-      </div>
+      /* Desktop View */}
+        <div className="hidden md:grid md:grid-cols-3 gap-4">
+          {cards.map((card, index) => (
+            <PaymentCard key={index} card={card} />
+          ))}
+        </div>
 
-      {/* Request Virtual Card Button */}
-      <div className="mt-4 flex justify-end">
-        <button
-          onClick={onRequestCard}
-          className="bg-blue-600 text-white px-8 py-2 mb-2 rounded-lg hover:bg-blue-700 flex items-center gap-2"
-        >
-          <i className="fas fa-credit-card"></i>
-          Request Virtual Card
-        </button>
-      </div>
+        {/* Request Virtual Card Button */}
+        <div className="mt-4 flex justify-end">
+          <button
+            onClick={onRequestCard}
+            className="bg-blue-600 text-white px-8 py-2 mb-2 rounded-lg hover:bg-blue-700 flex items-center gap-2"
+          >
+            <svg 
+          xmlns="http://www.w3.org/2000/svg" 
+          className="h-5 w-5" 
+          viewBox="0 0 24 24" 
+          fill="none" 
+          stroke="currentColor" 
+          strokeWidth="2"
+            >
+          <rect x="2" y="5" width="20" height="14" rx="2" />
+          <path d="M2 10h20" />
+            </svg>
+            Request Virtual Card
+          </button>
+        </div>
 
-      {/* Mobile View with Carousel */}
+        {/* Mobile View with Carousel */}
       <div className="md:hidden relative">
         <div className="overflow-hidden">
           <AnimatePresence mode="wait">
