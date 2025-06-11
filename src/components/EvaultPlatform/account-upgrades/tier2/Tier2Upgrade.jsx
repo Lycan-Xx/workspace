@@ -111,7 +111,7 @@ const Tier2Upgrade = ({ onComplete, onCancel }) => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100 flex items-center justify-center p-4">
+    <div className="min-h-screen flex items-center justify-center p-4">
       <div className="w-full max-w-lg bg-white rounded-xl shadow-lg">
         <div className="relative p-8">
           <div className="absolute top-0 left-0 w-full h-1 bg-gray-200">

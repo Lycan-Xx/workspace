@@ -15,9 +15,6 @@ import { useLocation } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import Tier2Upgrade from "../../../account-upgrades/tier2/Tier2Upgrade";
 import Tier3Upgrade from "../../../account-upgrades/tier3/Tier3Upgrade";
-import BusinessKycStep from "../../../account-upgrades/business-upgrade/BusinessKycStep";
-import LoadingStep from "../../../account-upgrades/shared/LoadingStep";
-import BusinessSuccessStep from "../../../account-upgrades/business-upgrade/BusinessSuccessStep";
 
 export const FormField = ({
   label,
@@ -552,30 +549,26 @@ export const SettingsContent = ({ setting, onBack }) => {
               "Up to ₦50,000 daily transfer limit",
               "Basic support",
             ],
-            price: "Free",
           },
           {
             id: 2,
             name: "Tier 2",
             features: [
+              "Dedicated account number",
               "Increased daily transfer limit up to ₦200,000",
               "Priority support",
               "Virtual card access",
               "Bill payments",
             ],
-            price: "₦1,000/month",
           },
           {
             id: 3,
             name: "Tier 3",
             features: [
-              "Unlimited daily transfers",
+              "Increased daily transfer limit up to ₦500,000",
               "Premium support 24/7",
               "Multiple virtual cards",
-              "Investment opportunities",
-              "Business tools access",
             ],
-            price: "₦2,500/month",
           },
         ];
 

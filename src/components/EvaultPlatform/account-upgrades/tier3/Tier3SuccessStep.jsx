@@ -16,7 +16,7 @@ const Tier3SuccessStep = ({ verificationData, kycData, onComplete }) => {
           Congratulations! 🎉
         </h2>
         <p className="text-gray-600">
-          You have successfully upgraded to Tier 3 Premium Account
+          You have successfully upgraded to TIER 3 (Premium Account)
         </p>
       </div>
 
@@ -30,27 +30,15 @@ const Tier3SuccessStep = ({ verificationData, kycData, onComplete }) => {
         <div className="space-y-3 text-sm text-yellow-700">
           <div className="flex items-center gap-2">
             <CheckCircle className="w-4 h-4 text-green-600" />
-            <span>Unlimited transaction limits</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <CheckCircle className="w-4 h-4 text-green-600" />
-            <span>Priority customer support</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <CheckCircle className="w-4 h-4 text-green-600" />
             <span>Advanced security features</span>
           </div>
           <div className="flex items-center gap-2">
             <CheckCircle className="w-4 h-4 text-green-600" />
-            <span>Access to premium investment options</span>
+            <span>Premium support 24/7</span>
           </div>
           <div className="flex items-center gap-2">
             <CheckCircle className="w-4 h-4 text-green-600" />
-            <span>International transfers enabled</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <CheckCircle className="w-4 h-4 text-green-600" />
-            <span>Virtual and physical debit cards</span>
+            <span>Multiple virtual cards</span>
           </div>
         </div>
       </div>
