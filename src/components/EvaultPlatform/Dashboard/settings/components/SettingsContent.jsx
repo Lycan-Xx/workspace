@@ -767,37 +767,54 @@ export const SettingsContent = ({ setting, onBack }) => {
   };
 
   return (
-    <div>
-      {showTier2Upgrade ? (
-        <Tier2Upgrade
-          onComplete={handleTier2UpgradeComplete}
-          onCancel={handleTier2UpgradeCancel}
-        />
-      ) : showTier3Upgrade ? (
-        <Tier3Upgrade
-          onComplete={handleTier3UpgradeComplete}
-          onCancel={handleTier3UpgradeCancel}
-        />
-      ) : (
-        <>
-          <button
-            onClick={onBack}
-            className="mb-6 inline-flex items-center text-gray-600 hover:text-gray-900"
-          >
-            <ArrowLeft className="w-5 h-5 mr-2" />
-            Back to Settings
-          </button>
-
-          <div className="bg-white rounded-xl shadow-sm">
-            <div className="p-8 border-b border-gray-200">
-              {renderHeader()}
-              <p className="text-gray-600 mt-2">{setting.description}</p>
+    <>
+      {/* Tier 2 Upgrade Overlay */}
+      {showTier2Upgrade && (
+        <div className="fixed inset-0 z-[9999] overflow-y-auto bg-black bg-opacity-50">
+          <div className="absolute inset-0 flex items-center justify-center p-4">
+            <div className="relative w-full max-w-2xl">
+              <Tier2Upgrade
+                onComplete={handleTier2UpgradeComplete}
+                onCancel={handleTier2UpgradeCancel}
+              />
             </div>
-
-            <div className="divide-y divide-gray-200">{renderContent()}</div>
           </div>
-        </>
+        </div>
       )}
-    </div>
+
+      {/* Tier 3 Upgrade Overlay */}
+      {showTier3Upgrade && (
+        <div className="fixed inset-0 z-[9999] overflow-y-auto bg-black bg-opacity-50">
+          <div className="absolute inset-0 flex items-center justify-center p-4">
+            <div className="relative w-full max-w-2xl">
+              <Tier3Upgrade
+                onComplete={handleTier3UpgradeComplete}
+                onCancel={handleTier3UpgradeCancel}
+              />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Main Settings Content */}
+      <div>
+        <button
+          onClick={onBack}
+          className="mb-6 inline-flex items-center text-gray-600 hover:text-gray-900"
+        >
+          <ArrowLeft className="w-5 h-5 mr-2" />
+          Back to Settings
+        </button>
+
+        <div className="bg-white rounded-xl shadow-sm">
+          <div className="p-8 border-b border-gray-200">
+            {renderHeader()}
+            <p className="text-gray-600 mt-2">{setting.description}</p>
+          </div>
+
+          <div className="divide-y divide-gray-200">{renderContent()}</div>
+        </div>
+      </div>
+    </>
   );
 };

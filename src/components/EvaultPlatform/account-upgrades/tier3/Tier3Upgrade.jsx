@@ -83,8 +83,9 @@ const Tier3Upgrade = ({ onComplete, onCancel }) => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100 flex items-center justify-center p-4">
-      <div className="w-full max-w-lg bg-white rounded-xl shadow-lg">
+      <div className="bg-white rounded-xl shadow-2xl overflow-hidden">
         <div className="relative p-8">
+          {/* Progress bar */}
           <div className="absolute top-0 left-0 w-full h-1 bg-gray-200">
             <div
               className="h-full bg-[#025798]"
@@ -96,18 +97,20 @@ const Tier3Upgrade = ({ onComplete, onCancel }) => {
               }}
             />
           </div>
+
+          {/* Cancel button */}
+          <button
+            onClick={onCancel}
+            className="absolute top-4 right-4 text-gray-400 hover:text-gray-600"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+
+          {/* Content */}
           <div className="pt-8">
             {renderStep()}
-            {currentStep !== "success" && (
-              <div className="mt-4 text-center">
-                <button
-                  onClick={onCancel}
-                  className="text-gray-500 hover:text-gray-700 text-sm underline"
-                >
-                  Cancel Upgrade
-                </button>
-              </div>
-            )}
           </div>
         </div>
       </div>
