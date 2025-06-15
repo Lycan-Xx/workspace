@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
@@ -23,13 +22,13 @@ const ConfigureSecurity = ({ onSkip, onComplete }) => {
             <h2 className="text-2xl font-bold text-gray-900 mb-2">Configure Security</h2>
             <p className="text-gray-600">Set up your security preferences</p>
           </div>
-          
+
           <div className="space-y-6">
             <div className="text-center">
               <p className="text-gray-600 mb-4">
                 Your security settings will be configured based on your account requirements.
               </p>
-              
+
               <div className="flex space-x-4">
                 <button
                   onClick={handleComplete}
@@ -37,7 +36,7 @@ const ConfigureSecurity = ({ onSkip, onComplete }) => {
                 >
                   Complete Setup
                 </button>
-                
+
                 <button
                   onClick={onSkip}
                   className="flex-1 bg-gray-300 text-gray-700 py-3 px-4 rounded-lg hover:bg-gray-400 transition-colors"
@@ -54,8 +53,8 @@ const ConfigureSecurity = ({ onSkip, onComplete }) => {
 };
 
 ConfigureSecurity.propTypes = {
-  onSkip: PropTypes.func.isRequired,
   onComplete: PropTypes.func.isRequired,
+  onSkip: PropTypes.func,
 };
 
 export default ConfigureSecurity;

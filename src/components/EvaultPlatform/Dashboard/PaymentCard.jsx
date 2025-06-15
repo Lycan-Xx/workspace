@@ -29,7 +29,7 @@ const PaymentCards = ({ onRequestCard, cards, setCards }) => {
 
   return (
     <animated.div style={cardSpring} className="relative mb-6">
-      /* Desktop View */}
+    {/* Desktop View */}
         <div className="hidden md:grid md:grid-cols-3 gap-4">
           {cards.map((card, index) => (
             <PaymentCard key={index} card={card} />
