@@ -15,6 +15,9 @@ import { useLocation } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import Tier2Upgrade from "../../../account-upgrades/tier2/Tier2Upgrade";
 import Tier3Upgrade from "../../../account-upgrades/tier3/Tier3Upgrade";
+import BusinessKycStep from "../../../account-upgrades/business-upgrade/BusinessKycStep";
+import BusinessSuccessStep from "../../../account-upgrades/business-upgrade/BusinessSuccessStep";
+import LoadingStep from "../../../account-upgrades/shared/LoadingStep";
 
 export const FormField = ({
   label,
