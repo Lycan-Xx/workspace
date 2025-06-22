@@ -51,18 +51,6 @@ const BusinessSuccessStep = ({ businessData, onComplete }) => {
             <p className="font-medium">Business Name:</p>
             <p>{businessData.businessName}</p>
           </div>
-          <div>
-            <p className="font-medium">Registration No:</p>
-            <p>{businessData.businessRegistration}</p>
-          </div>
-          <div>
-            <p className="font-medium">Business Type:</p>
-            <p>{businessData.businessType}</p>
-          </div>
-          <div>
-            <p className="font-medium">Tax ID:</p>
-            <p>{businessData.taxId}</p>
-          </div>
         </div>
       </div>
 

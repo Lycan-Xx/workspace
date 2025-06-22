@@ -33,30 +33,13 @@ const BusinessKycStep = ({ onComplete }) => {
 
   const validateForm = () => {
     const newErrors = {};
-    if (!formData.businessRegistration) {
-      newErrors.businessRegistration = "Business registration number is required";
-    }
-    if (!formData.businessName) {
-      newErrors.businessName = "Business name is required";
-    }
-    if (!formData.taxId) {
-      newErrors.taxId = "Tax ID is required";
-    }
-    if (!formData.businessType) {
-      newErrors.businessType = "Business type is required";
-    }
-    if (!formData.businessAddress) {
-      newErrors.businessAddress = "Business address is required";
-    }
-    
-    // Validate required documents
+    // Only validate required documents
     const requiredDocs = ["memorandum", "cacCertificate", "directorsParticulars", "boardResolution", "tinCertificate"];
     requiredDocs.forEach(doc => {
       if (!formData.documents[doc]) {
         newErrors[doc] = `${getDocumentName(doc)} is required`;
       }
     });
-    
     return newErrors;
   };
 
