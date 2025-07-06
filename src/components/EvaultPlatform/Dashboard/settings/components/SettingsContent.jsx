@@ -212,11 +212,15 @@ export const SettingsContent = ({ setting, onBack }) => {
     }
   };
 
-  const handleBusinessKYCComplete = (data) => {
-    setBusinessKYCData(data);
+  const handleBusinessKYCComplete = (kycData) => {
+    setBusinessKYCData({
+      ...kycData,
+      businessName: formState.businessName,
+      businessEmail: formState.businessEmail,
+    });
     setShowBusinessKYC(false);
     setIsBusinessLoading(true);
-    
+
     // Simulate API call
     setTimeout(() => {
       setIsBusinessLoading(false);

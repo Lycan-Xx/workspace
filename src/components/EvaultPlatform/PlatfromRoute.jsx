@@ -9,6 +9,7 @@ import { useSelector } from "react-redux";
 import PlatformApp from "./PlatformApp";
 import Dashboard from "./Dashboard/Dashboard";
 import ConfigureSecurity from "./authentication/security/ConfigureSecurity";
+import LandingPage from "../LandingPage/LandingPage";
 
 const PrivateRoute = ({ children }) => {
   const { isAuthenticated } = useSelector((state) => state.auth);
@@ -64,6 +65,7 @@ const App = () => {
             </PrivateRoute>
           }
         />
+        <Route path="/home" element={<LandingPage />} />
         <Route
           path="/"
           element={
