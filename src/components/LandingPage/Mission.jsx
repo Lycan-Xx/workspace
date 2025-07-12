@@ -231,7 +231,6 @@ const Mission = ({ language }) => {
 											{feature.icon}
 										</div>
 									</div>
-                </div>
 
 									{/* Title */}
 									<h3 className="text-xl font-semibold text-gray-800 mb-4 transition-all duration-300 group-hover:scale-105 transform">
@@ -257,6 +256,7 @@ const Mission = ({ language }) => {
 											</svg>
 										</span>
 									</div>
+								</div>
 
 								{/* Hover effect overlay */}
 								<div className="absolute inset-0 bg-gradient-to-br from-transparent to-black/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
