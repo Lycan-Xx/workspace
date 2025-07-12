@@ -1,13 +1,35 @@
 import React, { useState } from "react";
-import { Menu, X, Globe } from "lucide-react";
-import { ChevronUp, ChevronDown } from "lucide-react";
-import { FaSignInAlt, FaUserPlus } from "react-icons/fa";
+import { Menu, X, Globe, ChevronDown } from "lucide-react";
+import { FaUser } from "react-icons/fa";
 import { AnimatePresence, motion } from "framer-motion";
-import logo from "../assets/evault-main-logo.png";
+import logo from "../assets/evault-new-logo.png";
 
-const Navbar = ({ setShowPlatform, setPlatformInitialView, language, setLanguage }) => {
+const Navbar = ({ language, setLanguage }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isServicesOpen, setIsServicesOpen] = useState(false);
+  const [showPlatform, setShowPlatform] = useState(false);
+  const [platformInitialView, setPlatformInitialView] = useState("sign-in");
+
+  const services = [
+    { title: "Airtime Top Up", id: "airtime", category: "Mobile" },
+    { title: "Buy Data", id: "data", category: "Mobile" },
+    { title: "Cable Subscription", id: "cable", category: "Bills" },
+    { title: "Utility Bills Payment", id: "utility", category: "Bills" },
+    { title: "Remita Payments", id: "remita", category: "Government" },
+    { title: "School Fees Payment", id: "school", category: "Education" },
+    { title: "Funds Transfer", id: "transfer", category: "Financial" },
+    { title: "Virtual Cards", id: "cards", category: "Financial" },
+    { title: "Business Portfolio", id: "portfolio", category: "Business" },
+  ];
+
+  const serviceCategories = {
+    Mobile: services.filter(s => s.category === "Mobile"),
+    Bills: services.filter(s => s.category === "Bills"),
+    Financial: services.filter(s => s.category === "Financial"),
+    Government: services.filter(s => s.category === "Government"),
+    Education: services.filter(s => s.category === "Education"),
+    Business: services.filter(s => s.category === "Business"),
+  };
 
   const handleLanguageSwitch = () => {
     const languages = ["English", "Hausa", "Yoruba", "Igbo"];
@@ -21,30 +43,25 @@ const Navbar = ({ setShowPlatform, setPlatformInitialView, language, setLanguage
     if (element) {
       element.scrollIntoView({ behavior: "smooth" });
       setIsOpen(false);
-      setIsServicesOpen(false);
     }
   };
 
-  const services = [
-    { title: "Airtime Top Up", id: "airtime" },
-    { title: "Buy Data", id: "data" },
-    { title: "Cable Subscription", id: "cable" },
-    { title: "Utility Bills Payment", id: "utility" },
-    { title: "Remita Payments", id: "remita" },
-    { title: "School Fees Payment", id: "school" },
-    { title: "Funds Transfer", id: "transfer" },
-    { title: "Virtual Cards", id: "cards" },
-    { title: "Business Portfolio", id: "portfolio" },
-  ];
+  const handleHome = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    setIsOpen(false);
+  };
 
   const handleSignIn = () => {
-    setPlatformInitialView("sign-in");
-    setShowPlatform(true);
+    window.open('https://app.evault.com.ng/mobile/login/', '_blank');
   };
 
   const handleSignUp = () => {
-    setPlatformInitialView("sign-up");
-    setShowPlatform(true);
+    window.open('https://app.evault.com.ng/mobile/register/', '_blank');
+  };
+
+  const handleServiceClick = (serviceId) => {
+    console.log(`Navigate to ${serviceId} service`);
+    setIsServicesOpen(false);
   };
 
   return (
@@ -69,6 +86,14 @@ const Navbar = ({ setShowPlatform, setPlatformInitialView, language, setLanguage
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
             <button
+              onClick={handleHome}
+              className="relative group text-gray-300 hover:text-white text-lg transition-all duration-300"
+            >
+              Home
+              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-orange-400 to-orange-600 transition-all duration-300 group-hover:w-full"></span>
+            </button>
+
+            <button
               onClick={() => scrollToSection("about")}
               className="relative group text-gray-300 hover:text-white text-lg transition-all duration-300"
             >
@@ -76,39 +101,79 @@ const Navbar = ({ setShowPlatform, setPlatformInitialView, language, setLanguage
               <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-orange-400 to-orange-600 transition-all duration-300 group-hover:w-full"></span>
             </button>
 
-            {/* Services Dropdown */}
-            <div className="relative group">
-              <button className="flex items-center relative group text-gray-300 hover:text-white text-lg transition-all duration-300">
+            <div 
+              className="relative group"
+              onMouseEnter={() => setIsServicesOpen(true)}
+              onMouseLeave={() => setIsServicesOpen(false)}
+            >
+              <button
+                className="relative group text-gray-300 hover:text-white text-lg transition-all duration-300 flex items-center"
+              >
                 Services
+                <ChevronDown className={`ml-1 h-4 w-4 transition-transform duration-300 ${isServicesOpen ? 'rotate-180' : ''}`} />
                 <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-orange-400 to-orange-600 transition-all duration-300 group-hover:w-full"></span>
-                <ChevronDown className="ml-1 w-5 h-5" />
               </button>
-              <div className="absolute left-0 mt-2 w-64 bg-gradient-to-br from-primary-dark-blue/95 to-deep-dark-blue/95 backdrop-blur-md border border-white/10 shadow-glass rounded-lg z-10 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform origin-top">
-                <div className="py-2">
-                  {services.map((service, index) => (
-                    <button
-                      key={service.id}
-                      onClick={() => scrollToSection(service.id)}
-                      className={`block w-full text-left px-4 py-2 text-gray-300 hover:bg-white/10 hover:text-white transition-all duration-200
-                        ${index === 0 ? "rounded-t-lg" : ""} 
-                        ${index === services.length - 1 ? "rounded-b-lg" : ""}`}
-                    >
-                      {service.title}
-                    </button>
-                  ))}
-                </div>
-              </div>
+
+              {/* Services Dropdown */}
+              <AnimatePresence>
+                {isServicesOpen && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                    transition={{ duration: 0.2 }}
+                    className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 w-96 bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl shadow-2xl p-6 z-50"
+                  >
+                    <div className="grid grid-cols-2 gap-6">
+                      {Object.entries(serviceCategories).map(([category, categoryServices]) => (
+                        categoryServices.length > 0 && (
+                          <div key={category} className="space-y-3">
+                            <h3 className="text-orange-400 font-semibold text-sm uppercase tracking-wide border-b border-orange-400/30 pb-1">
+                              {category}
+                            </h3>
+                            <div className="space-y-2">
+                              {categoryServices.map((service) => (
+                                <button
+                                  key={service.id}
+                                  onClick={() => handleServiceClick(service.id)}
+                                  className="block w-full text-left text-gray-300 hover:text-white hover:bg-white/10 px-3 py-2 rounded-lg transition-all duration-200 text-sm"
+                                >
+                                  {service.title}
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+                        )
+                      ))}
+                    </div>
+                    
+                    {/* View All Services Button */}
+                    <div className="mt-6 pt-4 border-t border-white/10">
+                      <button
+                        onClick={() => {
+                          scrollToSection("services");
+                          setIsServicesOpen(false);
+                        }}
+                        className="w-full bg-gradient-to-r from-orange-500 to-orange-600 text-white px-4 py-2 rounded-lg font-medium hover:from-orange-600 hover:to-orange-700 transition-all duration-300 text-sm"
+                      >
+                        View All Services
+                      </button>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
 
             <button
-              onClick={() => scrollToSection("features")}
+              onClick={() => scrollToSection("offer")}
               className="relative group text-gray-300 hover:text-white text-lg transition-all duration-300"
             >
               Features
               <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-orange-400 to-orange-600 transition-all duration-300 group-hover:w-full"></span>
             </button>
+
             <button
-              onClick={() => scrollToSection("contact")}
+              onClick={() => scrollToSection("offer")}
               className="relative group text-gray-300 hover:text-white text-lg transition-all duration-300"
             >
               Contact
@@ -117,31 +182,28 @@ const Navbar = ({ setShowPlatform, setPlatformInitialView, language, setLanguage
           </div>
 
           {/* Desktop Right Actions */}
-          <div className="hidden md:flex items-center space-x-4">
+          <div className="hidden md:flex items-center space-x-6">
             <button
               onClick={handleLanguageSwitch}
-              className="flex items-center px-4 py-2 text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition-all duration-300 backdrop-blur-sm"
+              className="flex items-center px-3 py-2 text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition-all duration-300 backdrop-blur-sm"
             >
-              <Globe className="h-5 w-5 mr-1" />
+              <Globe className="h-4 w-4 mr-2" />
               {language}
             </button>
+
             <button
               onClick={handleSignIn}
-              className="flex items-center px-4 py-2 text-orange-400 hover:text-white hover:bg-white/10 rounded-lg transition-all duration-300 backdrop-blur-sm"
+              className="text-gray-300 hover:text-white transition-colors duration-300 text-lg"
             >
-              <FaSignInAlt className="h-5 w-5 mr-2" />
               Sign In
             </button>
-            <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-r from-orange-500 to-orange-600 rounded-lg blur opacity-75"></div>
-              <button
-                onClick={handleSignUp}
-                className="relative flex items-center px-4 py-2 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-lg hover:shadow-glow transition-all duration-300 transform hover:scale-105"
-              >
-                <FaUserPlus className="h-5 w-5 mr-2" />
-                Sign Up
-              </button>
-            </div>
+            
+            <button
+              onClick={handleSignUp}
+              className="bg-gradient-to-r from-orange-500 to-orange-600 text-white px-6 py-2 rounded-lg font-medium hover:from-orange-600 hover:to-orange-700 transition-all duration-300 transform hover:scale-105"
+            >
+              Sign Up
+            </button>
           </div>
 
           {/* Hamburger Menu */}
@@ -165,7 +227,7 @@ const Navbar = ({ setShowPlatform, setPlatformInitialView, language, setLanguage
             className="fixed inset-y-0 right-0 bg-gradient-to-br from-primary-dark-blue/95 to-deep-dark-blue/95 backdrop-blur-md border-l border-white/10 shadow-glass w-3/4 max-w-sm z-50 p-6"
           >
             {/* Mobile Logo */}
-            <div className="flex items-center justify-between mb-6">
+            <div>
               <img src={logo} alt="eVault Logo" className="h-10 w-10" />
               <button
                 onClick={() => setIsOpen(false)}
@@ -174,48 +236,41 @@ const Navbar = ({ setShowPlatform, setPlatformInitialView, language, setLanguage
                 <X className="h-6 w-6" />
               </button>
             </div>
-
+      
             {/* Mobile Links */}
             <div className="space-y-4">
-              {["About", "Features", "Contact"].map((link) => (
+              {[
+                { name: "Home", action: handleHome },
+                { name: "About", action: () => scrollToSection("about") },
+                { name: "Features", action: () => scrollToSection("offer") },
+                { name: "Contact", action: () => scrollToSection("contact") }
+              ].map((link) => (
                 <button
-                  key={link}
-                  onClick={() => scrollToSection(link.toLowerCase())}
+                  key={link.name}
+                  onClick={link.action}
                   className="block w-full text-left text-gray-300 hover:text-white text-lg transition-colors duration-300"
                 >
-                  {link}
+                  {link.name}
                 </button>
               ))}
+            </div>
 
-              {/* Mobile Services Dropdown */}
-              <div>
-                <button
-                  onClick={() => setIsServicesOpen(!isServicesOpen)}
-                  className="flex justify-between w-full text-left text-gray-300 hover:text-white text-lg transition-colors duration-300"
-                >
-                  Services
-                  {isServicesOpen ? <ChevronUp /> : <ChevronDown />}
-                </button>
-                <AnimatePresence>
-                  {isServicesOpen && (
-                    <motion.div
-                      initial={{ opacity: 0, y: -10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -10 }}
-                      className="ml-4 mt-2 space-y-2"
-                    >
-                      {services.map((service) => (
-                        <button
-                          key={service.id}
-                          onClick={() => scrollToSection(service.id)}
-                          className="block w-full text-left text-gray-300 hover:text-white transition-colors duration-300"
-                        >
-                          {service.title}
-                        </button>
-                      ))}
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+            {/* Mobile Services Section */}
+            <div className="space-y-2">
+              <h3 className="text-orange-400 font-semibold text-sm uppercase tracking-wide">Services</h3>
+              <div className="grid grid-cols-1 gap-1 max-h-48 overflow-y-auto">
+                {services.map((service) => (
+                  <button
+                    key={service.id}
+                    onClick={() => {
+                      handleServiceClick(service.id);
+                      setIsOpen(false);
+                    }}
+                    className="text-left text-gray-300 hover:text-white hover:bg-white/10 px-3 py-2 rounded-lg transition-all duration-300 text-sm"
+                  >
+                    {service.title}
+                  </button>
+                ))}
               </div>
             </div>
 
@@ -234,22 +289,17 @@ const Navbar = ({ setShowPlatform, setPlatformInitialView, language, setLanguage
 
               <button
                 onClick={handleSignIn}
-                className="flex items-center px-4 py-2 text-orange-400 hover:text-white hover:bg-white/10 rounded-lg transition-all duration-300 w-full text-left backdrop-blur-sm"
+                className="flex items-center px-4 py-2 text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition-all duration-300 w-full text-left backdrop-blur-sm"
               >
-                <FaSignInAlt className="h-5 w-5 mr-2" />
                 Sign In
               </button>
 
-              <div className="relative">
-                <div className="absolute inset-0 bg-gradient-to-r from-orange-500 to-orange-600 rounded-lg blur opacity-75"></div>
-                <button
-                  onClick={handleSignUp}
-                  className="relative flex items-center px-4 py-2 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-lg hover:shadow-glow transition-all duration-300 w-full text-left"
-                >
-                  <FaUserPlus className="h-5 w-5 mr-2" />
-                  Sign Up
-                </button>
-              </div>
+              <button
+                onClick={handleSignUp}
+                className="flex items-center px-4 py-2 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-lg hover:from-orange-600 hover:to-orange-700 transition-all duration-300 w-full text-left"
+              >
+                Sign Up
+              </button>
             </div>
           </motion.div>
         )}
