@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import PropTypes from "prop-types";
 import { useNavigate } from "react-router-dom";
 import LoadingStep from "../shared/LoadingStep";
-import IdVerificationStep from "./IdVerificationStep";
+import UtilityBillVerification from "./UtilityBillVerification";
 import KycDocumentationStep from "./KycDocumentationStep";
 import Tier3SuccessStep from "./Tier3SuccessStep";
 
@@ -13,7 +13,7 @@ const Tier3Upgrade = ({ onComplete, onCancel }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [verificationData, setVerificationData] = useState({});
 
-  const handleIdVerification = (idType, idNumber, document) => {
+  const handleUtilityBillVerification = (idType, idNumber, document) => {
     setIsLoading(true);
     setCurrentStep("loading");
 
@@ -50,8 +50,8 @@ const Tier3Upgrade = ({ onComplete, onCancel }) => {
     switch (currentStep) {
       case "id-verification":
         return (
-          <IdVerificationStep
-            onVerify={handleIdVerification}
+          <UtilityBillVerification
+            onVerify={handleUtilityBillVerification}
             isLoading={isLoading}
           />
         );

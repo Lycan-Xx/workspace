@@ -1,11 +1,12 @@
 import React, { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useAnimation } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useSpring, animated } from "react-spring";
 import VirtualCardRequest from "./VirtualCardRequest";
 
 const PaymentCards = ({ onRequestCard, cards, setCards }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const controls = useAnimation();
 
   // Animation for the entire card section
   const cardSpring = useSpring({
@@ -27,80 +28,127 @@ const PaymentCards = ({ onRequestCard, cards, setCards }) => {
     setCards((prev) => [...prev, newCard]);
   };
 
+  // Add swipe handling logic
+  const handleDragEnd = (event, info) => {
+    const swipeThreshold = 50; // minimum distance for swipe
+    const { offset, velocity } = info;
+
+    // Check for both distance and velocity for a more natural feel
+    if (offset.x < -swipeThreshold || velocity.x < -0.5) {
+      // Swipe left - next card
+      nextCard();
+    } else if (offset.x > swipeThreshold || velocity.x > 0.5) {
+      // Swipe right - previous card
+      prevCard();
+    } else {
+      // Reset position if swipe wasn't strong enough
+      controls.start({ x: 0, transition: { type: "spring", stiffness: 300, damping: 30 } });
+    }
+  };
+
   return (
     <animated.div style={cardSpring} className="relative mb-6">
-    {/* Desktop View */}
-        <div className="hidden md:grid md:grid-cols-3 gap-4">
-          {cards.map((card, index) => (
-            <PaymentCard key={index} card={card} />
-          ))}
-        </div>
+      {/* Desktop View */}
+      <div className="hidden md:grid md:grid-cols-3 gap-4">
+        {cards.map((card, index) => (
+          <PaymentCard key={index} card={card} />
+        ))}
+      </div>
 
-        {/* Request Virtual Card Button */}
-        <div className="mt-4 flex justify-end">
-          <button
-            onClick={onRequestCard}
-            className="bg-blue-600 text-white px-8 py-2 mb-2 rounded-lg hover:bg-blue-700 flex items-center gap-2"
+      {/* Request Virtual Card Button */}
+      <div className="mt-4 flex justify-end">
+        <button
+          onClick={onRequestCard}
+          className="bg-blue-600 text-white px-8 py-2 mb-2 rounded-lg hover:bg-blue-700 flex items-center gap-2"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-5 w-5"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
           >
-            <svg 
-          xmlns="http://www.w3.org/2000/svg" 
-          className="h-5 w-5" 
-          viewBox="0 0 24 24" 
-          fill="none" 
-          stroke="currentColor" 
-          strokeWidth="2"
-            >
-          <rect x="2" y="5" width="20" height="14" rx="2" />
-          <path d="M2 10h20" />
-            </svg>
-            Request Virtual Card
-          </button>
-        </div>
+            <rect x="2" y="5" width="20" height="14" rx="2" />
+            <path d="M2 10h20" />
+          </svg>
+          Request Virtual Card
+        </button>
+      </div>
 
-        {/* Mobile View with Carousel */}
-      <div className="md:hidden relative">
-        <div className="overflow-hidden">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={currentIndex}
-              initial={{ opacity: 0, x: 100 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -100 }}
-              transition={{ duration: 0.3 }}
-              className="w-full"
-            >
-              <PaymentCard card={cards[currentIndex]} />
-            </motion.div>
+      {/* Mobile View with Carousel */}
+      <div className="block md:hidden relative">
+        <div className="overflow-hidden px-4">
+          <AnimatePresence initial={false} mode="wait">
+            {cards && cards.length > 0 ? (
+              <motion.div
+                key={currentIndex}
+                initial={{ opacity: 0, x: 100 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -100 }}
+                transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                className="w-full" 
+                drag="x"
+                dragConstraints={{ left: 0, right: 0 }}
+                dragElastic={0.7}
+                onDragEnd={handleDragEnd}
+                animate={controls}
+                whileTap={{ cursor: "grabbing" }}
+              >
+                <PaymentCard card={cards[currentIndex]} />
+              </motion.div>
+            ) : (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="w-full px-4 py-6"
+              >
+                <div className="bg-gradient-to-r from-gray-200 to-gray-300 rounded-lg h-44 flex flex-col items-center justify-center shadow-md">
+                  <p className="text-gray-600 mb-4">No virtual cards yet</p>
+                  <button
+                    onClick={onRequestCard}
+                    className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                  >
+                    Request Your First Card
+                  </button>
+                </div>
+              </motion.div>
+            )}
           </AnimatePresence>
         </div>
 
-        {/* Navigation Arrows */}
-        <button
-          onClick={prevCard}
-          className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/2 bg-white/80 rounded-full p-2 shadow-lg z-10"
-        >
-          <ChevronLeft className="w-6 h-6 text-blue-600" />
-        </button>
-        <button
-          onClick={nextCard}
-          className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 bg-white/80 rounded-full p-2 shadow-lg z-10"
-        >
-          <ChevronRight className="w-6 h-6 text-blue-600" />
-        </button>
-
-        {/* Dots Indicator */}
-        <div className="flex justify-center mt-4 space-x-2">
-          {cards.map((_, index) => (
-            <button
-              key={index}
-              onClick={() => setCurrentIndex(index)}
-              className={`w-2 h-2 rounded-full transition-colors ${
-                index === currentIndex ? "bg-blue-600" : "bg-gray-300"
-              }`}
-            />
-          ))}
-        </div>
+        {/* Only show dots if there are multiple cards */}
+        {cards && cards.length > 1 && (
+          <div className="flex justify-center mt-4 space-x-2">
+            {cards.map((_, index) => (
+              <button
+                key={index}
+                onClick={() => setCurrentIndex(index)}
+                className={`w-2 h-2 rounded-full transition-colors ${
+                  index === currentIndex ? "bg-blue-600" : "bg-gray-300"
+                }`}
+              />
+            ))}
+          </div>
+        )}
       </div>
+
+      {/* Mock Virtual Card */}
+      {cards.length === 0 && (
+        <div className="bg-gray-100 rounded-lg p-6 text-center">
+          <div className="w-full max-w-sm mx-auto">
+            <div className="bg-gradient-to-r from-gray-200 to-gray-300 rounded-lg h-44 flex items-center justify-center">
+              <p className="text-gray-600">No virtual cards yet</p>
+            </div>
+            <button
+              onClick={onRequestCard}
+              className="mt-4 bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700"
+            >
+              Request Your First Card
+            </button>
+          </div>
+        </div>
+      )}
     </animated.div>
   );
 };

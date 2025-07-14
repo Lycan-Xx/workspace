@@ -76,7 +76,7 @@ const TopBar = ({ setSelectedTab, onSettingSelect }) => {
 
   return (
     <div className="w-full max-w-full overflow-hidden">
-      <div className="bg-blue-600 rounded-lg shadow-sm p-4 mb-4 mx-2">
+      <div className="bg-blue-600 rounded-lg shadow-sm p-4 mb-4">
         <div className="flex items-center justify-between flex-wrap gap-2">
           <div className="flex items-center space-x-2">
             <div className="text-white font-bold">

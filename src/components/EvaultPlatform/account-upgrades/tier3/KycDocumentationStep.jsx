@@ -1,4 +1,3 @@
-
 import React, { useState, useRef } from "react";
 import PropTypes from "prop-types";
 import { Camera, CheckCircle, SkipForward, User } from "lucide-react";
@@ -95,7 +94,7 @@ const KycDocumentationStep = ({ verifiedData, onComplete }) => {
       <div className="text-center space-y-4">
         <h2 className="text-2xl font-bold text-gray-800">KYC Documentation</h2>
         <p className="text-gray-600">
-          Complete your verification with face capture for enhanced security
+          Start your verification with face capture for enhanced security
         </p>
       </div>
 
@@ -195,24 +194,26 @@ const KycDocumentationStep = ({ verifiedData, onComplete }) => {
         {/* Skip Button */}
         <div className="text-center">
           <button
-            onClick={handleSkip}
+            onClick={handleSkip}  // This uses handleSkip which sets faceVerification: 'skipped'
             className="text-gray-500 hover:text-gray-700 text-sm underline flex items-center gap-1 mx-auto"
           >
             <SkipForward className="w-4 h-4" />
             Skip Face Verification
           </button>
         </div>
-
-        {/* Continue Button (when no camera access or skipped) */}
-        {!isCapturing && !capturedImage && (
-          <button
-            onClick={handleContinue}
-            className="w-full bg-[#025798] text-white py-3 rounded-lg hover:bg-[#024680] transition-colors"
-          >
-            Continue Without Face Verification
-          </button>
-        )}
       </div>
+
+
+       {/* Removed this redundant button since it does the same thing */}
+      {/* {!isCapturing && !capturedImage && (
+        <button
+          onClick={handleContinue}
+          className="w-full bg-[#025798] text-white py-3 rounded-lg hover:bg-[#024680] transition-colors"
+        >
+          Continue Without Face Verification
+        </button>
+      )} */}
+
 
       <canvas ref={canvasRef} style={{ display: 'none' }} />
     </SecurityStep>

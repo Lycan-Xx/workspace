@@ -27,7 +27,7 @@ const HomeContent = ({
       {selectedTab === "Dashboard" && (
         <>
           {/* Payment Cards Section */}
-          <div className="bg-white rounded-lg shadow-sm overflow-hidden">
+          <div className="rounded-lg shadow-none overflow-hidden">
             <PaymentCards 
               onRequestCard={onRequestCard}
               cards={cardData}

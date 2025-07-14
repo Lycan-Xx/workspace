@@ -53,8 +53,13 @@ const ConfigureSecurity = ({ onSkip, onComplete }) => {
 };
 
 ConfigureSecurity.propTypes = {
-  onComplete: PropTypes.func.isRequired,
+  onComplete: PropTypes.func,
   onSkip: PropTypes.func,
+};
+
+ConfigureSecurity.defaultProps = {
+  onComplete: () => {},
+  onSkip: () => {},
 };
 
 export default ConfigureSecurity;
