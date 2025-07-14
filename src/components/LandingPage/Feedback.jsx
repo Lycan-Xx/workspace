@@ -63,7 +63,7 @@ const Feedback = () => {
   }, [inView, hasAnimated]);
 
   return (
-    <div className="px-sm tablet:px-lg py-component-v bg-gradient-to-br from-[#08448c] via-[#0a4d9c] to-[#0c56ac] text-white">
+    <div className="px-sm tablet:px-lg py-component-v bg-gradient-to-br from-[#ffffff] via-[#fac192cb] to-[#b0d5ff] text-black">
       <div className="max-w-content mx-auto space-y-component-v">
         {/* Header Section */}
         <div className="text-center space-y-md">
@@ -71,9 +71,8 @@ const Feedback = () => {
             <h2 className="text-4xl tablet:text-5xl desktop:text-6xl font-bold bg-gradient-to-r from-orange-400 to-orange-600 bg-clip-text text-transparent">
               Customer Stories
             </h2>
-            <div className="h-1 bg-gradient-to-r from-orange-400 to-orange-600 mt-xs rounded-full"></div>
           </div>
-          <p className="text-xl tablet:text-2xl text-gray-300 max-w-tablet mx-auto leading-relaxed">
+          <p className="text-xl tablet:text-2xl text-black max-w-tablet mx-auto leading-relaxed">
             Discover what our valued clients have to say about their experiences with our platform
           </p>
         </div>
@@ -81,12 +80,12 @@ const Feedback = () => {
         {/* Trust Counter */}
         <div ref={ref} className="text-center">
           <div className="bg-white/5 backdrop-blur-sm rounded-large p-xl max-w-tablet mx-auto border border-white/10">
-            <div className="text-2xl tablet:text-3xl font-medium text-gray-200">
+            <div className="text-2xl tablet:text-3xl font-medium text-black">
               Trusted by{' '}
               <span className="text-orange-500 text-4xl tablet:text-5xl font-bold block mt-xs">
                 {count.toLocaleString()}+
               </span>{' '}
-              <span className="text-lg tablet:text-xl text-gray-300 block mt-xs">
+              <span className="text-lg tablet:text-xl text-black block mt-xs">
                 individuals and businesses across Nigeria
               </span>
             </div>
@@ -99,7 +98,7 @@ const Feedback = () => {
           {testimonials.map((testimonial, index) => (
             <div
               key={index}
-              className="group relative bg-white/5 backdrop-blur-sm rounded-large p-xl border border-white/10 hover:border-orange-500/50 transition-all duration-500 hover:transform hover:scale-105 hover:shadow-2xl"
+              className="group relative bg-white/5 backdrop-blur-sm rounded-large p-xl border border-white/70 hover:border-orange-500/50 transition-all duration-500 hover:transform hover:scale-105 hover:shadow-2xl"
             >
               {/* Category Badge */}
               <div className="absolute -top-3 left-md">
@@ -114,12 +113,12 @@ const Feedback = () => {
               </div>
 
               {/* Testimonial Text */}
-              <blockquote className="text-gray-300 text-lg leading-relaxed mb-xl italic">
+              <blockquote className="text-gray-300 text-lg leading-relaxed mb-xl italic text-black">
                 "{testimonial.text}"
               </blockquote>
 
               {/* Author Info */}
-              <div className="flex items-center space-x-sm pt-sm border-t border-white/10">
+              <div className="flex items-center space-x-sm pt-sm border-t border-white/10 text-gray-900">
                 <div className="relative">
                   <img
                     src={testimonial.image}
