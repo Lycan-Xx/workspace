@@ -1,27 +1,18 @@
-
 import React, { useState } from "react";
 import PropTypes from "prop-types";
-import { CreditCard, Upload, AlertCircle, Check } from "lucide-react";
+import { Receipt, Upload, AlertCircle, Check } from "lucide-react";
 import SecurityStep from "../shared/SecurityStep";
 
 const IdVerificationStep = ({ onVerify, isLoading }) => {
-  const [selectedIdType, setSelectedIdType] = useState("");
-  const [idNumber, setIdNumber] = useState("");
   const [uploadedFile, setUploadedFile] = useState(null);
   const [errors, setErrors] = useState({});
-
-  const idTypes = [
-    { value: "PVC", label: "Permanent Voter's Card (PVC)", placeholder: "Enter PVC number" },
-    { value: "NIN", label: "National Identification Number (NIN)", placeholder: "Enter 11-digit NIN" },
-    { value: "DRIVERS_LICENSE", label: "Driver's License", placeholder: "Enter license number" },
-  ];
 
   const handleFileUpload = (event) => {
     const file = event.target.files[0];
     if (file) {
       // Validate file type
-      if (!file.type.startsWith('image/')) {
-        setErrors({ ...errors, file: "Please upload an image file" });
+      if (!file.type.startsWith('image/') && !file.type.startsWith('application/pdf')) {
+        setErrors({ ...errors, file: "Please upload an image or PDF file" });
         return;
       }
       
@@ -39,25 +30,8 @@ const IdVerificationStep = ({ onVerify, isLoading }) => {
   const validateForm = () => {
     const newErrors = {};
 
-    if (!selectedIdType) {
-      newErrors.idType = "Please select an ID type";
-    }
-
-    if (!idNumber) {
-      newErrors.idNumber = "Please enter your ID number";
-    } else {
-      // Validate ID number based on type
-      if (selectedIdType === "NIN" && idNumber.length !== 11) {
-        newErrors.idNumber = "NIN must be 11 digits";
-      } else if (selectedIdType === "PVC" && idNumber.length < 8) {
-        newErrors.idNumber = "PVC number must be at least 8 characters";
-      } else if (selectedIdType === "DRIVERS_LICENSE" && idNumber.length < 6) {
-        newErrors.idNumber = "Driver's license number must be at least 6 characters";
-      }
-    }
-
     if (!uploadedFile) {
-      newErrors.file = "Please upload your ID document";
+      newErrors.file = "Please upload your utility bill";
     }
 
     setErrors(newErrors);
@@ -66,25 +40,25 @@ const IdVerificationStep = ({ onVerify, isLoading }) => {
 
   const handleVerify = () => {
     if (validateForm()) {
-      onVerify(selectedIdType, idNumber, uploadedFile);
+      onVerify('UTILITY_BILL', null, uploadedFile);
     }
   };
 
   return (
     <SecurityStep>
       <div className="w-32 h-32 text-[#025798]">
-        <CreditCard className="w-full h-full" />
+        <Receipt className="w-full h-full" />
       </div>
       
       <div className="text-center space-y-4">
-        <h2 className="text-2xl font-bold text-gray-800">ID Verification</h2>
+        <h2 className="text-2xl font-bold text-gray-800">Utility Bill Verification</h2>
         <p className="text-gray-600">
-          Please select and verify your valid identification document
+          Please upload your most recent utility bill (not older than 3 months)
         </p>
       </div>
 
       <div className="w-full space-y-6">
-        {/* ID Type Selection */}
+        {/* Commented out ID Type Selection for future use
         <div className="space-y-3">
           <label className="block text-sm font-medium text-gray-700">
             Select ID Type
@@ -109,8 +83,9 @@ const IdVerificationStep = ({ onVerify, isLoading }) => {
             </div>
           )}
         </div>
+        */}
 
-        {/* ID Number Input */}
+        {/* Commented out ID Number Input for future use
         {selectedIdType && (
           <div className="space-y-2">
             <label className="block text-sm font-medium text-gray-700">
@@ -133,16 +108,17 @@ const IdVerificationStep = ({ onVerify, isLoading }) => {
             )}
           </div>
         )}
+        */}
 
         {/* File Upload */}
         <div className="space-y-2">
           <label className="block text-sm font-medium text-gray-700">
-            Upload ID Document
+            Upload Utility Bill
           </label>
           <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
             <input
               type="file"
-              accept="image/*"
+              accept="image/*,application/pdf"
               onChange={handleFileUpload}
               className="hidden"
               id="file-upload"
@@ -157,8 +133,8 @@ const IdVerificationStep = ({ onVerify, isLoading }) => {
               ) : (
                 <div className="space-y-2">
                   <Upload className="w-8 h-8 text-gray-400 mx-auto" />
-                  <p className="text-sm text-gray-600">Click to upload your ID</p>
-                  <p className="text-xs text-gray-500">PNG, JPG up to 5MB</p>
+                  <p className="text-sm text-gray-600">Click to upload your utility bill</p>
+                  <p className="text-xs text-gray-500">PNG, JPG, PDF up to 5MB</p>
                 </div>
               )}
             </label>
@@ -174,9 +150,9 @@ const IdVerificationStep = ({ onVerify, isLoading }) => {
         {/* Verify Button */}
         <button
           onClick={handleVerify}
-          disabled={isLoading || !selectedIdType || !idNumber || !uploadedFile}
+          disabled={isLoading || !uploadedFile}
           className={`w-full py-3 ${
-            isLoading || !selectedIdType || !idNumber || !uploadedFile
+            isLoading || !uploadedFile
               ? "bg-gray-400 cursor-not-allowed"
               : "bg-[#025798] hover:bg-[#024680] text-white"
           } text-white rounded-lg transition-colors flex items-center justify-center gap-2`}
@@ -185,8 +161,8 @@ const IdVerificationStep = ({ onVerify, isLoading }) => {
             <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin" />
           ) : (
             <>
-              <CreditCard className="w-5 h-5" />
-              Verify ID Document
+              <Receipt className="w-5 h-5" />
+              Verify Utility Bill
             </>
           )}
         </button>
