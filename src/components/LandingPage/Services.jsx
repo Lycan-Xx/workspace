@@ -89,34 +89,25 @@ const serviceCategories = [
 ];
 
 const Services = () => {
-  const [selectedCategory, setSelectedCategory] = useState(null);
-
-  const handleCategoryClick = (category) => {
-    setSelectedCategory(category);
-  };
-
-  const handleCloseModal = () => {
-    setSelectedCategory(null);
-  };
+  const [hoveredCategory, setHoveredCategory] = useState(serviceCategories[0]);
 
   return (
     <section className="services-section py-20 relative overflow-hidden min-h-screen">
-      {/* Blurred Background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900"></div>
-      <div 
-        className="absolute inset-0 opacity-30"
-        style={{
-          backgroundImage: `url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><defs><pattern id="cityscape" x="0" y="0" width="200" height="200" patternUnits="userSpaceOnUse"><rect width="200" height="200" fill="%23000033"/><rect x="10" y="50" width="30" height="150" fill="%23000066"/><rect x="50" y="30" width="25" height="170" fill="%23000099"/><rect x="85" y="70" width="20" height="130" fill="%23000066"/><rect x="115" y="40" width="35" height="160" fill="%23000099"/><rect x="160" y="60" width="30" height="140" fill="%23000066"/></pattern></defs><rect width="1000" height="1000" fill="url(%23cityscape)"/></svg>')`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          filter: 'blur(8px)',
-        }}
-      />
+      {/* Gradient Background */}
+      <div className="absolute inset-0 bg-gradient-to-br from-[#040d21] via-[#071630] to-[#0a1f3f]">
+        {/* Glossy Overlay */}
+        <div className="absolute inset-0 bg-blue-500/5 backdrop-blur-3xl"></div>
+        {/* Radial Glow Effects */}
+        <div className="absolute inset-0">
+          <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-500/10 rounded-full filter blur-3xl"></div>
+          <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-cyan-500/10 rounded-full filter blur-3xl"></div>
+        </div>
+      </div>
 
       {/* Content */}
       <div className="relative z-10 max-w-content mx-auto px-sm tablet:px-md desktop:px-lg">
         {/* Title Section */}
-        <div className="text-center mb-component-v">
+        <div className="text-center mb-component-v pb-8">
           <motion.h2 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -143,8 +134,9 @@ const Services = () => {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
-              onClick={() => handleCategoryClick(category)}
-              className="bg-white/10 backdrop-blur-md border border-white/10 p-md rounded-large flex items-center space-x-sm hover:bg-white/20 transition-all duration-300 cursor-pointer group"
+              onMouseEnter={() => setHoveredCategory(category)}
+              className={`bg-white/5 backdrop-blur-2xl border-2 border-orange-500 p-md rounded-large flex items-center space-x-sm transition-all duration-300 cursor-pointer group shadow-lg
+                ${hoveredCategory === category ? 'bg-white/10 border-white/30 shadow-xl' : 'hover:bg-white/8'}`}
             >
               <div className="flex-shrink-0 group-hover:scale-110 transition-transform duration-300">
                 {category.icon}
@@ -158,101 +150,66 @@ const Services = () => {
             </motion.div>
           ))}
         </div>
-      </div>
 
-      {/* Modal Pop-up */}
-      <AnimatePresence>
-        {selectedCategory && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
-            className="fixed inset-0 bg-black/50 backdrop-blur-md flex items-center justify-center z-50 p-4"
-            onClick={handleCloseModal}
-          >
-            <motion.div
-              initial={{ scale: 0.8, opacity: 0, y: 50 }}
-              animate={{ scale: 1, opacity: 1, y: 0 }}
-              exit={{ scale: 0.8, opacity: 0, y: 50 }}
-              transition={{ 
-                type: "spring",
-                stiffness: 300,
-                damping: 30,
-                duration: 0.4 
-              }}
-              className="bg-white/10 backdrop-blur-lg border border-white/20 p-xl rounded-large max-w-tablet w-full max-h-[85vh] overflow-y-auto shadow-2xl"
-              onClick={(e) => e.stopPropagation()}
-            >
-              {/* Modal Header */}
-              <div className="flex items-center justify-between mb-md">
-                <div className="flex items-center space-x-sm">
-                  <div className="flex-shrink-0">
-                    {selectedCategory.icon}
-                  </div>
-                  <div>
-                    <h3 className="text-2xl font-bold text-white mb-xs">
-                      {selectedCategory.type}
-                    </h3>
-                    <p className="text-gray-300 text-sm">
-                      Choose from our available services
-                    </p>
-                  </div>
-                </div>
-                <button
-                  onClick={handleCloseModal}
-                  className="text-gray-400 hover:text-white transition-colors duration-200 p-xs rounded-full hover:bg-white/10"
-                >
-                  <FaBolt className="w-5 h-5" />
-                </button>
-              </div>
-
-              {/* Sub-services Grid */}
-              <div className="grid grid-cols-1 tablet:grid-cols-2 gap-sm">
-                {selectedCategory.subServices.map((service, idx) => (
-                  <motion.div
-                    key={idx}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ 
-                      duration: 0.3, 
-                      delay: idx * 0.1,
-                      type: "spring",
-                      stiffness: 200 
-                    }}
-                    whileHover={{ 
-                      scale: 1.02,
-                      transition: { duration: 0.2 }
-                    }}
-                    className="p-md rounded-large backdrop-blur-sm bg-white/10 border border-white/20 hover:border-white/40 transition-all duration-300 shadow-lg hover:shadow-xl cursor-pointer group"
-                  >
-                    <div className="flex items-start space-x-sm">
-                      <div className="flex-shrink-0 group-hover:scale-110 transition-transform duration-300">
-                        {service.icon}
-                      </div>
-                      <div>
-                        <h4 className="text-lg font-semibold text-white mb-xs">
-                          {service.title}
-                        </h4>
-                        <p className="text-gray-300 text-sm leading-relaxed">
-                          {service.description}
-                        </p>
-                      </div>
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
-
-              {/* Footer */}
-              <div className="mt-md text-center">
-                <p className="text-gray-400 text-sm">
-                  Click on any service to learn more or get started
+        {/* Preview Card */}
+        <motion.div
+          layout
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="mt-8 bg-white/5 backdrop-blur-2xl border border-white/20 rounded-large overflow-hidden shadow-2xl"
+        >
+          <div className="p-xl">
+            {/* Header */}
+            <div className="flex items-center space-x-sm mb-lg">
+              <motion.div 
+                className="flex-shrink-0"
+                animate={{ scale: [1, 1.1, 1] }}
+                transition={{ duration: 0.5, repeat: Infinity, repeatDelay: 2 }}
+              >
+                {hoveredCategory.icon}
+              </motion.div>
+              <div>
+                <h3 className="text-2xl font-bold text-white">
+                  {hoveredCategory.type}
+                </h3>
+                <p className="text-gray-300 text-sm">
+                  Available services in this category
                 </p>
               </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+            </div>
+
+            {/* Sub-services Grid */}
+            <div className="grid grid-cols-2 tablet:grid-cols-2 desktop:grid-cols-3 gap-2 tablet:gap-md">
+              {hoveredCategory.subServices.map((service, idx) => (
+                <motion.div
+                  key={idx}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3, delay: idx * 0.1 }}
+                  className="p-3 tablet:p-md rounded-large backdrop-blur-xl bg-white/5 border border-white/10 hover:border-white/30 transition-all duration-300 cursor-pointer group hover:bg-white/10"
+                >
+                  <div className="flex items-center tablet:items-start tablet:space-x-sm">
+                    <div className="flex-shrink-0 group-hover:scale-110 transition-transform duration-300">
+                      {service.icon}
+                    </div>
+                    <div className="ml-2 tablet:ml-0">
+                      <h4 className="text-sm tablet:text-lg font-semibold text-white">
+                        {service.title}
+                      </h4>
+                      <p className="hidden tablet:block text-gray-300 text-sm leading-relaxed mt-xs">
+                        {service.description}
+                      </p>
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </motion.div>
+      </div>
+
+      
     </section>
   );
 };

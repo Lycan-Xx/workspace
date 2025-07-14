@@ -148,7 +148,7 @@ const Feedback = () => {
           {testimonials.map((testimonial, index) => (
             <div
               key={index}
-              className="bg-white/5 backdrop-blur-sm rounded-large p-sm border border-white/10 hover:border-orange-500/50 transition-all duration-300"
+              className="bg-white/5 backdrop-blur-sm rounded-large p-sm border border-white/80 hover:border-orange-500/50 transition-all duration-300"
             >
               {/* Mobile Header */}
               <div className="flex items-center justify-between mb-sm">
@@ -159,7 +159,7 @@ const Feedback = () => {
                     className="w-10 h-10 rounded-full object-cover border-2 border-orange-500"
                   />
                   <div>
-                    <h4 className="font-semibold text-white text-sm">
+                    <h4 className="font-semibold text-gray-700 text-sm">
                       {testimonial.name}
                     </h4>
                     <p className="text-gray-400 text-xs">
@@ -167,7 +167,7 @@ const Feedback = () => {
                     </p>
                   </div>
                 </div>
-                <span className="bg-gradient-to-r from-orange-500 to-orange-600 text-white px-xs py-xs rounded-full text-xs font-medium">
+                <span className="bg-gradient-to-r from-orange-500 to-orange-600 text-gray-900 px-xs py-xs rounded-xl text-xs font-medium">
                   {testimonial.category}
                 </span>
               </div>
@@ -175,7 +175,7 @@ const Feedback = () => {
               {/* Mobile Quote */}
               <div className="flex items-start space-x-xs">
                 <FaQuoteLeft className="text-orange-500 text-sm mt-xs flex-shrink-0 opacity-70" />
-                <p className="text-gray-300 text-sm leading-relaxed italic">
+                <p className="text-black text-sm leading-relaxed italic">
                   {testimonial.text}
                 </p>
               </div>
@@ -186,10 +186,10 @@ const Feedback = () => {
         {/* Call to Action */}
         <div className="text-center">
           <div className="bg-white/5 backdrop-blur-sm rounded-large p-xl max-w-tablet mx-auto border border-white/10">
-            <h3 className="text-2xl tablet:text-3xl font-bold text-white mb-sm">
+            <h3 className="text-2xl tablet:text-3xl font-bold text-black/70 mb-sm">
               Ready to Join Our Success Stories?
             </h3>
-            <p className="text-gray-300 mb-md text-lg">
+            <p className="text-gray-700 mb-md text-lg">
               Experience the difference that thousands of businesses already trust
             </p>
             <button className="bg-gradient-to-r from-orange-500 to-orange-600 text-white px-xl py-sm rounded-full font-semibold text-lg hover:from-orange-600 hover:to-orange-700 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl">
