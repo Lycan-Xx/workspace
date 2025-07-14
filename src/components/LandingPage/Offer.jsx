@@ -1,19 +1,15 @@
-import React, { useRef, useState, useCallback, useMemo } from "react";
-import { useInView } from "react-intersection-observer";
-import { ArrowRight, Sparkles, Users, Shield, Zap } from "lucide-react";
+import React, { useState, useCallback, useMemo, useEffect } from "react";
+import { ArrowRight, Sparkles, Users, Shield, Zap, Star, TrendingUp } from "lucide-react";
+import { motion } from "framer-motion";
 
 const Offer = React.memo(({ language = "English" }) => {
-  const [hoveredCard, setHoveredCard] = useState(null);
-  const [hasAnimated, setHasAnimated] = useState(false);
-  const { ref: sectionRef, inView } = useInView({ 
-    threshold: 0.1,
-    triggerOnce: true,
-    onChange: (inView) => {
-      if (inView && !hasAnimated) {
-        setHasAnimated(true);
-      }
-    }
-  });
+  const [activeCard, setActiveCard] = useState(0);
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setIsVisible(true), 100);
+    return () => clearTimeout(timer);
+  }, []);
 
   const translations = useMemo(() => ({
     English: {
@@ -25,7 +21,9 @@ const Offer = React.memo(({ language = "English" }) => {
       highlights: ["Individuals", "Businesses", "Communities"],
       globalReach: "across the globe.",
       rightPanelTitle: "Financial Innovation",
-      rightPanelDescription: "Empowering the future of financial services through cutting-edge technology and inclusive design."
+      rightPanelDescription: "Empowering the future of financial services through cutting-edge technology and inclusive design.",
+      exploreMore: "Explore Features",
+      trustedBy: "Trusted by thousands"
     },
     Hausa: {
       sectionTitle: "Abin Da Muke Bayarwa",
@@ -36,7 +34,9 @@ const Offer = React.memo(({ language = "English" }) => {
       highlights: ["Mutane", "Kasuwanci", "Al'ummomi"],
       globalReach: "a duk duniya.",
       rightPanelTitle: "Sabbin Hanyoyin Kudi",
-      rightPanelDescription: "Ƙarfafa makomar sabis na kudi ta hanyar fasaha da tsarin haɗawa."
+      rightPanelDescription: "Ƙarfafa makomar sabis na kudi ta hanyar fasaha da tsarin haɗawa.",
+      exploreMore: "Duba Abubuwa",
+      trustedBy: "Amintattun mutane dubu-dubu"
     },
     Igbo: {
       sectionTitle: "Ihe Anyị Na-Enye",
@@ -47,7 +47,9 @@ const Offer = React.memo(({ language = "English" }) => {
       highlights: ["Ndị mmadụ", "Azụmaahịa", "Obodo"],
       globalReach: "n'ụwa niile.",
       rightPanelTitle: "Ọhụrụ Ego",
-      rightPanelDescription: "Inyere aka n'ọdịnihu nke ọrụ ego site na teknụzụ na nhazi nke gụnyere onye ọ bụla."
+      rightPanelDescription: "Inyere aka n'ọdịnihu nke ọrụ ego site na teknụzụ na nhazi nke gụnyere onye ọ bụla.",
+      exploreMore: "Chọpụta Ihe",
+      trustedBy: "Ndị pụrụ ịdabere na ya ọtụtụ puku"
     },
     Yoruba: {
       sectionTitle: "Ohun Ti A Npese",
@@ -58,7 +60,9 @@ const Offer = React.memo(({ language = "English" }) => {
       highlights: ["Awọn eniyan", "Awọn iṣowo", "Awọn agbegbe"],
       globalReach: "ni gbogbo agbaye.",
       rightPanelTitle: "Imudojuiwon Inawo",
-      rightPanelDescription: "Fifun agbara si ọjọ iwaju ti awọn iṣẹ inawo nipasẹ imọ-ẹrọ ti o ga julọ ati apẹrẹ ti o ni ifisi."
+      rightPanelDescription: "Fifun agbara si ọjọ iwaju ti awọn iṣẹ inawo nipasẹ imọ-ẹrọ ti o ga julọ ati apẹrẹ ti o ni ifisi.",
+      exploreMore: "Wo Awọn Ẹya",
+      trustedBy: "Ti awọn egberun gbẹkẹle"
     }
   }), []);
 
@@ -69,25 +73,22 @@ const Offer = React.memo(({ language = "English" }) => {
           icon: <Users className="w-6 h-6" />,
           title: "Inclusive Financial Access",
           description: "We ensure that everyone, regardless of location or background, has the opportunity to access modern financial services.",
-          gradient: "from-blue-500 to-cyan-500",
-          bgColor: "bg-blue-50",
-          iconColor: "text-blue-600"
+          metric: "10M+",
+          metricLabel: "Users Served"
         },
         {
           icon: <Shield className="w-6 h-6" />,
           title: "Reliable and Seamless Services",
           description: "Our focus is on providing stable and trustworthy services that streamline your financial operations.",
-          gradient: "from-emerald-500 to-teal-500",
-          bgColor: "bg-emerald-50",
-          iconColor: "text-emerald-600"
+          metric: "99.9%",
+          metricLabel: "Uptime"
         },
         {
           icon: <Zap className="w-6 h-6" />,
           title: "Innovative Financial Experiences",
           description: "We continuously strive to innovate and improve how you manage and grow your finances.",
-          gradient: "from-orange-500 to-red-500",
-          bgColor: "bg-orange-50",
-          iconColor: "text-orange-600"
+          metric: "24/7",
+          metricLabel: "Support"
         }
       ]
     },
@@ -97,25 +98,22 @@ const Offer = React.memo(({ language = "English" }) => {
           icon: <Users className="w-6 h-6" />,
           title: "Damar Samun Kudi Ga Kowa",
           description: "Muna tabbatar da cewa kowa, ba tare da la'akari da wurin da yake ko matsayin sa ba, yana da damar samun sabbin hanyoyin kudi.",
-          gradient: "from-blue-500 to-cyan-500",
-          bgColor: "bg-blue-50",
-          iconColor: "text-blue-600"
+          metric: "10M+",
+          metricLabel: "Masu Amfani"
         },
         {
           icon: <Shield className="w-6 h-6" />,
           title: "Ayyuka Masu Amfani da Tsaro",
           description: "Muna mayar da hankali wajen samar da ayyuka masu aminci da sauki, wanda zai taimaka wajen gudanar da harkokin kudi.",
-          gradient: "from-emerald-500 to-teal-500",
-          bgColor: "bg-emerald-50",
-          iconColor: "text-emerald-600"
+          metric: "99.9%",
+          metricLabel: "Aiki"
         },
         {
           icon: <Zap className="w-6 h-6" />,
           title: "Hanyoyin Inganta Kudi",
           description: "Muna ci gaba da ƙoƙarin sabunta hanyoyin da za a sarrafa kudi da kuma haɓaka nasarorin ku.",
-          gradient: "from-orange-500 to-red-500",
-          bgColor: "bg-orange-50",
-          iconColor: "text-orange-600"
+          metric: "24/7",
+          metricLabel: "Tallafi"
         }
       ]
     },
@@ -125,25 +123,22 @@ const Offer = React.memo(({ language = "English" }) => {
           icon: <Users className="w-6 h-6" />,
           title: "Inweta Ego N'oge Ọ bụla",
           description: "Anyị na-eme ka ọ bụrụ na onye ọ bụla nwere ohere iji nweta ọrụ ego nke oge a.",
-          gradient: "from-blue-500 to-cyan-500",
-          bgColor: "bg-blue-50",
-          iconColor: "text-blue-600"
+          metric: "10M+",
+          metricLabel: "Ndị Ọrụ"
         },
         {
           icon: <Shield className="w-6 h-6" />,
           title: "Ego Nchekwa na Nchebe",
           description: "Anyị na-elekwasị anya n'inye ọrụ dị nchebe na nke a pụrụ ịdabere na ya, nke na-eme ka ị na-arụ ọrụ ego gị na-adị mfe.",
-          gradient: "from-emerald-500 to-teal-500",
-          bgColor: "bg-emerald-50",
-          iconColor: "text-emerald-600"
+          metric: "99.9%",
+          metricLabel: "Oge Ọrụ"
         },
         {
           icon: <Zap className="w-6 h-6" />,
           title: "Omenala Ịma Egwuregwu",
           description: "Anyị na-agbaso imepụta na mmezi ngwa ọrụ akụ na ụba.",
-          gradient: "from-orange-500 to-red-500",
-          bgColor: "bg-orange-50",
-          iconColor: "text-orange-600"
+          metric: "24/7",
+          metricLabel: "Nkwado"
         }
       ]
     },
@@ -153,25 +148,22 @@ const Offer = React.memo(({ language = "English" }) => {
           icon: <Users className="w-6 h-6" />,
           title: "Ibi-afẹde Ti Inawo Fun Gbogbo eniyan",
           description: "A rii daju pe gbogbo eniyan, lai wo ibi ti wọn wa tabi ipo wọn, ni anfaani lati wọle si awọn iṣẹ inawo igbalode.",
-          gradient: "from-blue-500 to-cyan-500",
-          bgColor: "bg-blue-50",
-          iconColor: "text-blue-600"
+          metric: "10M+",
+          metricLabel: "Awọn Olumulo"
         },
         {
           icon: <Shield className="w-6 h-6" />,
           title: "Awọn iṣẹ To Duroṣinṣin ati To Lọrẹ",
           description: "A nṣe itọsọna lori gbigbe awọn iṣẹ inawo ti o dara julọ ati ti o tọ.",
-          gradient: "from-emerald-500 to-teal-500",
-          bgColor: "bg-emerald-50",
-          iconColor: "text-emerald-600"
+          metric: "99.9%",
+          metricLabel: "Akoko Iṣẹ"
         },
         {
           icon: <Zap className="w-6 h-6" />,
           title: "Iriri inawo Titun",
           description: "A n ṣafihan ọna tuntun ati ilọsiwaju bi a ṣe n ṣiṣẹda ati dagba awọn owo rẹ.",
-          gradient: "from-orange-500 to-red-500",
-          bgColor: "bg-orange-50",
-          iconColor: "text-orange-600"
+          metric: "24/7",
+          metricLabel: "Atilẹyin"
         }
       ]
     }
@@ -180,266 +172,225 @@ const Offer = React.memo(({ language = "English" }) => {
   const currentContent = content[language] || content.English;
   const currentTranslation = translations[language] || translations.English;
 
-  const handleCardHover = useCallback((index) => {
-    setHoveredCard(index);
+  const handleCardClick = useCallback((index) => {
+    setActiveCard(index);
   }, []);
-
-  const handleCardLeave = useCallback(() => {
-    setHoveredCard(null);
-  }, []);
-
-  const handleCardKeyDown = useCallback((e, index) => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault();
-      handleCardHover(index);
-    }
-  }, [handleCardHover]);
-
-  // Optimized floating elements
-  const floatingElements = useMemo(() => 
-    Array.from({ length: 8 }, (_, i) => ({
-      id: i,
-      left: Math.random() * 80 + 10,
-      top: Math.random() * 80 + 10,
-      delay: Math.random() * 2,
-      duration: 3 + Math.random() * 2
-    }))
-  , []);
 
   return (
-    <section
-      ref={sectionRef}
-      className="relative min-h-screen bg-white overflow-hidden"
-      role="region"
-      aria-labelledby="offer-section-title"
-    >
-      {/* CSS Animations */}
-      <style jsx>{`
-        @media (prefers-reduced-motion: reduce) {
-          .animate-float,
-          .animate-pulse,
-          .animate-slide-in,
-          .animate-fade-in {
-            animation: none !important;
-          }
-        }
-        
-        .animate-slide-in {
-          animation: slideIn 0.8s ease-out forwards;
-        }
-        
-        .animate-fade-in {
-          animation: fadeIn 0.6s ease-out forwards;
-        }
-        
-        .animate-float {
-          animation: float var(--duration, 4s) ease-in-out infinite;
-          animation-delay: var(--delay, 0s);
-        }
-        
-        @keyframes slideIn {
-          from {
-            opacity: 0;
-            transform: translateX(-2rem);
-          }
-          to {
-            opacity: 1;
-            transform: translateX(0);
-          }
-        }
-        
-        @keyframes fadeIn {
-          from {
-            opacity: 0;
-            transform: translateY(1rem);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-        
-        @keyframes float {
-          0%, 100% {
-            transform: translateY(0) scale(1);
-            opacity: 0.3;
-          }
-          50% {
-            transform: translateY(-1.25rem) scale(1.1);
-            opacity: 0.8;
-          }
-        }
-        
-        .card-hover {
-          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-          transform: translateY(0);
-        }
-        
-        .card-hover:hover {
-          transform: translateY(-0.25rem);
-          box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-        }
-        
-        .card-hover:focus {
-          outline: 2px solid #3b82f6;
-          outline-offset: 2px;
-        }
-      `}</style>
+    <section className="relative min-h-screen bg-white overflow-hidden">
+      {/* Hero Section */}
+      <div className="relative">
+        {/* Background Pattern */}
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-600 via-blue-700 to-blue-800">
+          <div className="absolute inset-0 bg-gradient-to-r from-blue-600/90 to-orange-500/20" />
+          
+          {/* Animated Background Elements */}
+          <div className="absolute inset-0 overflow-hidden">
+            <div className="absolute top-10 left-10 w-20 h-20 bg-orange-500/20 rounded-full blur-xl animate-pulse" />
+            <div className="absolute top-1/3 right-1/4 w-32 h-32 bg-white/10 rounded-full blur-2xl animate-pulse" style={{ animationDelay: '1s' }} />
+            <div className="absolute bottom-1/4 left-1/3 w-16 h-16 bg-orange-500/30 rounded-full blur-lg animate-pulse" style={{ animationDelay: '2s' }} />
+          </div>
+        </div>
 
-      {/* Split Screen Container */}
-      <div className="flex flex-col lg:flex-row min-h-screen">
-        {/* Left Side - Content */}
-        <div className="w-full desktop:w-1/2 relative z-10 flex flex-col justify-center px-sm tablet:px-md desktop:px-lg py-lg desktop:py-0">
-          <div className="max-w-tablet mx-auto desktop:mx-0">
-            {/* Header Section */}
-            <div className="mb-xl">
-              <div 
-                className={`flex items-center mb-md ${hasAnimated ? 'animate-fade-in' : 'opacity-0'}`}
-                style={{ animationDelay: '0.2s' }}
-              >
-                <Sparkles className="w-5 h-5 text-orange-500 mr-3" aria-hidden="true" />
-                <span className="text-orange-500 font-semibold text-base tablet:text-lg tracking-wide uppercase">
+        {/* Hero Content */}
+        <div className="relative z-10 px-4 sm:px-6 lg:px-8 py-16 sm:py-20 lg:py-24">
+          <div className="max-w-7xl mx-auto">
+            <div className="text-center">
+              {/* Badge */}
+              <div className={`inline-flex items-center px-4 py-2 rounded-full bg-orange-500/20 backdrop-blur-sm border border-orange-500/30 mb-8 transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+                <Sparkles className="w-4 h-4 text-orange-500 mr-2" />
+                <span className="text-white font-medium text-sm">
                   {currentTranslation.sectionTitle}
                 </span>
               </div>
 
-              <h1
-                id="offer-section-title"
-                className={`text-3xl tablet:text-4xl desktop:text-6xl font-bold text-gray-900 mb-xl leading-tight ${hasAnimated ? 'animate-fade-in' : 'opacity-0'}`}
-                style={{ animationDelay: '0.3s' }}
-              >
+              {/* Main Heading */}
+              <h1 className={`text-4xl sm:text-5xl lg:text-7xl font-bold text-white mb-6 leading-tight transition-all duration-1000 delay-200 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
                 {currentTranslation.subtitle}
               </h1>
 
-              <div 
-                className={`space-y-sm tablet:space-y-md text-base tablet:text-lg leading-relaxed ${hasAnimated ? 'animate-fade-in' : 'opacity-0'}`}
-                style={{ animationDelay: '0.4s' }}
-              >
-                <p className="text-gray-700">
-                  <span className="font-semibold text-gray-900">
+              {/* Description */}
+              <div className={`max-w-3xl mx-auto mb-8 transition-all duration-1000 delay-400 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+                <p className="text-lg sm:text-xl text-white/90 mb-4">
+                  <span className="font-semibold text-white">
                     {currentTranslation.mainDescription}
                   </span>
                 </p>
-                
-                <p className="text-gray-700 font-medium">
+                <p className="text-lg sm:text-xl text-white/90 font-medium">
                   {currentTranslation.subDescription}
                 </p>
-                
-                <p className="text-gray-600">
-                  <span className="text-blue-600 font-semibold">
-                    Join us in shaping a future where financial empowerment is accessible to all.
-                  </span>
-                  {' '}Together, we can create new opportunities and drive positive change for{' '}
-                  <span className="text-orange-500 font-bold">
-                    {currentTranslation.highlights.join(', ')}
-                  </span>
-                  <span className="font-semibold"> {currentTranslation.globalReach}</span>
-                </p>
               </div>
-            </div>
 
-            {/* Feature Cards */}
-            <div className="space-y-sm tablet:space-y-md">
-              {currentContent.cards.map((card, idx) => (
-                <div
-                  key={idx}
-                  className={`card-hover group relative overflow-hidden rounded-large border border-gray-100 bg-white p-sm tablet:p-md shadow-sm cursor-pointer focus:outline-none ${hasAnimated ? 'animate-fade-in' : 'opacity-0'}`}
-                  style={{ animationDelay: `${0.6 + idx * 0.1}s` }}
-                  onMouseEnter={() => handleCardHover(idx)}
-                  onMouseLeave={handleCardLeave}
-                  onKeyDown={(e) => handleCardKeyDown(e, idx)}
-                  tabIndex={0}
-                  role="button"
-                  aria-label={`Learn more about ${card.title}`}
-                >
-                  {/* Gradient overlay */}
-                  <div className={`absolute inset-0 bg-gradient-to-r ${card.gradient} opacity-0 group-hover:opacity-5 transition-opacity duration-300`} />
-                  
-                  {/* Content */}
-                  <div className="relative z-10 flex items-start space-x-3 sm:space-x-4">
-                    <div className={`${card.bgColor} ${card.iconColor} flex-shrink-0 p-xs tablet:p-sm rounded-medium group-hover:scale-105 transition-transform duration-300`}>
-                      {card.icon}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <h3 className="text-lg tablet:text-xl font-bold text-gray-900 mb-xs tablet:mb-sm group-hover:text-gray-800 transition-colors duration-300">
-                        {card.title}
-                      </h3>
-                      <p className="text-sm tablet:text-base text-gray-600 leading-relaxed group-hover:text-gray-700 transition-colors duration-300">
-                        {card.description}
-                      </p>
-                    </div>
-                    <div className="flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                      <ArrowRight className="w-4 h-4 tablet:w-5 tablet:h-5 text-gray-400 group-hover:text-gray-600 group-hover:translate-x-1 transition-all duration-300" />
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
+              {/* CTA Button */}
+              <div className={`transition-all duration-1000 delay-600 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+                <button className="inline-flex items-center px-8 py-4 bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-full transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl">
+                  <span>{currentTranslation.exploreMore}</span>
+                  <ArrowRight className="w-5 h-5 ml-2 transition-transform duration-300 group-hover:translate-x-1" />
+                </button>
+              </div>
 
-        {/* Right Side - Background */}
-        <div className="w-full desktop:w-1/2 relative min-h-64 desktop:min-h-screen">
-          {/* Background Image */}
-          <div className="absolute inset-0 bg-gradient-to-br from-blue-600 via-purple-600 to-orange-500">
-            {/* Overlay */}
-            <div className="absolute inset-0 bg-black/20" />
-            
-            {/* Optimized geometric patterns */}
-            <div className="absolute inset-0 overflow-hidden">
-              {/* Large circles */}
-              <div className="absolute top-1/4 right-1/4 w-48 tablet:w-64 h-48 tablet:h-64 bg-white/10 rounded-full blur-3xl animate-pulse" />
-              <div className="absolute bottom-1/4 left-1/4 w-32 tablet:w-48 h-32 tablet:h-48 bg-orange-400/20 rounded-full blur-2xl animate-pulse" style={{ animationDelay: '1s' }} />
-              
-              {/* Floating elements */}
-              {floatingElements.map((element) => (
-                <div
-                  key={element.id}
-                  className="absolute w-3 h-3 tablet:w-4 tablet:h-4 bg-white/30 rounded-full animate-float"
-                  style={{
-                    left: `${element.left}%`,
-                    top: `${element.top}%`,
-                    '--delay': `${element.delay}s`,
-                    '--duration': `${element.duration}s`
-                  }}
-                />
-              ))}
-            </div>
-            
-            {/* Content overlay */}
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="text-center text-white p-md tablet:p-xl">
-                <div 
-                  className={`mb-md tablet:mb-xl ${hasAnimated ? 'animate-fade-in' : 'opacity-0'}`}
-                  style={{ animationDelay: '0.8s' }}
-                >
-                  <div className="w-20 h-20 tablet:w-32 tablet:h-32 mx-auto bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm border border-white/30">
-                    <Sparkles className="w-10 h-10 tablet:w-16 tablet:h-16 text-white" aria-hidden="true" />
-                  </div>
+              {/* Trust Indicator */}
+              <div className={`mt-12 flex items-center justify-center space-x-2 transition-all duration-1000 delay-800 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+                <div className="flex items-center space-x-1">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} className="w-4 h-4 text-orange-500 fill-current" />
+                  ))}
                 </div>
-                
-                <h2 
-                  className={`text-2xl tablet:text-3xl font-bold mb-sm tablet:mb-sm ${hasAnimated ? 'animate-fade-in' : 'opacity-0'}`}
-                  style={{ animationDelay: '1s' }}
-                >
-                  {currentTranslation.rightPanelTitle}
-                </h2>
-                
-                <p 
-                  className={`text-base tablet:text-lg opacity-90 max-w-md mx-auto px-sm ${hasAnimated ? 'animate-fade-in' : 'opacity-0'}`}
-                  style={{ animationDelay: '1.2s' }}
-                >
-                  {currentTranslation.rightPanelDescription}
-                </p>
+                <span className="text-white/80 text-sm font-medium">
+                  {currentTranslation.trustedBy}
+                </span>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Mobile Background (fallback) */}
-      <div className="desktop:hidden absolute inset-0 bg-gradient-to-br from-blue-50 via-purple-50 to-orange-50 -z-10">
-        <div className="absolute inset-0 bg-white/80" />
+      {/* Features Section */}
+      <div className="relative bg-white py-16 sm:py-20 lg:py-24">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          
+          {/* Section Header */}
+          <div className="text-center mb-16">
+            <div className="inline-flex items-center px-4 py-2 rounded-full bg-blue-600/10 border border-blue-600/20 mb-6">
+              <TrendingUp className="w-4 h-4 text-blue-600 mr-2" />
+              <span className="text-blue-600 font-medium text-sm">
+                {currentTranslation.rightPanelTitle}
+              </span>
+            </div>
+            
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              {currentTranslation.rightPanelDescription}
+            </p>
+          </div>
+
+          {/* Mobile Card Stack */}
+          <div className="lg:hidden space-y-6">
+            {currentContent.cards.map((card, index) => (
+              <div
+                key={index}
+                className={`bg-white rounded-2xl border-2 p-6 transition-all duration-300 ${
+                  activeCard === index 
+                    ? 'border-blue-600 shadow-lg transform scale-105' 
+                    : 'border-gray-200 hover:border-blue-600/50'
+                }`}
+                onClick={() => handleCardClick(index)}
+              >
+                <div className="flex items-start space-x-4">
+                  <div className="flex-shrink-0 w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center text-white">
+                    {card.icon}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-xl font-bold text-gray-900 mb-2">
+                      {card.title}
+                    </h3>
+                    <p className="text-gray-600 mb-4 leading-relaxed">
+                      {card.description}
+                    </p>
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <div className="text-2xl font-bold text-blue-600">{card.metric}</div>
+                        <div className="text-sm text-gray-500">{card.metricLabel}</div>
+                      </div>
+                      <div className="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center">
+                        <ArrowRight className="w-4 h-4 text-white" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Desktop Grid */}
+          <div className="hidden lg:grid lg:grid-cols-3 lg:gap-8">
+            {currentContent.cards.map((card, index) => (
+              <div
+                key={index}
+                className={`group relative bg-white rounded-2xl border-2 p-8 transition-all duration-300 cursor-pointer ${
+                  activeCard === index 
+                    ? 'border-blue-600 shadow-xl transform -translate-y-2' 
+                    : 'border-gray-200 hover:border-blue-600/50 hover:shadow-lg hover:-translate-y-1'
+                }`}
+                onClick={() => handleCardClick(index)}
+                onMouseEnter={() => setActiveCard(index)}
+              >
+                {/* Card Header */}
+                <div className="flex items-center justify-between mb-6">
+                  <div className="w-14 h-14 bg-blue-600 rounded-xl flex items-center justify-center text-white group-hover:bg-blue-700 transition-colors duration-300">
+                    {card.icon}
+                  </div>
+                  <div className="text-right">
+                    <div className="text-2xl font-bold text-blue-600">{card.metric}</div>
+                    <div className="text-sm text-gray-500">{card.metricLabel}</div>
+                  </div>
+                </div>
+
+                {/* Card Content */}
+                <div className="space-y-4">
+                  <h3 className="text-xl font-bold text-gray-900 group-hover:text-blue-600 transition-colors duration-300">
+                    {card.title}
+                  </h3>
+                  <p className="text-gray-600 leading-relaxed">
+                    {card.description}
+                  </p>
+                </div>
+
+                {/* Card Footer */}
+                <div className="mt-6 flex items-center text-blue-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <span className="text-sm font-medium">Learn more</span>
+                  <ArrowRight className="w-4 h-4 ml-2 transform group-hover:translate-x-1 transition-transform duration-300" />
+                </div>
+
+                {/* Active Indicator */}
+                {activeCard === index && (
+                  <div className="absolute -top-1 -right-1 w-6 h-6 bg-orange-500 rounded-full flex items-center justify-center">
+                    <div className="w-2 h-2 bg-white rounded-full" />
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Call to Action Section */}
+      <div className="relative overflow-hidden">
+        {/* Gradient Background */}
+        <div className="absolute inset-0 bg-gradient-to-br from-[#040d21] via-[#071630] to-[#0a1f3f]">
+          {/* Glossy Overlay */}
+          <div className="absolute inset-0 bg-blue-500/5 backdrop-blur-3xl"></div>
+          {/* Radial Glow Effects */}
+          <div className="absolute inset-0">
+            <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-500/10 rounded-full filter blur-3xl"></div>
+            <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-cyan-500/10 rounded-full filter blur-3xl"></div>
+          </div>
+        </div>
+
+        {/* Content */}
+        <div className="relative z-10 max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8 py-20">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+          >
+            <h2 className="text-3xl sm:text-4xl font-bold text-white mb-6 bg-clip-text">
+              {currentTranslation.callToAction}
+            </h2>
+            <div className="text-xl text-white/90 mb-2 backdrop-blur-xl bg-white/5 border border-white/10 rounded-large p-6 shadow-2xl">
+              <motion.span 
+                className="text-orange-500 font-bold block mb-2"
+                animate={{ scale: [1, 1.02, 1] }}
+                transition={{ duration: 2, repeat: Infinity }}
+              >
+                {currentTranslation.highlights.join(' • ')}
+              </motion.span>
+              <span className="font-semibold text-white/80">
+                {currentTranslation.globalReach}
+              </span>
+            </div>
+          </motion.div>
+        </div>
       </div>
     </section>
   );

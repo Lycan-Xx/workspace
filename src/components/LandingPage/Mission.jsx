@@ -4,7 +4,7 @@ import { FaVault } from "react-icons/fa6";
 import { motion } from "framer-motion";
 import PropTypes from "prop-types";
 
-const Mission = ({ language }) => {
+const Mission = ({ language = "English" }) => {
 	const [hoveredCard, setHoveredCard] = useState(null);
 
 	const translations = {
@@ -332,11 +332,7 @@ const Mission = ({ language }) => {
 };
 
 Mission.propTypes = {
-	language: PropTypes.oneOf(["English", "Yoruba", "Hausa", "Igbo"]).isRequired,
-};
-
-Mission.defaultProps = {
-	language: "English",
+	language: PropTypes.oneOf(["English", "Yoruba", "Hausa", "Igbo"]),
 };
 
 export default Mission;
