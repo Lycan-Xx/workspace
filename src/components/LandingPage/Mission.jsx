@@ -148,13 +148,16 @@ const Mission = ({ language }) => {
 	// Fallback to English if language not found
 	const currentTranslation = translations[language] || translations.English;
 
+	// Animation variants for container and cards
 	const containerVariants = {
 		hidden: { opacity: 0 },
 		visible: {
 			opacity: 1,
 			transition: {
-				staggerChildren: 0.1,
-				delayChildren: 0.2
+				staggerChildren: 0.15,
+				delayChildren: 0.1,
+				duration: 0.6,
+				ease: [0.645, 0.045, 0.355, 1.000]
 			}
 		}
 	};
@@ -162,13 +165,23 @@ const Mission = ({ language }) => {
 	const cardVariants = {
 		hidden: { 
 			opacity: 0, 
-			scale: 0.95 
+			scale: 0.95,
+			y: 20
 		},
 		visible: { 
 			opacity: 1, 
 			scale: 1,
+			y: 0,
 			transition: {
-				duration: 0.3,
+				duration: 0.5,
+				ease: [0.215, 0.610, 0.355, 1.000]
+			}
+		},
+		hover: {
+			scale: 1.02,
+			y: -5,
+			transition: {
+				duration: 0.2,
 				ease: "easeOut"
 			}
 		}
@@ -204,59 +217,108 @@ const Mission = ({ language }) => {
 					viewport={{ once: true, margin: "-50px" }}
 					className="max-w-content mx-auto"
 				>
-					<div className="grid grid-cols-1 tablet:grid-cols-2 divide-y tablet:divide-y-0 tablet:divide-x divide-gray-200 border border-gray-200 rounded-large overflow-hidden bg-white shadow-lg">
+					<div className="grid grid-cols-1 tablet:grid-cols-2 gap-6 tablet:gap-8">
 						{currentTranslation.features.map((feature, index) => (
 							<motion.div
 								key={index}
 								variants={cardVariants}
-								className="p-xl flex flex-col hover:bg-gray-50 transition-all duration-300 ease-in-out relative overflow-hidden group cursor-pointer"
-								onMouseEnter={() => setHoveredCard(index)}
-								onMouseLeave={() => setHoveredCard(null)}
+								initial="hidden"
+								animate="visible"
+								whileHover="hover"
+								className="p-6 tablet:p-8 flex flex-col relative overflow-hidden group cursor-pointer border border-gray-200 rounded-xl bg-white shadow-md hover:shadow-lg transition-shadow duration-300"
+								onMouseEnter={() => {
+									setHoveredCard(index);
+								}}
+								onMouseLeave={() => {
+									setHoveredCard(null);
+								}}
 								style={{
 									backgroundColor: hoveredCard === index ? generateRandomColor() : 'transparent'
-								}}
-								whileHover={{ 
-									scale: 1.02,
-									transition: { duration: 0.2 }
 								}}
 								role="button"
 								tabIndex={0}
 								aria-label={`Learn more about ${feature.title}`}
 							>
 								{/* Content */}
-								<div className="relative z-10">
+								<motion.div 
+									className="relative z-10"
+									variants={{
+										hover: {
+											y: -5,
+											transition: { duration: 0.2 }
+										}
+									}}
+								>
 									{/* Icon */}
-									<div className="mb-md">
-										<div className="text-purple-600 transform transition-transform duration-300 group-hover:scale-105">
+									<motion.div 
+										className="mb-md m-8"
+										variants={{
+											hover: {
+												scale: 1.1,
+												transition: { duration: 0.2 }
+											}
+										}}
+									>
+										<div className="text-blue-600 transform">
 											{feature.icon}
 										</div>
-									</div>
+									</motion.div>
 
 									{/* Title */}
-									<h3 className="text-xl font-semibold text-gray-800 mb-sm transition-all duration-300 group-hover:scale-105 transform">
+									<motion.h3 
+										className="text-xl font-semibold text-gray-800 mb-sm m-4"
+										variants={{
+											hover: {
+												scale: 1.05,
+												transition: { duration: 0.2 }
+											}
+										}}
+									>
 										{feature.title}
-									</h3>
+									</motion.h3>
 
 									{/* Description */}
-									<p className="text-gray-600 flex-grow leading-relaxed mb-md transition-all duration-300 group-hover:scale-105 transform">
+									<motion.p 
+										className="text-gray-600 flex-grow leading-relaxed mb-md"
+										variants={{
+											hover: {
+												y: 0,
+												transition: { duration: 0.2 }
+											}
+										}}
+									>
 										{feature.description}
-									</p>
+									</motion.p>
 
 									{/* Read More Link */}
-									<div className="mt-sm">
-										<span className="text-purple-600 font-medium hover:underline transition-all duration-300 cursor-pointer inline-flex items-center group">
+									<motion.div 
+										className="mt-sm"
+										variants={{
+											hover: {
+												x: 5,
+												transition: { duration: 0.2 }
+											}
+										}}
+									>
+										<span className="text-blue-600 font-medium hover:text-blue-700 transition-colors duration-300 cursor-pointer inline-flex items-center group">
 											{feature.readMore}
-											<svg 
-												className="w-4 h-4 ml-2 transform transition-transform duration-300 group-hover:translate-x-1" 
+											<motion.svg 
+												className="w-4 h-4 ml-2" 
 												fill="none" 
 												stroke="currentColor" 
 												viewBox="0 0 24 24"
+												variants={{
+													hover: {
+														x: 5,
+														transition: { duration: 0.2 }
+													}
+												}}
 											>
 												<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-											</svg>
+											</motion.svg>
 										</span>
-									</div>
-								</div>
+									</motion.div>
+								</motion.div>
 
 								{/* Hover effect overlay */}
 								<div className="absolute inset-0 bg-gradient-to-br from-transparent to-black/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />

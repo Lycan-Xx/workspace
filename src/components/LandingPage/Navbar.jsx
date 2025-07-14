@@ -114,7 +114,7 @@ const Navbar = ({ language, setLanguage }) => {
                 <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-orange-400 to-orange-600 transition-all duration-300 group-hover:w-full"></span>
               </button>
 
-              {/* Services Dropdown */}
+             { /* Services Dropdown */}
               <AnimatePresence>
                 {isServicesOpen && (
                   <motion.div
@@ -122,7 +122,12 @@ const Navbar = ({ language, setLanguage }) => {
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={{ opacity: 0, y: 10, scale: 0.95 }}
                     transition={{ duration: 0.2 }}
-                    className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 w-96 bg-white/10 backdrop-blur-md border border-white/20 rounded-large shadow-2xl p-md z-50"
+                    className="absolute -left-36 transform -translate-x-1/2 mt-2 w-96 border border-white/20 rounded-large shadow-2xl p-md z-50"
+                    style={{
+                      background: "rgba(6, 17, 41, 0.9)",
+                      backdropFilter: "blur(16px)",
+                      top: "calc(100% + 0.5rem)"
+                    }}
                   >
                     <div className="grid grid-cols-2 gap-component-h">
                       {Object.entries(serviceCategories).map(([category, categoryServices]) => (
