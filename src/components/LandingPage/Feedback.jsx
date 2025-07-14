@@ -102,7 +102,7 @@ const Feedback = () => {
             >
               {/* Category Badge */}
               <div className="absolute -top-3 left-md">
-                <span className="bg-gradient-to-r from-orange-500 to-orange-600 text-white px-sm py-xs rounded-full text-sm font-medium shadow-lg">
+                <span className="bg-gradient-to-r from-orange-500 to-orange-600 text-white px-sm py-xs rounded-xl text-sm font-medium shadow-lg">
                   {testimonial.category}
                 </span>
               </div>
@@ -113,7 +113,7 @@ const Feedback = () => {
               </div>
 
               {/* Testimonial Text */}
-              <blockquote className="text-gray-300 text-lg leading-relaxed mb-xl italic text-black">
+              <blockquote className="text-gray-900 text-lg leading-relaxed mb-xl italic text-black">
                 "{testimonial.text}"
               </blockquote>
 
@@ -128,10 +128,10 @@ const Feedback = () => {
                   <div className="absolute inset-0 rounded-full bg-gradient-to-r from-orange-500/20 to-transparent"></div>
                 </div>
                 <div>
-                  <h4 className="font-bold text-xl text-white group-hover:text-orange-400 transition-colors duration-300">
+                  <h4 className="font-bold text-xl text-gray-700 group-hover:text-orange-500 transition-colors duration-300">
                     {testimonial.name}
                   </h4>
-                  <p className="text-gray-400 text-sm font-medium">
+                  <p className="text-gray-800 text-sm font-medium">
                     {testimonial.role}
                   </p>
                 </div>

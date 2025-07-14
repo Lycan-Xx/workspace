@@ -1,11 +1,46 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { FaShieldAlt, FaClock, FaHeadset } from "react-icons/fa";
 import { FaVault } from "react-icons/fa6";
 import { motion } from "framer-motion";
 import PropTypes from "prop-types";
+import video from "../assets/background-video.mp4";
 
 const Mission = ({ language = "English" }) => {
 	const [hoveredCard, setHoveredCard] = useState(null);
+	const videoRef = useRef(null);
+
+	useEffect(() => {
+		const videoElement = videoRef.current;
+		if (videoElement) {
+			videoElement.playbackRate = 0.75;
+			
+			const handlePlay = async () => {
+				try {
+					await videoElement.play();
+				} catch (error) {
+					console.log('Video autoplay prevented:', error);
+				}
+			};
+
+			const handleStall = () => {
+				// If video stalls, try to resume playback
+				videoElement.currentTime = 0;
+				handlePlay();
+			};
+
+			// Add event listeners for better playback handling
+			videoElement.addEventListener('loadeddata', handlePlay);
+			videoElement.addEventListener('stalled', handleStall);
+			videoElement.addEventListener('suspend', handlePlay);
+
+			return () => {
+				// Cleanup event listeners
+				videoElement.removeEventListener('loadeddata', handlePlay);
+				videoElement.removeEventListener('stalled', handleStall);
+				videoElement.removeEventListener('suspend', handlePlay);
+			};
+		}
+	}, []);
 
 	const translations = {
 		English: {
@@ -154,9 +189,9 @@ const Mission = ({ language = "English" }) => {
 		visible: {
 			opacity: 1,
 			transition: {
-				staggerChildren: 0.15,
-				delayChildren: 0.1,
-				duration: 0.6,
+				staggerChildren: 0.2,
+				delayChildren: 0.3,
+				duration: 0.8,
 				ease: [0.645, 0.045, 0.355, 1.000]
 			}
 		}
@@ -165,31 +200,49 @@ const Mission = ({ language = "English" }) => {
 	const cardVariants = {
 		hidden: { 
 			opacity: 0, 
-			scale: 0.95,
-			y: 20
+			scale: 0.9,
+			y: 30
 		},
 		visible: { 
 			opacity: 1, 
 			scale: 1,
 			y: 0,
 			transition: {
-				duration: 0.5,
+				duration: 0.8,
 				ease: [0.215, 0.610, 0.355, 1.000]
 			}
 		},
 		hover: {
-			scale: 1.02,
-			y: -5,
+			scale: 1.03,
+			y: -8,
 			transition: {
-				duration: 0.2,
-				ease: "easeOut"
+				duration: 0.3,
+				ease: [0.215, 0.610, 0.355, 1.000]
 			}
 		}
 	};
 
 	return (
-		<section className="py-component-v bg-gray-50">
-			<div className="max-w-content mx-auto px-sm tablet:px-md desktop:px-lg">
+		<section className="relative min-h-screen overflow-hidden">
+			{/* Video Background */}
+			<video 
+				ref={videoRef}
+				autoPlay 
+				loop 
+				muted 
+				playsInline
+				preload="auto"
+				className="absolute top-0 left-0 w-full h-full object-cover z-0"
+				poster={video.replace('.mp4', '-poster.jpg')} // Optional: Add a poster image while video loads
+			>
+				<source src={video} type="video/mp4" />
+			</video>
+
+			{/* Dark overlay */}
+			<div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-black/70 via-black/50 to-black/70 z-1">
+			</div>
+
+			<div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 py-24">
 				{/* Title and Description */}
 				<motion.div
 					initial={{ opacity: 0, y: 20 }}
@@ -201,23 +254,25 @@ const Mission = ({ language = "English" }) => {
 					}}
 					className="text-center mb-12"
 				>
-					<h2 className="text-3xl tablet:text-4xl font-bold mb-sm text-orange-500">
-						{currentTranslation.title}
-					</h2>
-					<p className="max-w-tablet mx-auto text-lg text-gray-600 leading-relaxed">
-						{currentTranslation.description}
-					</p>
+					<div className="max-w-4xl mx-auto">
+						<h2 className="text-4xl tablet:text-5xl font-bold mb-6 bg-gradient-to-r from-orange-500 to-orange-400 bg-clip-text text-transparent">
+							{currentTranslation.title}
+						</h2>
+						<p className="text-xl text-white/80 leading-relaxed">
+							{currentTranslation.description}
+						</p>
+					</div>
 				</motion.div>
 
-				{/* 2x2 Dashboard Grid */}
+				{/* Features Grid */}
 				<motion.div
 					variants={containerVariants}
 					initial="hidden"
 					whileInView="visible"
 					viewport={{ once: true, margin: "-50px" }}
-					className="max-w-content mx-auto"
+					className="max-w-7xl mx-auto mt-16"
 				>
-					<div className="grid grid-cols-1 tablet:grid-cols-2 gap-6 tablet:gap-8">
+					<div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
 						{currentTranslation.features.map((feature, index) => (
 							<motion.div
 								key={index}
@@ -225,7 +280,7 @@ const Mission = ({ language = "English" }) => {
 								initial="hidden"
 								animate="visible"
 								whileHover="hover"
-								className="p-6 tablet:p-8 flex flex-col relative overflow-hidden group cursor-pointer border border-gray-200 rounded-xl bg-white shadow-md hover:shadow-lg transition-shadow duration-300"
+								className="p-8 flex flex-col relative overflow-hidden group cursor-pointer rounded-xl bg-black/30 backdrop-blur-sm border-4 transition-all duration-300"
 								onMouseEnter={() => {
 									setHoveredCard(index);
 								}}
@@ -233,7 +288,7 @@ const Mission = ({ language = "English" }) => {
 									setHoveredCard(null);
 								}}
 								style={{
-									backgroundColor: hoveredCard === index ? generateRandomColor() : 'transparent'
+									borderColor: hoveredCard === index ? generateRandomColor() : 'rgba(255,255,255,0.1)'
 								}}
 								role="button"
 								tabIndex={0}
@@ -259,14 +314,14 @@ const Mission = ({ language = "English" }) => {
 											}
 										}}
 									>
-										<div className="text-blue-600 transform">
+										<div className="text-orange-400 transform">
 											{feature.icon}
 										</div>
 									</motion.div>
 
 									{/* Title */}
 									<motion.h3 
-										className="text-xl font-semibold text-gray-800 mb-sm m-4"
+										className="text-xl font-semibold text-white mb-4"
 										variants={{
 											hover: {
 												scale: 1.05,
