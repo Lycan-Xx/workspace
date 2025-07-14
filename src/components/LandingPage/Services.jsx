@@ -114,14 +114,14 @@ const Services = () => {
       />
 
       {/* Content */}
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="relative z-10 max-w-content mx-auto px-sm tablet:px-md desktop:px-lg">
         {/* Title Section */}
-        <div className="text-center mb-16">
+        <div className="text-center mb-component-v">
           <motion.h2 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="text-4xl md:text-5xl font-bold mb-4 text-white"
+            className="text-4xl tablet:text-5xl font-bold mb-sm text-white"
           >
             Our Services
           </motion.h2>
@@ -129,14 +129,14 @@ const Services = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="text-gray-200 text-lg max-w-2xl mx-auto"
+            className="text-gray-200 text-lg max-w-tablet mx-auto"
           >
             Explore our comprehensive range of services designed to simplify your financial life
           </motion.p>
         </div>
 
         {/* Main Service Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+        <div className="grid grid-cols-1 tablet:grid-cols-3 gap-component-h max-w-content mx-auto">
           {serviceCategories.map((category, index) => (
             <motion.div
               key={index}
@@ -144,13 +144,13 @@ const Services = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
               onClick={() => handleCategoryClick(category)}
-              className="bg-white/10 backdrop-blur-md border border-white/10 p-6 rounded-xl flex items-center space-x-4 hover:bg-white/20 transition-all duration-300 cursor-pointer group"
+              className="bg-white/10 backdrop-blur-md border border-white/10 p-md rounded-large flex items-center space-x-sm hover:bg-white/20 transition-all duration-300 cursor-pointer group"
             >
               <div className="flex-shrink-0 group-hover:scale-110 transition-transform duration-300">
                 {category.icon}
               </div>
               <div>
-                <h3 className="text-xl font-semibold text-white mb-2">{category.type}</h3>
+                <h3 className="text-xl font-semibold text-white mb-xs">{category.type}</h3>
                 <p className="text-gray-300 text-sm">
                   {category.subServices.length} services available
                 </p>
@@ -181,17 +181,17 @@ const Services = () => {
                 damping: 30,
                 duration: 0.4 
               }}
-              className="bg-white/10 backdrop-blur-lg border border-white/20 p-8 rounded-3xl max-w-2xl w-full max-h-[85vh] overflow-y-auto shadow-2xl"
+              className="bg-white/10 backdrop-blur-lg border border-white/20 p-xl rounded-large max-w-tablet w-full max-h-[85vh] overflow-y-auto shadow-2xl"
               onClick={(e) => e.stopPropagation()}
             >
               {/* Modal Header */}
-              <div className="flex items-center justify-between mb-6">
-                <div className="flex items-center space-x-4">
+              <div className="flex items-center justify-between mb-md">
+                <div className="flex items-center space-x-sm">
                   <div className="flex-shrink-0">
                     {selectedCategory.icon}
                   </div>
                   <div>
-                    <h3 className="text-2xl font-bold text-white">
+                    <h3 className="text-2xl font-bold text-white mb-xs">
                       {selectedCategory.type}
                     </h3>
                     <p className="text-gray-300 text-sm">
@@ -201,14 +201,14 @@ const Services = () => {
                 </div>
                 <button
                   onClick={handleCloseModal}
-                  className="text-gray-400 hover:text-white transition-colors duration-200 p-2 rounded-full hover:bg-white/10"
+                  className="text-gray-400 hover:text-white transition-colors duration-200 p-xs rounded-full hover:bg-white/10"
                 >
                   <FaBolt className="w-5 h-5" />
                 </button>
               </div>
 
               {/* Sub-services Grid */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 tablet:grid-cols-2 gap-sm">
                 {selectedCategory.subServices.map((service, idx) => (
                   <motion.div
                     key={idx}
@@ -224,14 +224,14 @@ const Services = () => {
                       scale: 1.02,
                       transition: { duration: 0.2 }
                     }}
-                    className="p-6 rounded-2xl backdrop-blur-sm bg-white/10 border border-white/20 hover:border-white/40 transition-all duration-300 shadow-lg hover:shadow-xl cursor-pointer group"
+                    className="p-md rounded-large backdrop-blur-sm bg-white/10 border border-white/20 hover:border-white/40 transition-all duration-300 shadow-lg hover:shadow-xl cursor-pointer group"
                   >
-                    <div className="flex items-start space-x-4">
+                    <div className="flex items-start space-x-sm">
                       <div className="flex-shrink-0 group-hover:scale-110 transition-transform duration-300">
                         {service.icon}
                       </div>
                       <div>
-                        <h4 className="text-lg font-semibold text-white mb-2">
+                        <h4 className="text-lg font-semibold text-white mb-xs">
                           {service.title}
                         </h4>
                         <p className="text-gray-300 text-sm leading-relaxed">
@@ -244,7 +244,7 @@ const Services = () => {
               </div>
 
               {/* Footer */}
-              <div className="mt-6 text-center">
+              <div className="mt-md text-center">
                 <p className="text-gray-400 text-sm">
                   Click on any service to learn more or get started
                 </p>

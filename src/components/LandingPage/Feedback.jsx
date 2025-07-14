@@ -63,30 +63,30 @@ const Feedback = () => {
   }, [inView, hasAnimated]);
 
   return (
-    <div className="px-6 md:px-16 py-20 bg-gradient-to-br from-[#08448c] via-[#0a4d9c] to-[#0c56ac] text-white">
-      <div className="max-w-7xl mx-auto space-y-16">
+    <div className="px-sm tablet:px-lg py-component-v bg-gradient-to-br from-[#08448c] via-[#0a4d9c] to-[#0c56ac] text-white">
+      <div className="max-w-content mx-auto space-y-component-v">
         {/* Header Section */}
-        <div className="text-center space-y-6">
+        <div className="text-center space-y-md">
           <div className="inline-block">
-            <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold bg-gradient-to-r from-orange-400 to-orange-600 bg-clip-text text-transparent">
+            <h2 className="text-4xl tablet:text-5xl desktop:text-6xl font-bold bg-gradient-to-r from-orange-400 to-orange-600 bg-clip-text text-transparent">
               Customer Stories
             </h2>
-            <div className="h-1 bg-gradient-to-r from-orange-400 to-orange-600 mt-2 rounded-full"></div>
+            <div className="h-1 bg-gradient-to-r from-orange-400 to-orange-600 mt-xs rounded-full"></div>
           </div>
-          <p className="text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
+          <p className="text-xl tablet:text-2xl text-gray-300 max-w-tablet mx-auto leading-relaxed">
             Discover what our valued clients have to say about their experiences with our platform
           </p>
         </div>
 
         {/* Trust Counter */}
         <div ref={ref} className="text-center">
-          <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-8 max-w-2xl mx-auto border border-white/10">
-            <div className="text-2xl md:text-3xl font-medium text-gray-200">
+          <div className="bg-white/5 backdrop-blur-sm rounded-large p-xl max-w-tablet mx-auto border border-white/10">
+            <div className="text-2xl tablet:text-3xl font-medium text-gray-200">
               Trusted by{' '}
-              <span className="text-orange-500 text-4xl md:text-5xl font-bold block mt-2">
+              <span className="text-orange-500 text-4xl tablet:text-5xl font-bold block mt-xs">
                 {count.toLocaleString()}+
               </span>{' '}
-              <span className="text-lg md:text-xl text-gray-300 block mt-2">
+              <span className="text-lg tablet:text-xl text-gray-300 block mt-xs">
                 individuals and businesses across Nigeria
               </span>
             </div>
@@ -95,31 +95,31 @@ const Feedback = () => {
 
         {/* Testimonials Grid */}
         {/* Desktop Grid View */}
-        <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="hidden tablet:grid tablet:grid-cols-2 desktop:grid-cols-3 gap-component-h">
           {testimonials.map((testimonial, index) => (
             <div
               key={index}
-              className="group relative bg-white/5 backdrop-blur-sm rounded-2xl p-8 border border-white/10 hover:border-orange-500/50 transition-all duration-500 hover:transform hover:scale-105 hover:shadow-2xl"
+              className="group relative bg-white/5 backdrop-blur-sm rounded-large p-xl border border-white/10 hover:border-orange-500/50 transition-all duration-500 hover:transform hover:scale-105 hover:shadow-2xl"
             >
               {/* Category Badge */}
-              <div className="absolute -top-3 left-6">
-                <span className="bg-gradient-to-r from-orange-500 to-orange-600 text-white px-4 py-1 rounded-full text-sm font-medium shadow-lg">
+              <div className="absolute -top-3 left-md">
+                <span className="bg-gradient-to-r from-orange-500 to-orange-600 text-white px-sm py-xs rounded-full text-sm font-medium shadow-lg">
                   {testimonial.category}
                 </span>
               </div>
 
               {/* Quote Icon */}
-              <div className="mb-6 pt-4">
+              <div className="mb-md pt-sm">
                 <FaQuoteLeft className="text-orange-500 text-3xl opacity-70 group-hover:opacity-100 transition-opacity duration-300" />
               </div>
 
               {/* Testimonial Text */}
-              <blockquote className="text-gray-300 text-lg leading-relaxed mb-8 italic">
+              <blockquote className="text-gray-300 text-lg leading-relaxed mb-xl italic">
                 "{testimonial.text}"
               </blockquote>
 
               {/* Author Info */}
-              <div className="flex items-center space-x-4 pt-4 border-t border-white/10">
+              <div className="flex items-center space-x-sm pt-sm border-t border-white/10">
                 <div className="relative">
                   <img
                     src={testimonial.image}
@@ -139,21 +139,21 @@ const Feedback = () => {
               </div>
 
               {/* Hover Effect Overlay */}
-              <div className="absolute inset-0 bg-gradient-to-r from-orange-500/5 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
+              <div className="absolute inset-0 bg-gradient-to-r from-orange-500/5 to-transparent rounded-large opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
             </div>
           ))}
         </div>
 
         {/* Mobile List View */}
-        <div className="md:hidden space-y-4">
+        <div className="tablet:hidden space-y-sm">
           {testimonials.map((testimonial, index) => (
             <div
               key={index}
-              className="bg-white/5 backdrop-blur-sm rounded-xl p-4 border border-white/10 hover:border-orange-500/50 transition-all duration-300"
+              className="bg-white/5 backdrop-blur-sm rounded-large p-sm border border-white/10 hover:border-orange-500/50 transition-all duration-300"
             >
               {/* Mobile Header */}
-              <div className="flex items-center justify-between mb-3">
-                <div className="flex items-center space-x-3">
+              <div className="flex items-center justify-between mb-sm">
+                <div className="flex items-center space-x-sm">
                   <img
                     src={testimonial.image}
                     alt={testimonial.name}
@@ -168,14 +168,14 @@ const Feedback = () => {
                     </p>
                   </div>
                 </div>
-                <span className="bg-gradient-to-r from-orange-500 to-orange-600 text-white px-2 py-1 rounded-full text-xs font-medium">
+                <span className="bg-gradient-to-r from-orange-500 to-orange-600 text-white px-xs py-xs rounded-full text-xs font-medium">
                   {testimonial.category}
                 </span>
               </div>
 
               {/* Mobile Quote */}
-              <div className="flex items-start space-x-2">
-                <FaQuoteLeft className="text-orange-500 text-sm mt-1 flex-shrink-0 opacity-70" />
+              <div className="flex items-start space-x-xs">
+                <FaQuoteLeft className="text-orange-500 text-sm mt-xs flex-shrink-0 opacity-70" />
                 <p className="text-gray-300 text-sm leading-relaxed italic">
                   {testimonial.text}
                 </p>
@@ -186,14 +186,14 @@ const Feedback = () => {
 
         {/* Call to Action */}
         <div className="text-center">
-          <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-8 max-w-2xl mx-auto border border-white/10">
-            <h3 className="text-2xl md:text-3xl font-bold text-white mb-4">
+          <div className="bg-white/5 backdrop-blur-sm rounded-large p-xl max-w-tablet mx-auto border border-white/10">
+            <h3 className="text-2xl tablet:text-3xl font-bold text-white mb-sm">
               Ready to Join Our Success Stories?
             </h3>
-            <p className="text-gray-300 mb-6 text-lg">
+            <p className="text-gray-300 mb-md text-lg">
               Experience the difference that thousands of businesses already trust
             </p>
-            <button className="bg-gradient-to-r from-orange-500 to-orange-600 text-white px-8 py-4 rounded-full font-semibold text-lg hover:from-orange-600 hover:to-orange-700 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl">
+            <button className="bg-gradient-to-r from-orange-500 to-orange-600 text-white px-xl py-sm rounded-full font-semibold text-lg hover:from-orange-600 hover:to-orange-700 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl">
               Get Started Today
             </button>
           </div>

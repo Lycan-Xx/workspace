@@ -2,6 +2,36 @@ module.exports = {
   content: ["./src/**/*.{js,jsx,ts,tsx}"],
   theme: {
     extend: {
+      // Custom spacing system
+      spacing: {
+        'xs': '8px',
+        'sm': '16px',
+        'md': '24px',
+        'lg': '32px',
+        'xl': '48px',
+        // Component spacing
+        'component-v': '16px',
+        'component-h': '24px',
+      },
+      // Custom breakpoints
+      screens: {
+        'mobile': '320px',
+        'tablet': '768px',
+        'desktop': '1024px',
+      },
+      // Maximum content widths
+      maxWidth: {
+        'mobile': '100%',
+        'tablet': '720px',
+        'desktop': '1200px',
+        'content': '1200px',
+      },
+      // Consistent border radius
+      borderRadius: {
+        'small': '4px',
+        'medium': '8px',
+        'large': '12px',
+      },
       colors: {
         'primary-dark-blue': '#0a1a3a',
         'deep-dark-blue': '#020817',

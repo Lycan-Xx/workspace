@@ -175,8 +175,8 @@ const Mission = ({ language }) => {
 	};
 
 	return (
-		<section className="py-16 bg-gray-50">
-			<div className="container mx-auto px-4 lg:px-8">
+		<section className="py-component-v bg-gray-50">
+			<div className="max-w-content mx-auto px-sm tablet:px-md desktop:px-lg">
 				{/* Title and Description */}
 				<motion.div
 					initial={{ opacity: 0, y: 20 }}
@@ -188,10 +188,10 @@ const Mission = ({ language }) => {
 					}}
 					className="text-center mb-12"
 				>
-					<h2 className="text-3xl md:text-4xl font-bold mb-4 text-orange-500">
+					<h2 className="text-3xl tablet:text-4xl font-bold mb-sm text-orange-500">
 						{currentTranslation.title}
 					</h2>
-					<p className="max-w-2xl mx-auto text-lg text-gray-600 leading-relaxed">
+					<p className="max-w-tablet mx-auto text-lg text-gray-600 leading-relaxed">
 						{currentTranslation.description}
 					</p>
 				</motion.div>
@@ -202,14 +202,14 @@ const Mission = ({ language }) => {
 					initial="hidden"
 					whileInView="visible"
 					viewport={{ once: true, margin: "-50px" }}
-					className="max-w-6xl mx-auto"
+					className="max-w-content mx-auto"
 				>
-					<div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-gray-200 border border-gray-200 rounded-2xl overflow-hidden bg-white shadow-lg">
+					<div className="grid grid-cols-1 tablet:grid-cols-2 divide-y tablet:divide-y-0 tablet:divide-x divide-gray-200 border border-gray-200 rounded-large overflow-hidden bg-white shadow-lg">
 						{currentTranslation.features.map((feature, index) => (
 							<motion.div
 								key={index}
 								variants={cardVariants}
-								className="p-8 flex flex-col hover:bg-gray-50 transition-all duration-300 ease-in-out relative overflow-hidden group cursor-pointer"
+								className="p-xl flex flex-col hover:bg-gray-50 transition-all duration-300 ease-in-out relative overflow-hidden group cursor-pointer"
 								onMouseEnter={() => setHoveredCard(index)}
 								onMouseLeave={() => setHoveredCard(null)}
 								style={{
@@ -226,24 +226,24 @@ const Mission = ({ language }) => {
 								{/* Content */}
 								<div className="relative z-10">
 									{/* Icon */}
-									<div className="mb-6">
+									<div className="mb-md">
 										<div className="text-purple-600 transform transition-transform duration-300 group-hover:scale-105">
 											{feature.icon}
 										</div>
 									</div>
 
 									{/* Title */}
-									<h3 className="text-xl font-semibold text-gray-800 mb-4 transition-all duration-300 group-hover:scale-105 transform">
+									<h3 className="text-xl font-semibold text-gray-800 mb-sm transition-all duration-300 group-hover:scale-105 transform">
 										{feature.title}
 									</h3>
 
 									{/* Description */}
-									<p className="text-gray-600 flex-grow leading-relaxed mb-6 transition-all duration-300 group-hover:scale-105 transform">
+									<p className="text-gray-600 flex-grow leading-relaxed mb-md transition-all duration-300 group-hover:scale-105 transform">
 										{feature.description}
 									</p>
 
 									{/* Read More Link */}
-									<div className="mt-4">
+									<div className="mt-sm">
 										<span className="text-purple-600 font-medium hover:underline transition-all duration-300 cursor-pointer inline-flex items-center group">
 											{feature.readMore}
 											<svg 

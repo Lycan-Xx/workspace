@@ -92,7 +92,6 @@ const PaymentCards = ({ onRequestCard, cards, setCards }) => {
                 dragConstraints={{ left: 0, right: 0 }}
                 dragElastic={0.7}
                 onDragEnd={handleDragEnd}
-                animate={controls}
                 whileTap={{ cursor: "grabbing" }}
               >
                 <PaymentCard card={cards[currentIndex]} />

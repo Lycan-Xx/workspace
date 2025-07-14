@@ -289,30 +289,30 @@ const Offer = React.memo(({ language = "English" }) => {
       {/* Split Screen Container */}
       <div className="flex flex-col lg:flex-row min-h-screen">
         {/* Left Side - Content */}
-        <div className="w-full lg:w-1/2 relative z-10 flex flex-col justify-center px-4 sm:px-6 lg:px-12 xl:px-16 py-12 lg:py-0">
-          <div className="max-w-2xl mx-auto lg:mx-0">
+        <div className="w-full desktop:w-1/2 relative z-10 flex flex-col justify-center px-sm tablet:px-md desktop:px-lg py-lg desktop:py-0">
+          <div className="max-w-tablet mx-auto desktop:mx-0">
             {/* Header Section */}
-            <div className="mb-12">
+            <div className="mb-xl">
               <div 
-                className={`flex items-center mb-6 ${hasAnimated ? 'animate-fade-in' : 'opacity-0'}`}
+                className={`flex items-center mb-md ${hasAnimated ? 'animate-fade-in' : 'opacity-0'}`}
                 style={{ animationDelay: '0.2s' }}
               >
                 <Sparkles className="w-5 h-5 text-orange-500 mr-3" aria-hidden="true" />
-                <span className="text-orange-500 font-semibold text-base sm:text-lg tracking-wide uppercase">
+                <span className="text-orange-500 font-semibold text-base tablet:text-lg tracking-wide uppercase">
                   {currentTranslation.sectionTitle}
                 </span>
               </div>
 
               <h1
                 id="offer-section-title"
-                className={`text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold text-gray-900 mb-8 leading-tight ${hasAnimated ? 'animate-fade-in' : 'opacity-0'}`}
+                className={`text-3xl tablet:text-4xl desktop:text-6xl font-bold text-gray-900 mb-xl leading-tight ${hasAnimated ? 'animate-fade-in' : 'opacity-0'}`}
                 style={{ animationDelay: '0.3s' }}
               >
                 {currentTranslation.subtitle}
               </h1>
 
               <div 
-                className={`space-y-4 sm:space-y-6 text-base sm:text-lg leading-relaxed ${hasAnimated ? 'animate-fade-in' : 'opacity-0'}`}
+                className={`space-y-sm tablet:space-y-md text-base tablet:text-lg leading-relaxed ${hasAnimated ? 'animate-fade-in' : 'opacity-0'}`}
                 style={{ animationDelay: '0.4s' }}
               >
                 <p className="text-gray-700">
@@ -339,11 +339,11 @@ const Offer = React.memo(({ language = "English" }) => {
             </div>
 
             {/* Feature Cards */}
-            <div className="space-y-4 sm:space-y-6">
+            <div className="space-y-sm tablet:space-y-md">
               {currentContent.cards.map((card, idx) => (
                 <div
                   key={idx}
-                  className={`card-hover group relative overflow-hidden rounded-xl sm:rounded-2xl border border-gray-100 bg-white p-4 sm:p-6 shadow-sm cursor-pointer focus:outline-none ${hasAnimated ? 'animate-fade-in' : 'opacity-0'}`}
+                  className={`card-hover group relative overflow-hidden rounded-large border border-gray-100 bg-white p-sm tablet:p-md shadow-sm cursor-pointer focus:outline-none ${hasAnimated ? 'animate-fade-in' : 'opacity-0'}`}
                   style={{ animationDelay: `${0.6 + idx * 0.1}s` }}
                   onMouseEnter={() => handleCardHover(idx)}
                   onMouseLeave={handleCardLeave}
@@ -357,19 +357,19 @@ const Offer = React.memo(({ language = "English" }) => {
                   
                   {/* Content */}
                   <div className="relative z-10 flex items-start space-x-3 sm:space-x-4">
-                    <div className={`${card.bgColor} ${card.iconColor} flex-shrink-0 p-2 sm:p-3 rounded-lg sm:rounded-xl group-hover:scale-105 transition-transform duration-300`}>
+                    <div className={`${card.bgColor} ${card.iconColor} flex-shrink-0 p-xs tablet:p-sm rounded-medium group-hover:scale-105 transition-transform duration-300`}>
                       {card.icon}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2 sm:mb-3 group-hover:text-gray-800 transition-colors duration-300">
+                      <h3 className="text-lg tablet:text-xl font-bold text-gray-900 mb-xs tablet:mb-sm group-hover:text-gray-800 transition-colors duration-300">
                         {card.title}
                       </h3>
-                      <p className="text-sm sm:text-base text-gray-600 leading-relaxed group-hover:text-gray-700 transition-colors duration-300">
+                      <p className="text-sm tablet:text-base text-gray-600 leading-relaxed group-hover:text-gray-700 transition-colors duration-300">
                         {card.description}
                       </p>
                     </div>
                     <div className="flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                      <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400 group-hover:text-gray-600 group-hover:translate-x-1 transition-all duration-300" />
+                      <ArrowRight className="w-4 h-4 tablet:w-5 tablet:h-5 text-gray-400 group-hover:text-gray-600 group-hover:translate-x-1 transition-all duration-300" />
                     </div>
                   </div>
                 </div>
@@ -379,7 +379,7 @@ const Offer = React.memo(({ language = "English" }) => {
         </div>
 
         {/* Right Side - Background */}
-        <div className="w-full lg:w-1/2 relative min-h-64 lg:min-h-screen">
+        <div className="w-full desktop:w-1/2 relative min-h-64 desktop:min-h-screen">
           {/* Background Image */}
           <div className="absolute inset-0 bg-gradient-to-br from-blue-600 via-purple-600 to-orange-500">
             {/* Overlay */}
@@ -388,14 +388,14 @@ const Offer = React.memo(({ language = "English" }) => {
             {/* Optimized geometric patterns */}
             <div className="absolute inset-0 overflow-hidden">
               {/* Large circles */}
-              <div className="absolute top-1/4 right-1/4 w-48 sm:w-64 h-48 sm:h-64 bg-white/10 rounded-full blur-3xl animate-pulse" />
-              <div className="absolute bottom-1/4 left-1/4 w-32 sm:w-48 h-32 sm:h-48 bg-orange-400/20 rounded-full blur-2xl animate-pulse" style={{ animationDelay: '1s' }} />
+              <div className="absolute top-1/4 right-1/4 w-48 tablet:w-64 h-48 tablet:h-64 bg-white/10 rounded-full blur-3xl animate-pulse" />
+              <div className="absolute bottom-1/4 left-1/4 w-32 tablet:w-48 h-32 tablet:h-48 bg-orange-400/20 rounded-full blur-2xl animate-pulse" style={{ animationDelay: '1s' }} />
               
               {/* Floating elements */}
               {floatingElements.map((element) => (
                 <div
                   key={element.id}
-                  className="absolute w-3 h-3 sm:w-4 sm:h-4 bg-white/30 rounded-full animate-float"
+                  className="absolute w-3 h-3 tablet:w-4 tablet:h-4 bg-white/30 rounded-full animate-float"
                   style={{
                     left: `${element.left}%`,
                     top: `${element.top}%`,
@@ -408,25 +408,25 @@ const Offer = React.memo(({ language = "English" }) => {
             
             {/* Content overlay */}
             <div className="absolute inset-0 flex items-center justify-center">
-              <div className="text-center text-white p-6 sm:p-8">
+              <div className="text-center text-white p-md tablet:p-xl">
                 <div 
-                  className={`mb-6 sm:mb-8 ${hasAnimated ? 'animate-fade-in' : 'opacity-0'}`}
+                  className={`mb-md tablet:mb-xl ${hasAnimated ? 'animate-fade-in' : 'opacity-0'}`}
                   style={{ animationDelay: '0.8s' }}
                 >
-                  <div className="w-20 h-20 sm:w-32 sm:h-32 mx-auto bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm border border-white/30">
-                    <Sparkles className="w-10 h-10 sm:w-16 sm:h-16 text-white" aria-hidden="true" />
+                  <div className="w-20 h-20 tablet:w-32 tablet:h-32 mx-auto bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm border border-white/30">
+                    <Sparkles className="w-10 h-10 tablet:w-16 tablet:h-16 text-white" aria-hidden="true" />
                   </div>
                 </div>
                 
                 <h2 
-                  className={`text-2xl sm:text-3xl font-bold mb-3 sm:mb-4 ${hasAnimated ? 'animate-fade-in' : 'opacity-0'}`}
+                  className={`text-2xl tablet:text-3xl font-bold mb-sm tablet:mb-sm ${hasAnimated ? 'animate-fade-in' : 'opacity-0'}`}
                   style={{ animationDelay: '1s' }}
                 >
                   {currentTranslation.rightPanelTitle}
                 </h2>
                 
                 <p 
-                  className={`text-base sm:text-lg opacity-90 max-w-md mx-auto px-4 ${hasAnimated ? 'animate-fade-in' : 'opacity-0'}`}
+                  className={`text-base tablet:text-lg opacity-90 max-w-md mx-auto px-sm ${hasAnimated ? 'animate-fade-in' : 'opacity-0'}`}
                   style={{ animationDelay: '1.2s' }}
                 >
                   {currentTranslation.rightPanelDescription}
@@ -438,7 +438,7 @@ const Offer = React.memo(({ language = "English" }) => {
       </div>
 
       {/* Mobile Background (fallback) */}
-      <div className="lg:hidden absolute inset-0 bg-gradient-to-br from-blue-50 via-purple-50 to-orange-50 -z-10">
+      <div className="desktop:hidden absolute inset-0 bg-gradient-to-br from-blue-50 via-purple-50 to-orange-50 -z-10">
         <div className="absolute inset-0 bg-white/80" />
       </div>
     </section>

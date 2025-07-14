@@ -66,8 +66,8 @@ const Navbar = ({ language, setLanguage }) => {
 
   return (
     <nav className="bg-gradient-to-r from-primary-dark-blue via-deep-dark-blue to-primary-dark-blue fixed w-full z-50 backdrop-blur-md border-b border-white/10 shadow-glass">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-14 md:h-20">
+      <div className="max-w-content mx-auto px-sm tablet:px-md desktop:px-lg">
+        <div className="flex justify-between items-center h-14 tablet:h-20">
           {/* Logo */}
           <div className="flex-shrink-0 flex items-center">
             <div className="relative">
@@ -75,16 +75,16 @@ const Navbar = ({ language, setLanguage }) => {
               <img 
                 src={logo} 
                 alt="eVault Logo" 
-                className="relative h-10 w-10 md:h-16 md:w-16 sm:h-12 sm:w-12 drop-shadow-lg rounded-full" 
+                className="relative h-10 w-10 tablet:h-16 tablet:w-16 drop-shadow-lg rounded-full" 
               />
             </div>
-            <span className="mt-[2rem] mr-[2rem] text-xl font-bold text-white hidden md:block bg-gradient-to-r from-orange-400 to-orange-600 bg-clip-text text-transparent">
+            <span className="ml-sm text-xl font-bold text-white hidden tablet:block bg-gradient-to-r from-orange-400 to-orange-600 bg-clip-text text-transparent">
               Vault
             </span>
           </div>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-8">
+          <div className="hidden tablet:flex items-center space-x-component-h">
             <button
               onClick={handleHome}
               className="relative group text-gray-300 hover:text-white text-lg transition-all duration-300"
@@ -122,21 +122,21 @@ const Navbar = ({ language, setLanguage }) => {
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={{ opacity: 0, y: 10, scale: 0.95 }}
                     transition={{ duration: 0.2 }}
-                    className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 w-96 bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl shadow-2xl p-6 z-50"
+                    className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 w-96 bg-white/10 backdrop-blur-md border border-white/20 rounded-large shadow-2xl p-md z-50"
                   >
-                    <div className="grid grid-cols-2 gap-6">
+                    <div className="grid grid-cols-2 gap-component-h">
                       {Object.entries(serviceCategories).map(([category, categoryServices]) => (
                         categoryServices.length > 0 && (
-                          <div key={category} className="space-y-3">
+                          <div key={category} className="space-y-sm">
                             <h3 className="text-orange-400 font-semibold text-sm uppercase tracking-wide border-b border-orange-400/30 pb-1">
                               {category}
                             </h3>
-                            <div className="space-y-2">
+                            <div className="space-y-xs">
                               {categoryServices.map((service) => (
                                 <button
                                   key={service.id}
                                   onClick={() => handleServiceClick(service.id)}
-                                  className="block w-full text-left text-gray-300 hover:text-white hover:bg-white/10 px-3 py-2 rounded-lg transition-all duration-200 text-sm"
+                                  className="block w-full text-left text-gray-300 hover:text-white hover:bg-white/10 px-sm py-xs rounded-medium transition-all duration-200 text-sm"
                                 >
                                   {service.title}
                                 </button>
@@ -148,13 +148,13 @@ const Navbar = ({ language, setLanguage }) => {
                     </div>
                     
                     {/* View All Services Button */}
-                    <div className="mt-6 pt-4 border-t border-white/10">
+                    <div className="mt-md pt-sm border-t border-white/10">
                       <button
                         onClick={() => {
                           scrollToSection("services");
                           setIsServicesOpen(false);
                         }}
-                        className="w-full bg-gradient-to-r from-orange-500 to-orange-600 text-white px-4 py-2 rounded-lg font-medium hover:from-orange-600 hover:to-orange-700 transition-all duration-300 text-sm"
+                        className="w-full bg-gradient-to-r from-orange-500 to-orange-600 text-white px-sm py-xs rounded-medium font-medium hover:from-orange-600 hover:to-orange-700 transition-all duration-300 text-sm"
                       >
                         View All Services
                       </button>
@@ -182,10 +182,10 @@ const Navbar = ({ language, setLanguage }) => {
           </div>
 
           {/* Desktop Right Actions */}
-          <div className="hidden md:flex items-center space-x-6">
+          <div className="hidden tablet:flex items-center space-x-component-h">
             <button
               onClick={handleLanguageSwitch}
-              className="flex items-center px-3 py-2 text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition-all duration-300 backdrop-blur-sm"
+              className="flex items-center px-sm py-xs text-gray-300 hover:text-white hover:bg-white/10 rounded-medium transition-all duration-300 backdrop-blur-sm"
             >
               <Globe className="h-4 w-4 mr-2" />
               {language}
@@ -200,7 +200,7 @@ const Navbar = ({ language, setLanguage }) => {
             
             <button
               onClick={handleSignUp}
-              className="bg-gradient-to-r from-orange-500 to-orange-600 text-white px-6 py-2 rounded-lg font-medium hover:from-orange-600 hover:to-orange-700 transition-all duration-300 transform hover:scale-105"
+              className="bg-gradient-to-r from-orange-500 to-orange-600 text-white px-md py-xs rounded-medium font-medium hover:from-orange-600 hover:to-orange-700 transition-all duration-300 transform hover:scale-105"
             >
               Sign Up
             </button>
@@ -209,7 +209,7 @@ const Navbar = ({ language, setLanguage }) => {
           {/* Hamburger Menu */}
           <button
             onClick={() => setIsOpen(!isOpen)}
-            className="md:hidden text-gray-300 hover:text-white focus:outline-none transition-colors duration-300"
+            className="tablet:hidden text-gray-300 hover:text-white focus:outline-none transition-colors duration-300"
           >
             {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
           </button>
@@ -224,7 +224,7 @@ const Navbar = ({ language, setLanguage }) => {
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
             transition={{ type: "tween", duration: 0.4 }}
-            className="fixed inset-y-0 right-0 bg-gradient-to-br from-primary-dark-blue/95 to-deep-dark-blue/95 backdrop-blur-md border-l border-white/10 shadow-glass w-3/4 max-w-sm z-50 p-6"
+            className="fixed inset-y-0 right-0 bg-gradient-to-br from-primary-dark-blue/95 to-deep-dark-blue/95 backdrop-blur-md border-l border-white/10 shadow-glass w-3/4 max-w-sm z-50 p-md"
           >
             {/* Mobile Logo */}
             <div>
@@ -238,7 +238,7 @@ const Navbar = ({ language, setLanguage }) => {
             </div>
       
             {/* Mobile Links */}
-            <div className="space-y-4">
+            <div className="space-y-sm">
               {[
                 { name: "Home", action: handleHome },
                 { name: "About", action: () => scrollToSection("about") },
@@ -256,9 +256,9 @@ const Navbar = ({ language, setLanguage }) => {
             </div>
 
             {/* Mobile Services Section */}
-            <div className="space-y-2">
+            <div className="space-y-xs">
               <h3 className="text-orange-400 font-semibold text-sm uppercase tracking-wide">Services</h3>
-              <div className="grid grid-cols-1 gap-1 max-h-48 overflow-y-auto">
+              <div className="grid grid-cols-1 gap-xs max-h-48 overflow-y-auto">
                 {services.map((service) => (
                   <button
                     key={service.id}
@@ -266,7 +266,7 @@ const Navbar = ({ language, setLanguage }) => {
                       handleServiceClick(service.id);
                       setIsOpen(false);
                     }}
-                    className="text-left text-gray-300 hover:text-white hover:bg-white/10 px-3 py-2 rounded-lg transition-all duration-300 text-sm"
+                    className="text-left text-gray-300 hover:text-white hover:bg-white/10 px-sm py-xs rounded-medium transition-all duration-300 text-sm"
                   >
                     {service.title}
                   </button>
@@ -275,13 +275,13 @@ const Navbar = ({ language, setLanguage }) => {
             </div>
 
             {/* Divider */}
-            <div className="border-t border-white/10 my-4"></div>
+            <div className="border-t border-white/10 my-sm"></div>
 
             {/* Mobile Actions */}
-            <div className="space-y-4">
+            <div className="space-y-sm">
               <button
                 onClick={handleLanguageSwitch}
-                className="flex items-center px-4 py-2 text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition-all duration-300 w-full text-left backdrop-blur-sm"
+                className="flex items-center px-sm py-xs text-gray-300 hover:text-white hover:bg-white/10 rounded-medium transition-all duration-300 w-full text-left backdrop-blur-sm"
               >
                 <Globe className="h-5 w-5 mr-2" />
                 {language}
@@ -289,14 +289,14 @@ const Navbar = ({ language, setLanguage }) => {
 
               <button
                 onClick={handleSignIn}
-                className="flex items-center px-4 py-2 text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition-all duration-300 w-full text-left backdrop-blur-sm"
+                className="flex items-center px-sm py-xs text-gray-300 hover:text-white hover:bg-white/10 rounded-medium transition-all duration-300 w-full text-left backdrop-blur-sm"
               >
                 Sign In
               </button>
 
               <button
                 onClick={handleSignUp}
-                className="flex items-center px-4 py-2 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-lg hover:from-orange-600 hover:to-orange-700 transition-all duration-300 w-full text-left"
+                className="flex items-center px-sm py-xs bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-medium hover:from-orange-600 hover:to-orange-700 transition-all duration-300 w-full text-left"
               >
                 Sign Up
               </button>
