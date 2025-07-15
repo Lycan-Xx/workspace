@@ -1,601 +1,571 @@
-import React, { useState, useEffect, useRef } from "react";
-import {
-  FaQuestionCircle,
-  FaNetworkWired,
-  FaMobileAlt,
-  FaCreditCard,
-  FaChevronRight,
-} from "react-icons/fa";
+import React, { useState, useEffect, useRef, useCallback } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { 
+  ArrowRight, 
+  X, 
+  ChevronLeft, 
+  ChevronRight, 
+  Shield, 
+  Zap, 
+  Users, 
+  Globe,
+  Sparkles,
+  Eye
+} from "lucide-react";
+import Button from "./ui/Button";
 
 const About = ({ language = "English" }) => {
-  const [activeCard, setActiveCard] = useState(0);
-  const [isScrollLocked, setIsScrollLocked] = useState(false);
+  const [isPortalActive, setIsPortalActive] = useState(false);
+  const [currentSubComponent, setCurrentSubComponent] = useState(0);
+  const [isTransitioning, setIsTransitioning] = useState(false);
   const containerRef = useRef(null);
-  const isScrollingRef = useRef(false);
+  const subComponentsRef = useRef([]);
 
   const translations = {
     English: {
       title: "About eVault",
-      description:
-        "At eVault, we believe in empowering individuals and businesses by providing them with the financial tools they need to succeed. Our mission is to create an inclusive and accessible financial ecosystem that helps bridge gaps in financial management, making it easier for everyone to participate in the economy.",
-      subtitle:
-        "We are committed to delivering secure, reliable, and efficient financial solutions that cater to your needs.",
+      subtitle: "Transforming Financial Services",
+      description: "At eVault, we believe in empowering individuals and businesses by providing them with the financial tools they need to succeed. Our mission is to create an inclusive and accessible financial ecosystem.",
+      portalButton: "Experience Our Services",
+      returnButton: "Return to About",
+      escapeHint: "Press ESC to exit",
+      subComponents: [
+        {
+          title: "Security First",
+          subtitle: "Bank-Grade Protection",
+          description: "Your financial data is protected with military-grade encryption and multi-layer security protocols, ensuring your assets remain completely safe.",
+          icon: Shield,
+          color: "emerald"
+        },
+        {
+          title: "Lightning Fast",
+          subtitle: "Instant Transactions",
+          description: "Experience real-time processing with our advanced infrastructure. Send money, pay bills, and manage finances with unprecedented speed.",
+          icon: Zap,
+          color: "yellow"
+        },
+        {
+          title: "For Everyone",
+          subtitle: "Inclusive Access",
+          description: "We ensure that everyone, regardless of location or background, has the opportunity to access modern financial services.",
+          icon: Users,
+          color: "blue"
+        },
+        {
+          title: "Global Reach",
+          subtitle: "Worldwide Coverage",
+          description: "Connect with financial services across borders. Our platform supports international transactions and multi-currency operations.",
+          icon: Globe,
+          color: "purple"
+        }
+      ]
     },
     Hausa: {
       title: "Game da eVault",
-      description:
-        "A eVault, muna da yakinin cewa muna bai wa mutane da kasuwanci damar samun hanyoyin kudi masu aminci da saukin samu. Manufarmu ita ce gina tsarin hada-hadar kudi wanda zai tabbatar da samun dama ga kowa da kowa, wanda zai magance gibin da ke cikin gudanar da kudi, yana saukaka shiga cikin tattalin arziki.",
-      subtitle:
-        "Muna da kwazo wajen bayar da sabis na kudi masu tsaro, masu kyau da inganci wadanda za su biya bukatun ku.",
+      subtitle: "Canza Sabis na Kudi",
+      description: "A eVault, muna da yakinin cewa muna bai wa mutane da kasuwanci damar samun hanyoyin kudi masu aminci da saukin samu.",
+      portalButton: "Gwada Sabis Dinmu",
+      returnButton: "Koma zuwa About",
+      escapeHint: "Danna ESC don fita",
+      subComponents: [
+        {
+          title: "Tsaro Na Farko",
+          subtitle: "Kariya Kamar Banki",
+          description: "Ana kare bayananku na kuɗi da tsarin soja kuma da tsarin tsaro na musamman.",
+          icon: Shield,
+          color: "emerald"
+        },
+        {
+          title: "Sauri Kamar Walƙiya",
+          subtitle: "Canja Wuri Nan Take",
+          description: "Sami ƙwarewa na ainihi tare da kayan aikin mu na zamani.",
+          icon: Zap,
+          color: "yellow"
+        },
+        {
+          title: "Ga Kowa",
+          subtitle: "Damar Shiga Ga Kowa",
+          description: "Muna tabbatar da cewa kowa yana da damar samun sabbin hanyoyin kudi.",
+          icon: Users,
+          color: "blue"
+        },
+        {
+          title: "Isar Da Duniya",
+          subtitle: "Rufe Duniya",
+          description: "Haɗa kai da sabis na kuɗi a fadin duniya.",
+          icon: Globe,
+          color: "purple"
+        }
+      ]
     },
     Igbo: {
       title: "Maka eVault",
-      description:
-        "Na eVault, anyị kwenyere n'inyere ndị mmadụ na azụmaahịa ikike iji nweta ihe ngwọta ego dị nchebe ma dị mfe. Ebumnobi anyị bụ iwulite usoro ego nke na-eme ka ọ dị mfe maka onye ọ bụla ịbanye n'ime akụ na ụba, iji kpochapụ ihe mgbochi ọ bụla na-arụ ọrụ akụ na ụba.",
-      subtitle:
-        "Anyị kwadoro iji nyere ndị ahịa anyị usoro ego dị nchebe, kwụsie ike, na nke a pụrụ ịdabere na ya, nke na-enyere ha aka.",
+      subtitle: "Ịgbanwe Ọrụ Ego",
+      description: "Na eVault, anyị kwenyere n'inyere ndị mmadụ na azụmaahịa ikike iji nweta ihe ngwọta ego dị nchebe ma dị mfe.",
+      portalButton: "Nweta Ọrụ Anyị",
+      returnButton: "Laghachi na About",
+      escapeHint: "Pịa ESC ka ị pụọ",
+      subComponents: [
+        {
+          title: "Nchekwa Mbụ",
+          subtitle: "Nchebe Banki",
+          description: "Ana echekwa data gị nke ego site na nchekwa dị elu nke agha.",
+          icon: Shield,
+          color: "emerald"
+        },
+        {
+          title: "Ọsọ Ọsọ",
+          subtitle: "Azụmahịa Ozugbo",
+          description: "Nwee ahụmịhe nhazi oge n'ezie site na akụrụngwa anyị dị elu.",
+          icon: Zap,
+          color: "yellow"
+        },
+        {
+          title: "Maka Onye Ọ Bụla",
+          subtitle: "Nnweta Nke Gụnyere",
+          description: "Anyị na-eme ka ọ bụrụ na onye ọ bụla nwere ohere iji nweta ọrụ ego nke oge a.",
+          icon: Users,
+          color: "blue"
+        },
+        {
+          title: "Iru Ụwa",
+          subtitle: "Mkpuchi Ụwa Niile",
+          description: "Jikọọ na ọrụ ego n'ofe oke. Platform anyị na-akwado azụmahịa mba ụwa.",
+          icon: Globe,
+          color: "purple"
+        }
+      ]
     },
     Yoruba: {
       title: "Nipa eVault",
-      description:
-        "Ni eVault, a gbagbọ ninu agbara eniyan ati awọn iṣowo pẹlu awọn solusan inawo ti o ni aabo ati ti o rọrun lati wọle si. Aims wa ni lati ṣẹda eto inawo ti o ni wiwo gbogbo eniyan ati ti o rọrun lati wọle si, ti o ṣe iranlọwọ lati ṣe iwọn awọn ailagbara ni iṣakoso inawo, ṣiṣe ni irọrun fun gbogbo eniyan lati kopa ninu ọrọ-aje.",
-      subtitle:
-        "A ni igbẹkẹle lati pese awọn solusan inawo to ni aabo, to ni igbẹkẹle ati to munadoko ti o yẹ fun awọn iwulo oriṣiriṣi ti awọn.",
-    },
-  };
-
-  const faqItems = [
-    {
-      id: 0,
-      icon: <FaQuestionCircle />,
-      question: "Getting Started",
-      answer:
-        "Create an account and sign in with your username and password to access all services.",
-      color: "emerald",
-      bgGradient: "from-emerald-400 via-teal-500 to-cyan-600",
-      animation: "startup",
-    },
-    {
-      id: 1,
-      icon: <FaNetworkWired />,
-      question: "Bill Payments",
-      answer:
-        "Pay your utility bills, cable subscriptions, and other bills with ease on our platform.",
-      color: "violet",
-      bgGradient: "from-violet-400 via-purple-500 to-indigo-600",
-      animation: "network",
-    },
-    {
-      id: 2,
-      icon: <FaMobileAlt />,
-      question: "Instant Airtime and Data Top Up",
-      answer:
-        "Top up your airtime and data instantly with our secure and reliable platform.",
-      color: "blue",
-      bgGradient: "from-blue-400 via-cyan-500 to-teal-600",
-      animation: "mobile",
-    },
-    {
-      id: 3,
-      icon: <FaCreditCard />,
-      question: "Virtual Cards",
-      answer:
-        "Get a virtual card for online transactions and enjoy seamless and reliable payments.",
-      color: "orange",
-      bgGradient: "from-orange-400 via-red-500 to-pink-600",
-      animation: "card",
-    },
-  ];
-
-  // Scroll lock implementation
-  useEffect(() => {
-    let scrollTimeout = null;
-    let wheelTimeout = null;
-    let scrollAccumulator = 0;
-    let isProcessingWheel = false;
-    const scrollThreshold = 120; // Increased threshold for more deliberate scrolling
-
-    const handleScroll = () => {
-      if (scrollTimeout) clearTimeout(scrollTimeout);
-
-      scrollTimeout = setTimeout(() => {
-        if (!containerRef.current) return;
-
-        const container = containerRef.current;
-        const rect = container.getBoundingClientRect();
-        const viewportHeight = window.innerHeight;
-        const containerTop = rect.top;
-        const containerHeight = rect.height;
-
-        // More stable scroll lock detection with larger buffer zones
-        const shouldLock =
-          containerTop <= 100 &&
-          containerTop >= -(containerHeight - viewportHeight + 200);
-
-        if (shouldLock !== isScrollLocked) {
-          setIsScrollLocked(shouldLock);
-          document.body.style.overflow = shouldLock ? "hidden" : "auto";
-          // Reset all state when entering/leaving scroll lock
-          scrollAccumulator = 0;
-          isProcessingWheel = false;
-          if (wheelTimeout) {
-            clearTimeout(wheelTimeout);
-            wheelTimeout = null;
-          }
+      subtitle: "Iyipada Awọn Iṣẹ Inawo",
+      description: "Ni eVault, a gbagbọ ninu agbara eniyan ati awọn iṣowo pẹlu awọn solusan inawo ti o ni aabo.",
+      portalButton: "Ni Iriri Awọn Iṣẹ Wa",
+      returnButton: "Pada si About",
+      escapeHint: "Tẹ ESC lati jade",
+      subComponents: [
+        {
+          title: "Aabo Akọkọ",
+          subtitle: "Aabo Banki",
+          description: "A n lo aabo to ga julọ lati da owo rẹ si pamọ.",
+          icon: Shield,
+          color: "emerald"
+        },
+        {
+          title: "Yara Bi Mọnamọna",
+          subtitle: "Awọn Iṣowo Kiakia",
+          description: "Ni iriri sisẹ akoko gidi pẹlu awọn ohun elo wa to ga.",
+          icon: Zap,
+          color: "yellow"
+        },
+        {
+          title: "Fun Gbogbo Eniyan",
+          subtitle: "Wiwọle Ti O Ni Ifisi",
+          description: "A rii daju pe gbogbo eniyan ni anfaani lati wọle si awọn iṣẹ inawo igbalode.",
+          icon: Users,
+          color: "blue"
+        },
+        {
+          title: "Iru Agbaye",
+          subtitle: "Iboju Agbaye",
+          description: "Sopọ pẹlu awọn iṣẹ inawo kọja awọn aala.",
+          icon: Globe,
+          color: "purple"
         }
-      }, 50); // Increased debounce time for stability
-    };
-
-    const handleWheel = (e) => {
-      // Only process wheel events when we're definitely in the About section
-      if (!isScrollLocked || isProcessingWheel) return;
-
-      // Check if we're actually within the About container bounds
-      if (containerRef.current) {
-        const rect = containerRef.current.getBoundingClientRect();
-        const isWithinContainer = rect.top <= 100 && rect.bottom >= 100;
-        if (!isWithinContainer) return;
-      }
-
-      e.preventDefault();
-      e.stopPropagation();
-
-      const deltaY = e.deltaY;
-      const scrollMagnitude = Math.abs(deltaY);
-
-      // Ignore very small scroll movements (trackpad micro-movements)
-      if (scrollMagnitude < 10) return;
-
-      scrollAccumulator += scrollMagnitude;
-
-      // Only trigger change if we've accumulated enough scroll
-      if (scrollAccumulator >= scrollThreshold) {
-        isProcessingWheel = true;
-        const scrollingDown = deltaY > 0;
-
-        if (scrollingDown && activeCard < faqItems.length - 1) {
-          setActiveCard((prev) => prev + 1);
-          scrollAccumulator = 0;
-          wheelTimeout = setTimeout(() => {
-            isProcessingWheel = false;
-          }, 1000); // Longer timeout for more stable navigation
-        } else if (!scrollingDown && activeCard > 0) {
-          setActiveCard((prev) => prev - 1);
-          scrollAccumulator = 0;
-          wheelTimeout = setTimeout(() => {
-            isProcessingWheel = false;
-          }, 1000);
-        } else if (scrollingDown && activeCard === faqItems.length - 1) {
-          // Unlock and continue scrolling
-          setIsScrollLocked(false);
-          document.body.style.overflow = "auto";
-          scrollAccumulator = 0;
-          isProcessingWheel = false;
-          setTimeout(() => {
-            window.scrollBy(0, 200);
-          }, 150);
-        } else if (!scrollingDown && activeCard === 0) {
-          // Unlock and continue scrolling up
-          setIsScrollLocked(false);
-          document.body.style.overflow = "auto";
-          scrollAccumulator = 0;
-          isProcessingWheel = false;
-          setTimeout(() => {
-            window.scrollBy(0, -200);
-          }, 150);
-        } else {
-          // Reset if we can't scroll in the desired direction
-          scrollAccumulator = 0;
-          isProcessingWheel = false;
-        }
-      }
-    };
-
-    // Add event listeners
-    window.addEventListener("scroll", handleScroll, { passive: true });
-
-    // Add wheel listener specifically to the container for better control
-    if (containerRef.current) {
-      containerRef.current.addEventListener("wheel", handleWheel, {
-        passive: false,
-      });
-    }
-
-    return () => {
-      if (scrollTimeout) clearTimeout(scrollTimeout);
-      if (wheelTimeout) clearTimeout(wheelTimeout);
-      window.removeEventListener("scroll", handleScroll);
-      if (containerRef.current) {
-        containerRef.current.removeEventListener("wheel", handleWheel);
-      }
-      document.body.style.overflow = "auto";
-    };
-  }, [activeCard, isScrollLocked, faqItems.length]);
-
-  // Animation components for each FAQ item
-  const AnimationComponent = ({ type, isActive }) => {
-    const baseClasses = "absolute inset-0 transition-all duration-1000";
-
-    switch (type) {
-      case "startup":
-        return (
-          <div
-            className={`${baseClasses} ${isActive ? "opacity-100" : "opacity-0"}`}
-          >
-            <div className="absolute inset-0 bg-gradient-to-br from-emerald-400/20 via-teal-500/20 to-cyan-600/20">
-              <div className="absolute bottom-1/4 left-1/4 w-8 h-8 bg-white rounded-full animate-bounce">
-                <div className="absolute -top-2 -left-2 w-12 h-12 bg-emerald-400/50 rounded-full animate-ping"></div>
-              </div>
-              {[...Array(12)].map((_, i) => (
-                <div
-                  key={i}
-                  className="absolute w-2 h-2 bg-emerald-400 rounded-full animate-pulse"
-                  style={{
-                    left: `${Math.random() * 100}%`,
-                    top: `${Math.random() * 100}%`,
-                    animationDelay: `${Math.random() * 2}s`,
-                    animationDuration: `${2 + Math.random() * 2}s`,
-                  }}
-                />
-              ))}
-            </div>
-          </div>
-        );
-
-      case "network":
-        return (
-          <div
-            className={`${baseClasses} ${isActive ? "opacity-100" : "opacity-0"}`}
-          >
-            <div className="absolute inset-0 bg-gradient-to-br from-violet-400/20 via-purple-500/20 to-indigo-600/20">
-              <div className="absolute inset-0">
-                {[...Array(6)].map((_, i) => (
-                  <div
-                    key={i}
-                    className="absolute w-4 h-4 bg-violet-400 rounded-full animate-pulse"
-                    style={{
-                      left: `${20 + (i % 3) * 30}%`,
-                      top: `${30 + Math.floor(i / 3) * 40}%`,
-                      animationDelay: `${i * 0.5}s`,
-                    }}
-                  >
-                    <div className="absolute inset-0 bg-violet-400/30 rounded-full animate-ping"></div>
-                  </div>
-                ))}
-              </div>
-              <svg className="absolute inset-0 w-full h-full">
-                {[...Array(5)].map((_, i) => (
-                  <line
-                    key={i}
-                    x1={`${20 + (i % 3) * 30}%`}
-                    y1={`${30 + Math.floor(i / 3) * 40}%`}
-                    x2={`${20 + ((i + 1) % 3) * 30}%`}
-                    y2={`${30 + Math.floor((i + 1) / 3) * 40}%`}
-                    stroke="rgba(139, 92, 246, 0.3)"
-                    strokeWidth="2"
-                    className="animate-pulse"
-                  />
-                ))}
-              </svg>
-            </div>
-          </div>
-        );
-
-      case "mobile":
-        return (
-          <div
-            className={`${baseClasses} ${isActive ? "opacity-100" : "opacity-0"}`}
-          >
-            <div className="absolute inset-0 bg-gradient-to-br from-blue-400/20 via-cyan-500/20 to-teal-600/20">
-              <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-                <div className="w-24 h-40 border-4 border-blue-400 rounded-lg relative animate-pulse">
-                  <div className="absolute top-2 left-1/2 transform -translate-x-1/2 w-8 h-1 bg-blue-400 rounded-full"></div>
-                  <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 w-8 h-8 border-2 border-blue-400 rounded-full"></div>
-                  <div className="absolute -top-8 -right-8 flex space-x-1">
-                    {[...Array(4)].map((_, i) => (
-                      <div
-                        key={i}
-                        className="bg-blue-400 rounded-sm animate-pulse"
-                        style={{
-                          width: "3px",
-                          height: `${(i + 1) * 4}px`,
-                          animationDelay: `${i * 0.2}s`,
-                        }}
-                      />
-                    ))}
-                  </div>
-                </div>
-              </div>
-              {[...Array(3)].map((_, i) => (
-                <div
-                  key={i}
-                  className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 border-2 border-blue-400/30 rounded-full animate-ping"
-                  style={{
-                    width: `${100 + i * 50}px`,
-                    height: `${100 + i * 50}px`,
-                    animationDelay: `${i * 0.7}s`,
-                    animationDuration: "2s",
-                  }}
-                />
-              ))}
-            </div>
-          </div>
-        );
-
-      case "card":
-        return (
-          <div
-            className={`${baseClasses} ${isActive ? "opacity-100" : "opacity-0"}`}
-          >
-            <div className="absolute inset-0 bg-gradient-to-br from-orange-400/20 via-red-500/20 to-pink-600/20">
-              <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-                <div className="w-32 h-20 bg-gradient-to-r from-orange-400 to-pink-600 rounded-lg shadow-lg animate-pulse relative">
-                  <div className="absolute top-2 left-2 w-6 h-4 bg-yellow-300 rounded-sm"></div>
-                  <div className="absolute bottom-2 right-2 text-white text-xs font-bold">
-                    ****
-                  </div>
-                  <div className="absolute top-2 right-2 w-4 h-4 bg-white/30 rounded-full"></div>
-                </div>
-              </div>
-              {["$", "€", "£", "¥"].map((symbol, i) => (
-                <div
-                  key={i}
-                  className="absolute text-orange-400 text-2xl font-bold animate-bounce"
-                  style={{
-                    left: `${20 + i * 20}%`,
-                    top: `${20 + (i % 2) * 60}%`,
-                    animationDelay: `${i * 0.3}s`,
-                  }}
-                >
-                  {symbol}
-                </div>
-              ))}
-              <div className="absolute inset-0 flex flex-col justify-center items-center space-y-4">
-                {[...Array(3)].map((_, i) => (
-                  <div
-                    key={i}
-                    className="w-1/2 h-0.5 bg-gradient-to-r from-transparent via-orange-400 to-transparent animate-pulse"
-                    style={{
-                      animationDelay: `${i * 0.4}s`,
-                      animationDuration: "1.5s",
-                    }}
-                  />
-                ))}
-              </div>
-            </div>
-          </div>
-        );
-
-      default:
-        return null;
+      ]
     }
   };
 
   const currentTranslation = translations[language] || translations.English;
 
+  // Lock/unlock viewport scrolling
+  const lockViewport = useCallback(() => {
+    document.body.style.overflow = 'hidden';
+    document.body.style.height = '100vh';
+  }, []);
+
+  const unlockViewport = useCallback(() => {
+    document.body.style.overflow = '';
+    document.body.style.height = '';
+  }, []);
+
+  // Handle portal activation
+  const activatePortal = useCallback(() => {
+    setIsTransitioning(true);
+    setIsPortalActive(true);
+    lockViewport();
+    
+    setTimeout(() => {
+      setIsTransitioning(false);
+    }, 800);
+  }, [lockViewport]);
+
+  // Handle portal deactivation
+  const deactivatePortal = useCallback(() => {
+    setIsTransitioning(true);
+    
+    setTimeout(() => {
+      setIsPortalActive(false);
+      setCurrentSubComponent(0);
+      unlockViewport();
+      setIsTransitioning(false);
+    }, 500);
+  }, [unlockViewport]);
+
+  // Navigate between subcomponents
+  const navigateToSubComponent = useCallback((index) => {
+    if (index >= 0 && index < currentTranslation.subComponents.length && !isTransitioning) {
+      setIsTransitioning(true);
+      setCurrentSubComponent(index);
+      
+      setTimeout(() => {
+        setIsTransitioning(false);
+      }, 600);
+    }
+  }, [currentTranslation.subComponents.length, isTransitioning]);
+
+  // Keyboard navigation
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (!isPortalActive) return;
+
+      switch (e.key) {
+        case 'Escape':
+          e.preventDefault();
+          deactivatePortal();
+          break;
+        case 'ArrowLeft':
+          e.preventDefault();
+          if (currentSubComponent > 0) {
+            navigateToSubComponent(currentSubComponent - 1);
+          }
+          break;
+        case 'ArrowRight':
+          e.preventDefault();
+          if (currentSubComponent < currentTranslation.subComponents.length - 1) {
+            navigateToSubComponent(currentSubComponent + 1);
+          }
+          break;
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isPortalActive, currentSubComponent, deactivatePortal, navigateToSubComponent, currentTranslation.subComponents.length]);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      unlockViewport();
+    };
+  }, [unlockViewport]);
+
+  const colorVariants = {
+    emerald: {
+      bg: "from-emerald-500 to-teal-600",
+      accent: "emerald-400",
+      glow: "emerald-500/30"
+    },
+    yellow: {
+      bg: "from-yellow-500 to-orange-600",
+      accent: "yellow-400",
+      glow: "yellow-500/30"
+    },
+    blue: {
+      bg: "from-blue-500 to-cyan-600",
+      accent: "blue-400",
+      glow: "blue-500/30"
+    },
+    purple: {
+      bg: "from-purple-500 to-pink-600",
+      accent: "purple-400",
+      glow: "purple-500/30"
+    }
+  };
+
   return (
-    <section
-      ref={containerRef}
-      id="about"
-      className="relative min-h-screen bg-gray-900 overflow-hidden"
-    >
-      {/* Progress indicator - only visible when scroll locked in About section */}
-      {isScrollLocked && (
-        <div className="fixed top-1/2 right-6 transform -translate-y-1/2 z-50 flex flex-col space-y-2">
-          {faqItems.map((item, index) => (
-            <div
-              key={item.id}
-              className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                index === activeCard
-                  ? `bg-gradient-to-r ${item.bgGradient} shadow-lg scale-110`
-                  : "bg-white/30 hover:bg-white/50"
-              }`}
-            />
-          ))}
-        </div>
-      )}
-
-      {/* Desktop Split Screen Layout */}
-      <div className="hidden desktop:flex min-h-screen">
-        {/* Left Side - Animated Background */}
-        <div className="w-1/2 relative overflow-hidden">
-          <div
-            className={`absolute inset-0 bg-gradient-to-br ${faqItems[activeCard].bgGradient} transition-all duration-1000`}
+    <section id="about" className="relative min-h-screen overflow-hidden">
+      {/* Main About View */}
+      <AnimatePresence>
+        {!isPortalActive && (
+          <motion.div
+            initial={{ opacity: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            transition={{ duration: 0.5 }}
+            className="relative min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-gray-900 flex items-center justify-center"
           >
-            <div className="absolute inset-0 bg-black/20"></div>
-
-            {faqItems.map((item, index) => (
-              <AnimationComponent
-                key={item.id}
-                type={item.animation}
-                isActive={index === activeCard}
-              />
-            ))}
-
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent to-gray-900/50"></div>
-          </div>
-        </div>
-
-        {/* Right Side - Content */}
-        <div className="w-1/2 relative bg-gray-900 p-xl flex flex-col justify-center">
-          <div className="max-w-tablet mx-auto">
-            <div className="mb-xl">
-              <h2 className="text-4xl font-bold text-white mb-md leading-tight">
-                {currentTranslation.title}
-              </h2>
-              <p className="text-gray-300 text-lg leading-relaxed mb-md">
-                {currentTranslation.description}
-              </p>
-              <p className="text-gray-400 leading-relaxed">
-                {currentTranslation.subtitle}
-              </p>
-            </div>
-
-            <div className="space-y-sm">
-              {faqItems.map((item, index) => (
-                <div
-                  key={item.id}
-                  className={`relative overflow-hidden rounded-large transition-all duration-500 ${
-                    activeCard === index
-                      ? "bg-white/10 backdrop-blur-sm border border-white/20 shadow-2xl scale-105"
-                      : "bg-white/5 backdrop-blur-sm border border-white/10 opacity-60"
-                  }`}
-                >
-                  <div className="p-md">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-sm">
-                        <div
-                          className={`p-sm rounded-full bg-${item.color}-500/20 text-${item.color}-400 text-xl transition-all duration-300 ${
-                            activeCard === index ? "scale-110" : ""
-                          }`}
-                        >
-                          {item.icon}
-                        </div>
-                        <div>
-                          <h3 className="text-white font-semibold text-lg">
-                            {item.question}
-                          </h3>
-                          <div
-                            className={`overflow-hidden transition-all duration-500 ${
-                              activeCard === index
-                                ? "max-h-40 opacity-100 mt-xs"
-                                : "max-h-0 opacity-0"
-                            }`}
-                          >
-                            <p className="text-gray-300 text-sm leading-relaxed">
-                              {item.answer}
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                      <div
-                        className={`transform transition-transform duration-300 ${
-                          activeCard === index ? "rotate-90" : ""
-                        }`}
-                      >
-                        <FaChevronRight className="text-gray-400" />
-                      </div>
-                    </div>
-                  </div>
-
-                  {activeCard === index && (
-                    <div
-                      className={`absolute left-0 top-0 w-1 h-full bg-gradient-to-b ${item.bgGradient} transition-all duration-500`}
-                    />
-                  )}
-                </div>
+            {/* Background Effects */}
+            <div className="absolute inset-0">
+              <div className="absolute inset-0 bg-black/50"></div>
+              {[...Array(20)].map((_, i) => (
+                <motion.div
+                  key={i}
+                  className="absolute w-1 h-1 bg-orange-400 rounded-full"
+                  style={{
+                    left: `${Math.random() * 100}%`,
+                    top: `${Math.random() * 100}%`,
+                  }}
+                  animate={{
+                    y: [0, -30, 0],
+                    opacity: [0.2, 1, 0.2],
+                    scale: [0.5, 1, 0.5]
+                  }}
+                  transition={{
+                    duration: 4 + Math.random() * 3,
+                    repeat: Infinity,
+                    delay: Math.random() * 3
+                  }}
+                />
               ))}
             </div>
-          </div>
-        </div>
-      </div>
 
-      {/* Mobile Layout */}
-      <div className="desktop:hidden relative">
-        <div className="relative h-64 overflow-hidden">
-          <div
-            className={`absolute inset-0 bg-gradient-to-br ${faqItems[activeCard].bgGradient} transition-all duration-1000`}
+            {/* Content */}
+            <div className="relative z-10 max-w-4xl mx-auto text-center px-6">
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8 }}
+                className="space-y-8"
+              >
+                <div className="space-y-4">
+                  <h2 className="text-5xl md:text-7xl font-bold text-white leading-tight">
+                    {currentTranslation.title}
+                  </h2>
+                  <p className="text-xl md:text-2xl text-orange-400 font-medium">
+                    {currentTranslation.subtitle}
+                  </p>
+                </div>
+                
+                <p className="text-lg md:text-xl text-gray-300 leading-relaxed max-w-3xl mx-auto">
+                  {currentTranslation.description}
+                </p>
+
+                {/* Portal Button */}
+                <motion.div
+                  className="pt-8"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.8, delay: 0.4 }}
+                >
+                  <motion.button
+                    onClick={activatePortal}
+                    className="group relative inline-flex items-center px-8 py-4 bg-gradient-to-r from-orange-500 to-pink-600 text-white font-bold text-lg rounded-full overflow-hidden shadow-2xl"
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    {/* Portal Ring Effect */}
+                    <motion.div
+                      className="absolute inset-0 rounded-full border-2 border-orange-400"
+                      animate={{
+                        scale: [1, 1.2, 1],
+                        opacity: [0.5, 0, 0.5]
+                      }}
+                      transition={{
+                        duration: 2,
+                        repeat: Infinity,
+                        ease: "easeInOut"
+                      }}
+                    />
+                    
+                    {/* Sparkle Effects */}
+                    <Sparkles className="w-5 h-5 mr-3 group-hover:animate-spin" />
+                    <span className="relative z-10">{currentTranslation.portalButton}</span>
+                    <Eye className="w-5 h-5 ml-3 group-hover:scale-110 transition-transform" />
+                    
+                    {/* Glow Effect */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-orange-500/50 to-pink-600/50 rounded-full blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  </motion.button>
+                </motion.div>
+              </motion.div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Portal Experience */}
+      <AnimatePresence>
+        {isPortalActive && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.8 }}
+            className="fixed inset-0 z-50 bg-black"
           >
-            <div className="absolute inset-0 bg-black/30"></div>
+            {/* Escape Hint */}
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 1 }}
+              className="absolute top-6 right-6 z-50"
+            >
+              <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg px-4 py-2 text-white text-sm">
+                {currentTranslation.escapeHint}
+              </div>
+            </motion.div>
 
-            {faqItems.map((item, index) => (
-              <AnimationComponent
-                key={item.id}
-                type={item.animation}
-                isActive={index === activeCard}
-              />
-            ))}
+            {/* Progress Indicator */}
+            <div className="absolute top-6 left-1/2 transform -translate-x-1/2 z-50">
+              <div className="flex items-center space-x-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-6 py-3">
+                <span className="text-white text-sm font-medium">
+                  {currentSubComponent + 1} / {currentTranslation.subComponents.length}
+                </span>
+                <div className="w-32 h-1 bg-white/20 rounded-full overflow-hidden">
+                  <motion.div
+                    className="h-full bg-gradient-to-r from-orange-500 to-pink-600 rounded-full"
+                    initial={{ width: "0%" }}
+                    animate={{ 
+                      width: `${((currentSubComponent + 1) / currentTranslation.subComponents.length) * 100}%` 
+                    }}
+                    transition={{ duration: 0.5 }}
+                  />
+                </div>
+              </div>
+            </div>
 
-            <div className="absolute inset-0 bg-gradient-to-b from-transparent to-gray-900/80"></div>
-          </div>
-        </div>
+            {/* Navigation Arrows */}
+            {currentSubComponent > 0 && (
+              <motion.button
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                onClick={() => navigateToSubComponent(currentSubComponent - 1)}
+                className="absolute left-6 top-1/2 transform -translate-y-1/2 z-50 p-3 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full text-white hover:bg-white/20 transition-all duration-300"
+                disabled={isTransitioning}
+              >
+                <ChevronLeft className="w-6 h-6" />
+              </motion.button>
+            )}
 
-        <div className="relative bg-gray-900 p-md -mt-xl rounded-t-3xl">
-          {/* Mobile progress indicator - only when scroll locked */}
-          {isScrollLocked && (
-            <div className="absolute top-8 right-4 z-20 flex space-x-2">
-              {faqItems.map((item, index) => (
-                <div
-                  key={item.id}
-                  className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                    index === activeCard
-                      ? `bg-gradient-to-r ${item.bgGradient} shadow-lg`
-                      : "bg-white/30"
+            {currentSubComponent < currentTranslation.subComponents.length - 1 && (
+              <motion.button
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                onClick={() => navigateToSubComponent(currentSubComponent + 1)}
+                className="absolute right-6 top-1/2 transform -translate-y-1/2 z-50 p-3 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full text-white hover:bg-white/20 transition-all duration-300"
+                disabled={isTransitioning}
+              >
+                <ChevronRight className="w-6 h-6" />
+              </motion.button>
+            )}
+
+            {/* Subcomponent Content */}
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={currentSubComponent}
+                initial={{ opacity: 0, scale: 0.9, rotateY: 90 }}
+                animate={{ opacity: 1, scale: 1, rotateY: 0 }}
+                exit={{ opacity: 0, scale: 0.9, rotateY: -90 }}
+                transition={{ duration: 0.6, ease: "easeInOut" }}
+                className="h-full flex items-center justify-center"
+              >
+                {(() => {
+                  const subComponent = currentTranslation.subComponents[currentSubComponent];
+                  const colors = colorVariants[subComponent.color];
+                  const IconComponent = subComponent.icon;
+
+                  return (
+                    <div className="relative max-w-4xl mx-auto text-center px-6">
+                      {/* Background Gradient */}
+                      <div className={`absolute inset-0 bg-gradient-to-br ${colors.bg} opacity-20 rounded-3xl blur-3xl`} />
+                      
+                      {/* Content */}
+                      <div className="relative z-10 space-y-8">
+                        {/* Icon */}
+                        <motion.div
+                          initial={{ scale: 0, rotate: -180 }}
+                          animate={{ scale: 1, rotate: 0 }}
+                          transition={{ duration: 0.8, delay: 0.2 }}
+                          className="flex justify-center"
+                        >
+                          <div className={`p-6 bg-gradient-to-br ${colors.bg} rounded-full shadow-2xl`}>
+                            <IconComponent className="w-16 h-16 text-white" />
+                          </div>
+                        </motion.div>
+
+                        {/* Text Content */}
+                        <motion.div
+                          initial={{ opacity: 0, y: 30 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ duration: 0.8, delay: 0.4 }}
+                          className="space-y-4"
+                        >
+                          <h3 className="text-4xl md:text-6xl font-bold text-white">
+                            {subComponent.title}
+                          </h3>
+                          <p className={`text-xl md:text-2xl text-${colors.accent} font-medium`}>
+                            {subComponent.subtitle}
+                          </p>
+                          <p className="text-lg text-gray-300 leading-relaxed max-w-2xl mx-auto">
+                            {subComponent.description}
+                          </p>
+                        </motion.div>
+
+                        {/* Return Button (only on last subcomponent) */}
+                        {currentSubComponent === currentTranslation.subComponents.length - 1 && (
+                          <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.8, delay: 0.6 }}
+                            className="pt-8"
+                          >
+                            <Button
+                              variant="primary"
+                              size="lg"
+                              onClick={deactivatePortal}
+                              icon={<ArrowRight />}
+                              className="bg-gradient-to-r from-orange-500 to-pink-600 hover:from-orange-600 hover:to-pink-700 shadow-2xl"
+                            >
+                              {currentTranslation.returnButton}
+                            </Button>
+                          </motion.div>
+                        )}
+                      </div>
+
+                      {/* Floating Particles */}
+                      {[...Array(8)].map((_, i) => (
+                        <motion.div
+                          key={i}
+                          className={`absolute w-2 h-2 bg-${colors.accent} rounded-full`}
+                          style={{
+                            left: `${Math.random() * 100}%`,
+                            top: `${Math.random() * 100}%`,
+                          }}
+                          animate={{
+                            y: [0, -20, 0],
+                            opacity: [0.3, 1, 0.3],
+                            scale: [0.5, 1, 0.5]
+                          }}
+                          transition={{
+                            duration: 3 + Math.random() * 2,
+                            repeat: Infinity,
+                            delay: Math.random() * 2
+                          }}
+                        />
+                      ))}
+                    </div>
+                  );
+                })()}
+              </motion.div>
+            </AnimatePresence>
+
+            {/* Dot Navigation */}
+            <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex space-x-3">
+              {currentTranslation.subComponents.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => navigateToSubComponent(index)}
+                  disabled={isTransitioning}
+                  className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                    index === currentSubComponent
+                      ? 'bg-orange-500 scale-125'
+                      : 'bg-white/30 hover:bg-white/50'
                   }`}
                 />
               ))}
             </div>
-          )}
-
-          <div className="mb-xl">
-            <h2 className="text-3xl font-bold text-white mb-md leading-tight">
-              {currentTranslation.title}
-            </h2>
-            <p className="text-gray-300 leading-relaxed mb-md">
-              {currentTranslation.description}
-            </p>
-            <p className="text-gray-400 text-sm leading-relaxed">
-              {currentTranslation.subtitle}
-            </p>
-          </div>
-
-          <div className="space-y-sm">
-            {faqItems.map((item, index) => (
-              <div
-                key={item.id}
-                className={`relative overflow-hidden rounded-large transition-all duration-500 ${
-                  activeCard === index
-                    ? "bg-white/10 backdrop-blur-sm border border-white/20 shadow-xl scale-105"
-                    : "bg-white/5 backdrop-blur-sm border border-white/10 opacity-60"
-                }`}
-              >
-                <div className="p-md">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-sm">
-                      <div
-                        className={`p-sm rounded-full bg-${item.color}-500/20 text-${item.color}-400 text-lg transition-all duration-300 ${
-                          activeCard === index ? "scale-110" : ""
-                        }`}
-                      >
-                        {item.icon}
-                      </div>
-                      <div>
-                        <h3 className="text-white font-semibold">
-                          {item.question}
-                        </h3>
-                        <div
-                          className={`overflow-hidden transition-all duration-500 ${
-                            activeCard === index
-                              ? "max-h-32 opacity-100 mt-xs"
-                              : "max-h-0 opacity-0"
-                          }`}
-                        >
-                          <p className="text-gray-300 text-sm leading-relaxed">
-                            {item.answer}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                    <div
-                      className={`transform transition-transform duration-300 ${
-                        activeCard === index ? "rotate-90" : ""
-                      }`}
-                    >
-                      <FaChevronRight className="text-gray-400" />
-                    </div>
-                  </div>
-                </div>
-
-                {activeCard === index && (
-                  <div
-                    className={`absolute left-0 top-0 w-1 h-full bg-gradient-to-b ${item.bgGradient} transition-all duration-500`}
-                  />
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </section>
   );
 };

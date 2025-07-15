@@ -133,20 +133,47 @@ const Services = () => {
               key={index}
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
+              transition={{ 
+                duration: 0.6,
+                delay: index * 0.15,
+                ease: [0.215, 0.610, 0.355, 1.000]
+              }}
+              whileHover={{ 
+                scale: 1.02,
+                y: -5,
+                transition: { duration: 0.2 }
+              }}
+              whileTap={{ scale: 0.98 }}
               onMouseEnter={() => setHoveredCategory(category)}
-              className={`bg-white/5 backdrop-blur-2xl border-2 border-orange-500 p-md rounded-large flex items-center space-x-sm transition-all duration-300 cursor-pointer group shadow-lg
-                ${hoveredCategory === category ? 'bg-white/10 border-white/30 shadow-xl' : 'hover:bg-white/8'}`}
+              className={`bg-white/5 backdrop-blur-2xl border-2 p-md rounded-large flex items-center space-x-sm cursor-pointer group shadow-lg
+                ${hoveredCategory === category 
+                  ? 'bg-white/10 border-white/30 shadow-xl' 
+                  : 'hover:bg-white/8 border-orange-500/50'}`}
             >
-              <div className="flex-shrink-0 group-hover:scale-110 transition-transform duration-300">
+              <motion.div 
+                className="flex-shrink-0"
+                animate={{ 
+                  rotate: [0, 5, 0, -5, 0],
+                }}
+                transition={{
+                  duration: 4,
+                  repeat: Infinity,
+                  repeatType: "reverse",
+                  ease: "easeInOut"
+                }}
+              >
                 {category.icon}
-              </div>
-              <div>
+              </motion.div>
+              <motion.div
+                initial={{ x: 0 }}
+                whileHover={{ x: 3 }}
+                transition={{ duration: 0.2 }}
+              >
                 <h3 className="text-xl font-semibold text-white mb-xs">{category.type}</h3>
                 <p className="text-gray-300 text-sm">
                   {category.subServices.length} services available
                 </p>
-              </div>
+              </motion.div>
             </motion.div>
           ))}
         </div>
