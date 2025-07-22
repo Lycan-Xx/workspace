@@ -3,7 +3,7 @@ import { UserPlus, Mail, Check, PhoneCall, EyeOff, Eye } from "lucide-react";
 
 // Progressive Line Component
 function ProgressiveLine({ currentStep, totalSteps }) {
-  const progressPercentage = ((currentStep - 1) / (totalSteps - 1)) * 100;
+  const progressPercentage = ((currentStep - 1) / (totalSteps - 1)) * 100 
 
   return (
     <div className="w-full bg-gray-300 rounded-full h-2.5 mb-6">
