@@ -90,25 +90,44 @@ export const checkTokenExpiration = () => (dispatch, getState) => {
 // Thunk for handling login
 export const login = (credentials) => async (dispatch) => {
 	try {
-		const user = users.find(
-			u => u.email === credentials.email && u.password === credentials.password
-		);
+		// Basic validation
+		if (!credentials.email || !credentials.password) {
+			dispatch(loginFailure('Email and password are required'));
+			return false;
+		}
 
-		if (user) {
+		// Import API service dynamically to avoid circular imports
+		const { apiService } = await import('../../../services/api');
+		const result = await apiService.login(credentials);
+
+		if (result.success) {
 			dispatch(loginSuccess({ 
-				email: user.email, 
-				name: user.name, 
-				role: user.role,
-				loginTime: Date.now() // Add login timestamp
+				...result.user,
+				loginTime: Date.now()
 			}));
 			return true;
 		} else {
-			dispatch(loginFailure('Invalid email or password'));
+			dispatch(loginFailure(result.error));
 			return false;
 		}
 	} catch (error) {
+		console.error('Login error:', error);
 		dispatch(loginFailure('An error occurred during login'));
 		return false;
+	}
+};
+
+// Thunk for handling signup
+export const signup = (userData) => async (dispatch) => {
+	try {
+		// Import API service dynamically to avoid circular imports
+		const { apiService } = await import('../../../services/api');
+		const result = await apiService.signup(userData);
+		
+		return result;
+	} catch (error) {
+		console.error('Signup error:', error);
+		return { success: false, message: 'An error occurred during signup' };
 	}
 };
 

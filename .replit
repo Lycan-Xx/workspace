@@ -4,3 +4,22 @@ modules = ["nodejs-20"]
 localPort = 5173
 externalPort = 80
 exposeLocalhost = true
+
+[[ports]]
+localPort = 8090
+externalPort = 3000
+
+[workflows]
+runButton = "Start PocketBase"
+
+[[workflows.workflow]]
+name = "Start PocketBase"
+author = 45342669
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "./backend/start-pocketbase.sh"
+
+[nix]
+packages = ["unzip"]
