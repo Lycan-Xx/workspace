@@ -304,7 +304,6 @@ function DataInputStep({ accountType, step, onSubmit, onBack }) {
     if (!formData.password) newErrors.password = "Password is required.";
     if (formData.password !== formData.confirmPassword)
       newErrors.confirmPassword = "Passwords do not match.";
-    if (!formData.vaultPhrase) newErrors.vaultPhrase = "Vault phrase is required.";
     return newErrors;
   };
 
@@ -427,15 +426,6 @@ function DataInputStep({ accountType, step, onSubmit, onBack }) {
               className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-[#025798] focus:ring-2 focus:ring-[#025798]/20 transition-all outline-none"
             />
             {errors.confirmPassword && <p className="text-red-500 text-sm mt-1">{errors.confirmPassword}</p>}
-            <input
-              type="text"
-              name="vaultPhrase"
-              placeholder="Vault Phrase/PIN"
-              value={formData.vaultPhrase}
-              onChange={handleChange}
-              className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-[#025798] focus:ring-2 focus:ring-[#025798]/20 transition-all outline-none"
-            />
-            {errors.vaultPhrase && <p className="text-red-500 text-sm mt-1">{errors.vaultPhrase}</p>}
             <input
               type="text"
               name="referralCode"
