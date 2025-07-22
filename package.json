@@ -26,6 +26,7 @@
 		"@testing-library/react": "^13.4.0",
 		"@testing-library/user-event": "^13.5.0",
 		"classnames": "^2.5.1",
+		"concurrently": "^9.2.0",
 		"es-abstract": "^1.23.7",
 		"framer-motion": "^11.15.0",
 		"lucide-react": "^0.468.0",
@@ -51,7 +52,10 @@
 		"build": "vite build",
 		"preview": "vite preview",
 		"predeploy": "npm run build",
-		"deploy": "gh-pages -d dist"
+		"deploy": "gh-pages -d dist",
+		"backend": "./backend/pb_start.sh",
+		"start:backend": "chmod +x backend/pb_start.sh && ./backend/pb_start.sh",
+		"start:full": "concurrently \"npm run backend\" \"npm run dev\""
 	},
 	"browserslist": {
 		"production": [

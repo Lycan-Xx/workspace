@@ -19,7 +19,21 @@ mode = "sequential"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "./backend/start-pocketbase.sh"
+args = "npm run start:backend"
+
+[[workflows.workflow]]
+name = "Full Stack Dev"
+author = 45342669
+mode = "parallel"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm run dev"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm run start:backend"
 
 [nix]
 packages = ["unzip"]
+channel = "stable-24_05"
