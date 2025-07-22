@@ -3,12 +3,14 @@ import { useDispatch, useSelector } from 'react-redux';
 import { login } from '../store/authSlice';
 import { Eye, EyeOff, Mail, Lock } from "lucide-react";
 import { useNavigate } from 'react-router-dom';
+import ForgotPassword from './ForgotPassword'; // Import the ForgotPassword component
 
 export default function SignIn({ onSignUp }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState({});
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const error = useSelector(state => state.auth.error);
@@ -36,19 +38,25 @@ export default function SignIn({ onSignUp }) {
     }
   };
 
+  const handleForgotPasswordClick = (e) => {
+    e.preventDefault();
+    setShowForgotPassword(true);
+  };
+
+  const handleBackToSignIn = () => {
+    setShowForgotPassword(false);
+  };
+
+  // If showing forgot password, render the ForgotPassword component
+  if (showForgotPassword) {
+    return <ForgotPassword onBackToSignIn={handleBackToSignIn} />;
+  }
+
   return (
     <div className="bg-white w-full max-w-lg rounded-2xl shadow-2xl p-6 sm:p-8 lg:p-10 mx-auto">
       <h2 className="text-2xl lg:text-3xl font-bold text-gray-800 mb-6 text-center">
         Welcome Back
       </h2>
-
-      {/* Progressive Line - Static for sign in */}
-      <div className="w-full bg-gray-300 rounded-full h-2.5 mb-6">
-        <div
-          className="bg-[#025798] h-2.5 rounded-full transition-all duration-500"
-          style={{ width: '100%' }}
-        ></div>
-      </div>
 
       <div>
         <h3 className="text-lg font-bold text-center text-gray-700 mb-6">
@@ -110,12 +118,13 @@ export default function SignIn({ onSignUp }) {
             {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password}</p>}
             
             <div className="text-right mt-2">
-              <a
-                href="#"
+              <button
+                type="button"
+                onClick={handleForgotPasswordClick}
                 className="text-sm text-[#025798] hover:underline transition-colors"
               >
                 Forgot password?
-              </a>
+              </button>
             </div>
           </div>
 

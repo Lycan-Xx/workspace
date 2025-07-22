@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { UserPlus, Mail, Check, PhoneCall, EyeOff, Eye } from "lucide-react";
+import { UserPlus, Mail, Check, PhoneCall, EyeOff, Eye, Lock } from "lucide-react";
 
 // Progressive Line Component
 function ProgressiveLine({ currentStep, totalSteps }) {
@@ -275,6 +275,8 @@ function DataInputStep({ accountType, step, onSubmit, onBack }) {
   });
 
   const [errors, setErrors] = useState({});
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -299,9 +301,10 @@ function DataInputStep({ accountType, step, onSubmit, onBack }) {
     return newErrors;
   };
 
-  const validateStep2 = () => {
+  const validateStep4 = () => {
     const newErrors = {};
     if (!formData.password) newErrors.password = "Password is required.";
+    if (formData.password && formData.password.length < 6) newErrors.password = "Password must be at least 6 characters.";
     if (formData.password !== formData.confirmPassword)
       newErrors.confirmPassword = "Passwords do not match.";
     return newErrors;
@@ -309,7 +312,7 @@ function DataInputStep({ accountType, step, onSubmit, onBack }) {
 
   const handleContinue = (e) => {
     e.preventDefault();
-    const newErrors = step === 1 ? validateStep1() : validateStep2();
+    const newErrors = step === 1 ? validateStep1() : validateStep4();
     if (Object.keys(newErrors).length === 0) {
       onSubmit(formData);
     } else {
@@ -406,29 +409,21 @@ function DataInputStep({ accountType, step, onSubmit, onBack }) {
             {errors.nin && <p className="text-red-500 text-sm mt-1">{errors.nin}</p>}
           </>
         )}
-        {step === 3 && (
+        {step === 4 && (
           <>
-            <input
-              type="password"
-              name="password"
-              placeholder="Password"
-              value={formData.password}
-              onChange={handleChange}
-              className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-[#025798] focus:ring-2 focus:ring-[#025798]/20 transition-all outline-none"
-            />
-            {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password}</p>}
-            <input
-              type="password"
-              name="confirmPassword"
-              placeholder="Confirm Password"
-              value={formData.confirmPassword}
-              onChange={handleChange}
-              className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-[#025798] focus:ring-2 focus:ring-[#025798]/20 transition-all outline-none"
-            />
-                          <button
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                name="password"
+                placeholder="Password"
+                value={formData.password}
+                onChange={handleChange}
+                className="w-full px-4 py-3 pr-12 border-2 border-gray-300 rounded-lg focus:border-[#025798] focus:ring-2 focus:ring-[#025798]/20 transition-all outline-none"
+              />
+              <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-3.5 text-gray-400 hover:text-gray-600 transition-colors"
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
               >
                 {showPassword ? (
                   <EyeOff className="h-5 w-5" />
@@ -436,6 +431,30 @@ function DataInputStep({ accountType, step, onSubmit, onBack }) {
                   <Eye className="h-5 w-5" />
                 )}
               </button>
+            </div>
+            {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password}</p>}
+            <div className="relative">
+              <input
+                type={showConfirmPassword ? "text" : "password"}
+                name="confirmPassword"
+                placeholder="Confirm Password"
+                value={formData.confirmPassword}
+                onChange={handleChange}
+                className="w-full px-4 py-3 pr-12 border-2 border-gray-300 rounded-lg focus:border-[#025798] focus:ring-2 focus:ring-[#025798]/20 transition-all outline-none"
+              />
+              <button
+                type="button"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+              >
+                {showConfirmPassword ? (
+                  <EyeOff className="h-5 w-5" />
+                ) : (
+                  <Eye className="h-5 w-5" />
+                )}
+              </button>
+            </div>
+
             {errors.confirmPassword && <p className="text-red-500 text-sm mt-1">{errors.confirmPassword}</p>}
             <input
               type="text"
@@ -460,7 +479,7 @@ function DataInputStep({ accountType, step, onSubmit, onBack }) {
             onClick={handleContinue}
             className="px-6 py-3 bg-[#025798] text-white rounded-lg font-medium hover:bg-[#025798]/90 transition duration-300"
           >
-            {step === 3 ? "Submit" : "Continue"}
+            {step === 4 ? "Submit" : "Continue"}
           </button>
         </div>
       </form>
@@ -563,7 +582,7 @@ export default function SignUp() {
         {currentStep === Steps.PASSWORD_INPUT && (
           <DataInputStep
             accountType={accountType}
-            step={3}
+            step={4}
             onSubmit={handleDataSubmit}
             onBack={handleBack}
           />
