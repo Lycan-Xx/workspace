@@ -249,7 +249,7 @@ function OTPVerificationStep({ onSubmit, onBack }) {
               !isPhoneVerified || otp.join("").length !== 6
                 ? "bg-gray-400 cursor-not-allowed"
                 : "bg-[#025798] hover:bg-[#025798]/90"
-            } text-white rounded-lg font-medium border-2 border-[#025798] rounded-lg ease-linear`}
+            } text-white rounded-lg font-medium border-2 rounded-lg ease-linear`}
           >
             Continue
           </button>
