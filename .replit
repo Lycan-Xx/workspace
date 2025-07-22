@@ -5,6 +5,10 @@ localPort = 5173
 externalPort = 80
 exposeLocalhost = true
 
+[[ports]]
+localPort = 8090
+externalPort = 3000
+
 [workflows]
 runButton = "Start PocketBase"
 
@@ -16,3 +20,6 @@ mode = "sequential"
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "./backend/start-pocketbase.sh"
+
+[nix]
+packages = ["unzip"]
