@@ -95,7 +95,6 @@ export default function SignIn({ onSignUp }) {
                 className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-[#025798] focus:ring-2 focus:ring-[#025798]/20 transition-all outline-none pr-12"
                 required
               />
-              <Lock className="absolute left-3 top-3.5 h-5 w-5 text-gray-400" />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
