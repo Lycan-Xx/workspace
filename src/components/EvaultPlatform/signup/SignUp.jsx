@@ -1,10 +1,9 @@
-
-import React, { useState } from "react";
-import { UserPlus, Mail, Check } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { UserPlus, Mail, Check, PhoneCall, EyeOff, Eye, Lock } from "lucide-react";
 
 // Progressive Line Component
 function ProgressiveLine({ currentStep, totalSteps }) {
-  const progressPercentage = ((currentStep - 1) / (totalSteps - 1)) * 100;
+  const progressPercentage = ((currentStep - 1) / (totalSteps - 1)) * 100 
 
   return (
     <div className="w-full bg-gray-300 rounded-full h-2.5 mb-6">
@@ -49,13 +48,223 @@ function AccountTypeStep({ onSelect }) {
   );
 }
 
+// OTP Verification Step Component
+function OTPVerificationStep({ onSubmit, onBack }) {
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [countryCode, setCountryCode] = useState("+234");
+  const [otp, setOtp] = useState(["", "", "", "", "", ""]);
+  const [isPhoneVerified, setIsPhoneVerified] = useState(false);
+  const [countdown, setCountdown] = useState(0);
+  const [errors, setErrors] = useState({});
+
+  const countryCodes = [
+    { code: "+234", flag: "🇳🇬", name: "Nigeria" },
+    { code: "+1", flag: "🇺🇸", name: "USA" },
+    { code: "+44", flag: "🇬🇧", name: "UK" },
+    { code: "+27", flag: "🇿🇦", name: "South Africa" },
+    { code: "+254", flag: "🇰🇪", name: "Kenya" },
+    { code: "+233", flag: "🇬🇭", name: "Ghana" },
+  ];
+
+  useEffect(() => {
+    let timer;
+    if (countdown > 0) {
+      timer = setTimeout(() => {
+        setCountdown(countdown - 1);
+      }, 1000);
+    }
+    return () => clearTimeout(timer);
+  }, [countdown]);
+
+  const handlePhoneChange = (e) => {
+    const value = e.target.value.replace(/\D/g, "");
+    setPhoneNumber(value);
+    setErrors({});
+  };
+
+  const handleCountryCodeChange = (e) => {
+    setCountryCode(e.target.value);
+  };
+
+  const handleOtpChange = (index, value) => {
+    if (value.length > 1) {
+      value = value.charAt(0);
+    }
+    
+    if (value && !/^\d+$/.test(value)) {
+      return;
+    }
+
+    const newOtp = [...otp];
+    newOtp[index] = value;
+    setOtp(newOtp);
+
+    // Auto-focus to the next input field
+    if (value && index < 5) {
+      const nextInput = document.getElementById(`otp-${index + 1}`);
+      if (nextInput) nextInput.focus();
+    }
+  };
+
+  const handleKeyDown = (index, e) => {
+    // Move to previous input on backspace
+    if (e.key === "Backspace" && !otp[index] && index > 0) {
+      const prevInput = document.getElementById(`otp-${index - 1}`);
+      if (prevInput) prevInput.focus();
+    }
+  };
+
+  const handleVerifyPhone = () => {
+    // Basic validation
+    if (!phoneNumber) {
+      setErrors({ phone: "Phone number is required" });
+      return;
+    }
+    
+    // Simulate OTP sending
+    setIsPhoneVerified(true);
+    setCountdown(60);
+    
+    // In a real app, you would call an API to send OTP
+    console.log(`Sending OTP to ${countryCode}${phoneNumber}`);
+    
+    // Clear any errors
+    setErrors({});
+  };
+
+  const handleResendOTP = () => {
+    if (countdown === 0) {
+      // Resend OTP logic
+      setCountdown(60);
+      console.log(`Resending OTP to ${countryCode}${phoneNumber}`);
+    }
+  };
+
+  const handleContinue = () => {
+    // Check if OTP is complete
+    const otpValue = otp.join("");
+    if (otpValue.length !== 6) {
+      setErrors({ otp: "Please enter the complete 6-digit OTP" });
+      return;
+    }
+    
+    // Simulate OTP verification
+    // In a real app, you would verify the OTP with an API
+    console.log(`Verifying OTP: ${otpValue}`);
+    
+    // If verification is successful, proceed to the next step
+    onSubmit({ phone: `${countryCode}${phoneNumber}`, otp: otpValue });
+  };
+
+  return (
+    <div>
+      <h3 className="text-lg font-bold text-center text-gray-700 mb-6">
+        Verify Your Phone Number
+      </h3>
+      <div className="space-y-4">
+        <div className="flex flex-row items-center gap-2">
+          <div className="w-1/3">
+            <select
+              value={countryCode}
+              onChange={handleCountryCodeChange}
+              disabled={isPhoneVerified}
+              className="w-full px-3 py-3 border-2 border-gray-300 rounded-lg focus:border-[#025798] focus:ring-2 focus:ring-[#025798]/20 transition-all outline-none appearance-none"
+            >
+              {countryCodes.map((country) => (
+                <option key={country.code} value={country.code}>
+                  {country.flag} {country.code}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="w-2/3">
+            <input
+              type="tel"
+              placeholder="Phone Number"
+              value={phoneNumber}
+              onChange={handlePhoneChange}
+              disabled={isPhoneVerified}
+              className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-[#025798] focus:ring-2 focus:ring-[#025798]/20 transition-all outline-none"
+            />
+          </div>
+        </div>
+        {errors.phone && <p className="text-red-500 text-sm mt-1">{errors.phone}</p>}
+        
+        {!isPhoneVerified ? (
+          <button
+            onClick={handleVerifyPhone}
+            className="w-full px-6 py-3 bg-[#025798] hover:bg-white text-white hover:text-[#025798] transition duration-300 border-2 border-[#025798] rounded-lg ease-linear font-medium"
+          >
+            Verify Number
+          </button>
+        ) : (
+          <>
+            <div className="flex justify-between items-center">
+              <p className="text-sm text-gray-600">
+                Enter the 6-digit code sent to {countryCode}{phoneNumber}
+              </p>
+              {countdown > 0 ? (
+                <span className="text-sm text-gray-500">Resend in {countdown}s</span>
+              ) : (
+                <button
+                  onClick={handleResendOTP}
+                  className="text-sm text-[#025798] font-medium hover:underline"
+                >
+                  Resend OTP
+                </button>
+              )}
+            </div>
+            
+            <div className="flex justify-between gap-2 my-4">
+              {otp.map((digit, index) => (
+                <input
+                  key={index}
+                  id={`otp-${index}`}
+                  type="text"
+                  maxLength={1}
+                  value={digit}
+                  onChange={(e) => handleOtpChange(index, e.target.value)}
+                  onKeyDown={(e) => handleKeyDown(index, e)}
+                  className="w-12 h-12 text-center text-xl font-bold border-2 border-gray-300 rounded-lg focus:border-[#025798] focus:ring-2 focus:ring-[#025798]/20 transition-all outline-none"
+                />
+              ))}
+            </div>
+            {errors.otp && <p className="text-red-500 text-sm mt-1">{errors.otp}</p>}
+          </>
+        )}
+        
+        <div className="flex flex-col sm:flex-row justify-between gap-4 pt-4">
+          <button
+            type="button"
+            onClick={onBack}
+            className="px-6 py-3 bg-gray-300 text-gray-800 rounded-lg font-medium hover:bg-gray-400 transition duration-300"
+          >
+            Back
+          </button>
+          <button
+            type="button"
+            onClick={handleContinue}
+            disabled={!isPhoneVerified || otp.join("").length !== 6}
+            className={`px-6 py-3 ${
+              !isPhoneVerified || otp.join("").length !== 6
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-[#025798] hover:bg-[#025798]/90"
+            } text-white rounded-lg font-medium border-2 rounded-lg ease-linear`}
+          >
+            Continue
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // Data Input Step Component
 function DataInputStep({ accountType, step, onSubmit, onBack }) {
   const [formData, setFormData] = useState({
     firstname: "",
     lastname: "",
     email: "",
-    phone: "",
     businessName: "",
     rcNumber: "",
     nin: "",
@@ -66,6 +275,8 @@ function DataInputStep({ accountType, step, onSubmit, onBack }) {
   });
 
   const [errors, setErrors] = useState({});
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -81,7 +292,6 @@ function DataInputStep({ accountType, step, onSubmit, onBack }) {
       if (!formData.firstname) newErrors.firstname = "First name is required.";
       if (!formData.lastname) newErrors.lastname = "Last name is required.";
       if (!formData.email) newErrors.email = "Email is required.";
-      if (!formData.phone) newErrors.phone = "Phone number is required.";
     } else if (accountType === "Business") {
       if (!formData.businessName) newErrors.businessName = "Business name is required.";
       if (!formData.email) newErrors.email = "Email is required.";
@@ -91,18 +301,18 @@ function DataInputStep({ accountType, step, onSubmit, onBack }) {
     return newErrors;
   };
 
-  const validateStep2 = () => {
+  const validateStep4 = () => {
     const newErrors = {};
     if (!formData.password) newErrors.password = "Password is required.";
+    if (formData.password && formData.password.length < 6) newErrors.password = "Password must be at least 6 characters.";
     if (formData.password !== formData.confirmPassword)
       newErrors.confirmPassword = "Passwords do not match.";
-    if (!formData.vaultPhrase) newErrors.vaultPhrase = "Vault phrase is required.";
     return newErrors;
   };
 
   const handleContinue = (e) => {
     e.preventDefault();
-    const newErrors = step === 1 ? validateStep1() : validateStep2();
+    const newErrors = step === 1 ? validateStep1() : validateStep4();
     if (Object.keys(newErrors).length === 0) {
       onSubmit(formData);
     } else {
@@ -157,15 +367,6 @@ function DataInputStep({ accountType, step, onSubmit, onBack }) {
               className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-[#025798] focus:ring-2 focus:ring-[#025798]/20 transition-all outline-none"
             />
             {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
-            <input
-              type="tel"
-              name="phone"
-              placeholder="Phone Number"
-              value={formData.phone}
-              onChange={handleChange}
-              className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-[#025798] focus:ring-2 focus:ring-[#025798]/20 transition-all outline-none"
-            />
-            {errors.phone && <p className="text-red-500 text-sm mt-1">{errors.phone}</p>}
           </>
         )}
         {step === 1 && accountType === "Business" && (
@@ -208,35 +409,53 @@ function DataInputStep({ accountType, step, onSubmit, onBack }) {
             {errors.nin && <p className="text-red-500 text-sm mt-1">{errors.nin}</p>}
           </>
         )}
-        {step === 2 && (
+        {step === 4 && (
           <>
-            <input
-              type="password"
-              name="password"
-              placeholder="Password"
-              value={formData.password}
-              onChange={handleChange}
-              className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-[#025798] focus:ring-2 focus:ring-[#025798]/20 transition-all outline-none"
-            />
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                name="password"
+                placeholder="Password"
+                value={formData.password}
+                onChange={handleChange}
+                className="w-full px-4 py-3 pr-12 border-2 border-gray-300 rounded-lg focus:border-[#025798] focus:ring-2 focus:ring-[#025798]/20 transition-all outline-none"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+              >
+                {showPassword ? (
+                  <EyeOff className="h-5 w-5" />
+                ) : (
+                  <Eye className="h-5 w-5" />
+                )}
+              </button>
+            </div>
             {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password}</p>}
-            <input
-              type="password"
-              name="confirmPassword"
-              placeholder="Confirm Password"
-              value={formData.confirmPassword}
-              onChange={handleChange}
-              className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-[#025798] focus:ring-2 focus:ring-[#025798]/20 transition-all outline-none"
-            />
+            <div className="relative">
+              <input
+                type={showConfirmPassword ? "text" : "password"}
+                name="confirmPassword"
+                placeholder="Confirm Password"
+                value={formData.confirmPassword}
+                onChange={handleChange}
+                className="w-full px-4 py-3 pr-12 border-2 border-gray-300 rounded-lg focus:border-[#025798] focus:ring-2 focus:ring-[#025798]/20 transition-all outline-none"
+              />
+              <button
+                type="button"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+              >
+                {showConfirmPassword ? (
+                  <EyeOff className="h-5 w-5" />
+                ) : (
+                  <Eye className="h-5 w-5" />
+                )}
+              </button>
+            </div>
+
             {errors.confirmPassword && <p className="text-red-500 text-sm mt-1">{errors.confirmPassword}</p>}
-            <input
-              type="text"
-              name="vaultPhrase"
-              placeholder="Vault Phrase/PIN"
-              value={formData.vaultPhrase}
-              onChange={handleChange}
-              className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-[#025798] focus:ring-2 focus:ring-[#025798]/20 transition-all outline-none"
-            />
-            {errors.vaultPhrase && <p className="text-red-500 text-sm mt-1">{errors.vaultPhrase}</p>}
             <input
               type="text"
               name="referralCode"
@@ -260,7 +479,7 @@ function DataInputStep({ accountType, step, onSubmit, onBack }) {
             onClick={handleContinue}
             className="px-6 py-3 bg-[#025798] text-white rounded-lg font-medium hover:bg-[#025798]/90 transition duration-300"
           >
-            {step === 2 ? "Submit" : "Continue"}
+            {step === 4 ? "Submit" : "Continue"}
           </button>
         </div>
       </form>
@@ -294,12 +513,14 @@ export default function SignUp() {
   const Steps = {
     ACCOUNT_TYPE: 1,
     DATA_INPUT: 2,
-    PASSWORD_INPUT: 3,
-    SUCCESS: 4,
+    OTP_VERIFICATION: 3,
+    PASSWORD_INPUT: 4,
+    SUCCESS: 5,
   };
 
   const [currentStep, setCurrentStep] = useState(Steps.ACCOUNT_TYPE);
   const [accountType, setAccountType] = useState(null);
+  const [userData, setUserData] = useState({});
 
   const handleAccountTypeSelect = (type) => {
     setAccountType(type);
@@ -308,17 +529,26 @@ export default function SignUp() {
 
   const handleDataSubmit = (data) => {
     if (currentStep === Steps.DATA_INPUT) {
+      setUserData((prev) => ({ ...prev, ...data }));
+      setCurrentStep(Steps.OTP_VERIFICATION);
+    } else if (currentStep === Steps.OTP_VERIFICATION) {
+      setUserData((prev) => ({ ...prev, ...data }));
       setCurrentStep(Steps.PASSWORD_INPUT);
     } else if (currentStep === Steps.PASSWORD_INPUT) {
+      setUserData((prev) => ({ ...prev, ...data }));
       setCurrentStep(Steps.SUCCESS);
+      // Here you would typically make an API call to create the account
+      console.log("Account creation data:", { ...userData, ...data });
     }
   };
 
   const handleBack = () => {
     if (currentStep === Steps.DATA_INPUT) {
       setCurrentStep(Steps.ACCOUNT_TYPE);
-    } else if (currentStep === Steps.PASSWORD_INPUT) {
+    } else if (currentStep === Steps.OTP_VERIFICATION) {
       setCurrentStep(Steps.DATA_INPUT);
+    } else if (currentStep === Steps.PASSWORD_INPUT) {
+      setCurrentStep(Steps.OTP_VERIFICATION);
     }
   };
 
@@ -329,16 +559,30 @@ export default function SignUp() {
       </h2>
 
       {/* Progressive Line */}
-      <ProgressiveLine currentStep={currentStep} totalSteps={4} />
+      <ProgressiveLine currentStep={currentStep} totalSteps={5} />
 
       <div>
         {currentStep === Steps.ACCOUNT_TYPE && (
           <AccountTypeStep onSelect={handleAccountTypeSelect} />
         )}
-        {(currentStep === Steps.DATA_INPUT || currentStep === Steps.PASSWORD_INPUT) && (
+        {currentStep === Steps.DATA_INPUT && (
           <DataInputStep
             accountType={accountType}
-            step={currentStep === Steps.DATA_INPUT ? 1 : 2}
+            step={1}
+            onSubmit={handleDataSubmit}
+            onBack={handleBack}
+          />
+        )}
+        {currentStep === Steps.OTP_VERIFICATION && (
+          <OTPVerificationStep
+            onSubmit={handleDataSubmit}
+            onBack={handleBack}
+          />
+        )}
+        {currentStep === Steps.PASSWORD_INPUT && (
+          <DataInputStep
+            accountType={accountType}
+            step={4}
             onSubmit={handleDataSubmit}
             onBack={handleBack}
           />
