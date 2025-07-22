@@ -1,13 +1,34 @@
-
 import PocketBase from 'pocketbase';
 
-const pb = new PocketBase(process.env.NODE_ENV === 'production' 
-  ? 'https://your-production-url.com' 
-  : 'http://localhost:8090');
+// PocketBase configuration
+const getPocketBaseUrl = () => {
+  if (typeof window === 'undefined') return 'http://localhost:8090';
+
+  if (window.location.hostname.includes('replit.dev')) {
+    // Replit environment
+    const hostname = window.location.hostname;
+    return `https://${hostname.replace(/^.*?-00-/, '').replace('.janeway', '')}-8090.${hostname.split('.').slice(-2).join('.')}`;
+  }
+
+  return 'http://localhost:8090';
+};
+
+const pb = new PocketBase(getPocketBaseUrl());
 
 class ApiService {
   constructor() {
     this.pb = pb;
+    this.checkConnection();
+  }
+
+  async checkConnection() {
+    try {
+      await this.pb.health.check();
+      console.log('PocketBase connection established');
+    } catch (error) {
+      console.error('PocketBase connection failed:', error);
+      console.log('Make sure PocketBase is running at:', getPocketBaseUrl());
+    }
   }
 
   // Authentication methods
@@ -68,7 +89,7 @@ class ApiService {
       }
 
       const record = await this.pb.collection('users').create(pbUserData);
-      
+
       return {
         success: true,
         message: 'Account created successfully',
@@ -103,7 +124,7 @@ class ApiService {
       }
 
       const user = users.items[0];
-      
+
       // Update password
       await this.pb.collection('users').update(user.id, {
         password: newPassword,
@@ -126,7 +147,7 @@ class ApiService {
     // In a real implementation, you would verify the OTP with an external service
     // For now, we'll simulate verification
     console.log('API: OTP verification', phone, otp);
-    
+
     // Simulate successful verification for testing
     if (otp === '111111') {
       return {
@@ -134,7 +155,7 @@ class ApiService {
         message: 'OTP verified successfully'
       };
     }
-    
+
     return {
       success: false,
       error: 'Invalid OTP'
@@ -144,7 +165,7 @@ class ApiService {
   async sendOTP(phone) {
     // In a real implementation, you would integrate with an SMS service
     console.log('API: Send OTP to', phone);
-    
+
     // Simulate successful OTP sending
     return {
       success: true,
