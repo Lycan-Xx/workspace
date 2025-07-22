@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from 'react-router-dom';
 import { UserPlus, Mail, Check, PhoneCall, EyeOff, Eye, Lock } from "lucide-react";
 
 // Progressive Line Component
@@ -488,7 +489,7 @@ function DataInputStep({ accountType, step, onSubmit, onBack }) {
 }
 
 // Success Step Component
-function SuccessStep({ accountType }) {
+function SuccessStep({ accountType, onSignIn }) {
   return (
     <div className="text-center py-8">
       <Check className="mx-auto mb-6 text-green-500" size={64} />
@@ -500,7 +501,7 @@ function SuccessStep({ accountType }) {
       </p>
       <button
         className="mt-8 px-6 py-3 bg-[#025798] text-white rounded-lg font-medium hover:bg-[#025798]/90 transition duration-300"
-        onClick={() => window.location.reload()}
+        onClick={onSignIn}
       >
         Sign In
       </button>
@@ -509,7 +510,8 @@ function SuccessStep({ accountType }) {
 }
 
 // Main SignUp Component
-export default function SignUp() {
+export default function SignUp({ onCancel }) {
+  const navigate = useNavigate();
   const Steps = {
     ACCOUNT_TYPE: 1,
     DATA_INPUT: 2,
@@ -552,6 +554,10 @@ export default function SignUp() {
     }
   };
 
+  const handleSignIn = () => {
+    navigate('/sign-in');
+  };
+
   return (
     <div className="bg-white w-full max-w-lg rounded-2xl shadow-2xl p-6 sm:p-8 lg:p-10 mx-auto">
       <h2 className="text-2xl lg:text-3xl font-bold text-gray-800 mb-6 text-center">
@@ -588,7 +594,7 @@ export default function SignUp() {
           />
         )}
         {currentStep === Steps.SUCCESS && (
-          <SuccessStep accountType={accountType} />
+          <SuccessStep accountType={accountType} onSignIn={handleSignIn} />
         )}
       </div>
     </div>

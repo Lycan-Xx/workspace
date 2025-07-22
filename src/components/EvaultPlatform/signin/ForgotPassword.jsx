@@ -5,6 +5,14 @@ import { Eye, EyeOff, ArrowLeft, Check, PhoneCall } from "lucide-react";
 function ProgressiveLine({ currentStep, totalSteps }) {
   const progressPercentage = ((currentStep - 1) / (totalSteps - 1)) * 100;
 
+  return (
+    <div className="w-full bg-gray-300 rounded-full h-2.5 mb-6">
+      <div
+        className="bg-[#025798] h-2.5 rounded-full transition-all duration-500"
+        style={{ width: `${progressPercentage}%` }}
+      ></div>
+    </div>
+  );
 }
 
 // Phone Number Input Step

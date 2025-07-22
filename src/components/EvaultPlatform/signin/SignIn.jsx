@@ -32,9 +32,14 @@ export default function SignIn({ onSignUp }) {
     }
 
     setErrors({});
-    const success = await dispatch(login({ email, password }));
-    if (success) {
-      navigate('/dashboard');
+    try {
+      const success = await dispatch(login({ email, password }));
+      if (success) {
+        // Navigate to dashboard on successful login
+        navigate('/dashboard');
+      }
+    } catch (error) {
+      setErrors({ general: 'An error occurred during login' });
     }
   };
 
@@ -63,9 +68,9 @@ export default function SignIn({ onSignUp }) {
           Sign In to Your Account
         </h3>
 
-        {error && (
+        {(error || errors.general) && (
           <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-6">
-            {error}
+            {error || errors.general}
           </div>
         )}
 

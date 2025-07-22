@@ -90,6 +90,12 @@ export const checkTokenExpiration = () => (dispatch, getState) => {
 // Thunk for handling login
 export const login = (credentials) => async (dispatch) => {
 	try {
+		// Basic validation
+		if (!credentials.email || !credentials.password) {
+			dispatch(loginFailure('Email and password are required'));
+			return false;
+		}
+
 		const user = users.find(
 			u => u.email === credentials.email && u.password === credentials.password
 		);
@@ -107,8 +113,24 @@ export const login = (credentials) => async (dispatch) => {
 			return false;
 		}
 	} catch (error) {
+		console.error('Login error:', error);
 		dispatch(loginFailure('An error occurred during login'));
 		return false;
+	}
+};
+
+// Thunk for handling signup (preparation for PocketBase)
+export const signup = (userData) => async (dispatch) => {
+	try {
+		// This will be replaced with PocketBase API call
+		console.log('Signup data:', userData);
+		
+		// For now, just simulate success
+		// In PocketBase integration, this will create a new user
+		return { success: true, message: 'Account created successfully' };
+	} catch (error) {
+		console.error('Signup error:', error);
+		return { success: false, message: 'An error occurred during signup' };
 	}
 };
 
