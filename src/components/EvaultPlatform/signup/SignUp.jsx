@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { UserPlus, Mail, Check, PhoneCall } from "lucide-react";
+import { UserPlus, Mail, Check, PhoneCall, EyeOff, Eye } from "lucide-react";
 
 // Progressive Line Component
 function ProgressiveLine({ currentStep, totalSteps }) {
