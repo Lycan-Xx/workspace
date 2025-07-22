@@ -193,7 +193,7 @@ function OTPVerificationStep({ onSubmit, onBack }) {
         {!isPhoneVerified ? (
           <button
             onClick={handleVerifyPhone}
-            className="w-full px-6 py-3 bg-[#025798] text-white rounded-lg font-medium hover:bg-[#025798]/90 transition duration-300"
+            className="w-full px-6 py-3 bg-[#025798] hover:bg-white text-white hover:text-[#025798] transition duration-300 border-2 border-[#025798] rounded-lg ease-linear font-medium"
           >
             Verify Number
           </button>
