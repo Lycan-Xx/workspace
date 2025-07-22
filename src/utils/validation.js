@@ -1,5 +1,5 @@
 
-// Validation utilities for forms
+// Validation utilities for eVault forms
 
 export const validateEmail = (email) => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -7,82 +7,118 @@ export const validateEmail = (email) => {
 };
 
 export const validatePassword = (password) => {
-  return {
-    isValid: password && password.length >= 6,
-    errors: []
-  };
+  return password && password.length >= 6;
 };
 
 export const validatePhone = (phone) => {
-  // Remove spaces and special characters
-  const cleanPhone = phone.replace(/\D/g, '');
-  
-  // Check if it's a valid length (varies by country)
-  if (cleanPhone.length < 8 || cleanPhone.length > 15) {
-    return { isValid: false, message: 'Please enter a valid phone number' };
-  }
-  
-  return { isValid: true, message: '' };
+  const phoneRegex = /^\d{10,11}$/;
+  return phoneRegex.test(phone);
 };
 
 export const validateNIN = (nin) => {
-  // Nigerian NIN is 11 digits
-  const cleanNIN = nin.replace(/\D/g, '');
-  
-  if (cleanNIN.length !== 11) {
-    return { isValid: false, message: 'NIN must be 11 digits' };
-  }
-  
-  return { isValid: true, message: '' };
+  const ninRegex = /^\d{11}$/;
+  return ninRegex.test(nin);
 };
 
 export const validateRCNumber = (rcNumber) => {
-  // Basic RC number validation
-  if (!rcNumber || rcNumber.trim().length < 6) {
-    return { isValid: false, message: 'Please enter a valid RC number' };
-  }
-  
-  return { isValid: true, message: '' };
+  // RC numbers can vary in format, basic validation for length
+  return rcNumber && rcNumber.length >= 6;
 };
 
-export const validateForm = (formData, requiredFields) => {
+export const validateName = (name) => {
+  return name && name.trim().length >= 2;
+};
+
+export const validateBusinessName = (businessName) => {
+  return businessName && businessName.trim().length >= 2;
+};
+
+export const validateOTP = (otp) => {
+  const otpRegex = /^\d{6}$/;
+  return otpRegex.test(otp);
+};
+
+// Comprehensive form validation
+export const validateSignupForm = (userData, accountType) => {
   const errors = {};
-  
-  requiredFields.forEach(field => {
-    if (!formData[field] || formData[field].trim() === '') {
-      errors[field] = `${field.charAt(0).toUpperCase() + field.slice(1)} is required`;
-    }
-  });
-  
-  // Special validations
-  if (formData.email && !validateEmail(formData.email)) {
+
+  // Common validations
+  if (!validateEmail(userData.email)) {
     errors.email = 'Please enter a valid email address';
   }
-  
-  if (formData.password && formData.confirmPassword && formData.password !== formData.confirmPassword) {
+
+  if (!validatePassword(userData.password)) {
+    errors.password = 'Password must be at least 6 characters long';
+  }
+
+  if (userData.password !== userData.confirmPassword) {
     errors.confirmPassword = 'Passwords do not match';
   }
-  
-  if (formData.phone) {
-    const phoneValidation = validatePhone(formData.phone);
-    if (!phoneValidation.isValid) {
-      errors.phone = phoneValidation.message;
+
+  if (userData.phone && !validatePhone(userData.phone.replace(/^\+234/, ''))) {
+    errors.phone = 'Please enter a valid phone number';
+  }
+
+  // Account type specific validations
+  if (accountType === 'Personal') {
+    if (!validateName(userData.firstname)) {
+      errors.firstname = 'First name is required';
+    }
+    if (!validateName(userData.lastname)) {
+      errors.lastname = 'Last name is required';
+    }
+  } else if (accountType === 'Business') {
+    if (!validateBusinessName(userData.businessName)) {
+      errors.businessName = 'Business name is required';
+    }
+    if (!validateRCNumber(userData.rcNumber)) {
+      errors.rcNumber = 'Please enter a valid RC number';
+    }
+    if (!validateNIN(userData.nin)) {
+      errors.nin = 'Please enter a valid 11-digit NIN';
     }
   }
-  
-  if (formData.nin) {
-    const ninValidation = validateNIN(formData.nin);
-    if (!ninValidation.isValid) {
-      errors.nin = ninValidation.message;
-    }
+
+  return {
+    isValid: Object.keys(errors).length === 0,
+    errors
+  };
+};
+
+export const validateLoginForm = (credentials) => {
+  const errors = {};
+
+  if (!validateEmail(credentials.email)) {
+    errors.email = 'Please enter a valid email address';
   }
-  
-  if (formData.rcNumber) {
-    const rcValidation = validateRCNumber(formData.rcNumber);
-    if (!rcValidation.isValid) {
-      errors.rcNumber = rcValidation.message;
-    }
+
+  if (!credentials.password) {
+    errors.password = 'Password is required';
   }
-  
-  return errors;
+
+  return {
+    isValid: Object.keys(errors).length === 0,
+    errors
+  };
+};
+
+export const validateForgotPasswordForm = (phone, newPassword, confirmPassword) => {
+  const errors = {};
+
+  if (!validatePhone(phone.replace(/^\+234/, ''))) {
+    errors.phone = 'Please enter a valid phone number';
+  }
+
+  if (!validatePassword(newPassword)) {
+    errors.password = 'Password must be at least 6 characters long';
+  }
+
+  if (newPassword !== confirmPassword) {
+    errors.confirmPassword = 'Passwords do not match';
+  }
+
+  return {
+    isValid: Object.keys(errors).length === 0,
+    errors
+  };
 };

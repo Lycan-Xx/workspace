@@ -1,64 +1,207 @@
 
-// API service structure for PocketBase integration
-// This will be updated when PocketBase is implemented
+import PocketBase from 'pocketbase';
 
-const API_BASE_URL = process.env.NODE_ENV === 'production' 
+const pb = new PocketBase(process.env.NODE_ENV === 'production' 
   ? 'https://your-production-url.com' 
-  : 'http://localhost:8090';
+  : 'http://localhost:8090');
 
 class ApiService {
   constructor() {
-    this.baseURL = API_BASE_URL;
+    this.pb = pb;
   }
 
   // Authentication methods
   async login(credentials) {
-    // Will be implemented with PocketBase
-    console.log('API: Login attempt', credentials.email);
-    throw new Error('PocketBase not yet implemented');
+    try {
+      const authData = await this.pb.collection('users').authWithPassword(
+        credentials.email, 
+        credentials.password
+      );
+      return {
+        success: true,
+        user: {
+          id: authData.record.id,
+          email: authData.record.email,
+          name: authData.record.name || `${authData.record.firstname} ${authData.record.lastname}`,
+          role: authData.record.account_type,
+          verified: authData.record.verified,
+          phone: authData.record.phone
+        },
+        token: authData.token
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error.message || 'Login failed'
+      };
+    }
   }
 
   async signup(userData) {
-    // Will be implemented with PocketBase
-    console.log('API: Signup attempt', userData);
-    throw new Error('PocketBase not yet implemented');
+    try {
+      // Prepare user data for PocketBase
+      const pbUserData = {
+        email: userData.email,
+        password: userData.password,
+        passwordConfirm: userData.confirmPassword,
+        account_type: userData.accountType?.toLowerCase() || 'personal',
+        phone: userData.phone,
+        verified: false,
+        created: new Date().toISOString()
+      };
+
+      // Add account-type specific fields
+      if (userData.accountType === 'Personal') {
+        pbUserData.firstname = userData.firstname;
+        pbUserData.lastname = userData.lastname;
+        pbUserData.name = `${userData.firstname} ${userData.lastname}`;
+      } else if (userData.accountType === 'Business') {
+        pbUserData.business_name = userData.businessName;
+        pbUserData.rc_number = userData.rcNumber;
+        pbUserData.nin = userData.nin;
+        pbUserData.name = userData.businessName;
+      }
+
+      // Add optional fields
+      if (userData.referralCode) {
+        pbUserData.referral_code = userData.referralCode;
+      }
+
+      const record = await this.pb.collection('users').create(pbUserData);
+      
+      return {
+        success: true,
+        message: 'Account created successfully',
+        user: record
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error.message || 'Signup failed'
+      };
+    }
   }
 
   async logout() {
-    // Will be implemented with PocketBase
-    console.log('API: Logout');
-    throw new Error('PocketBase not yet implemented');
+    try {
+      this.pb.authStore.clear();
+      return { success: true };
+    } catch (error) {
+      return { success: false, error: error.message };
+    }
   }
 
-  async resetPassword(email) {
-    // Will be implemented with PocketBase
-    console.log('API: Password reset for', email);
-    throw new Error('PocketBase not yet implemented');
+  async resetPassword(phone, newPassword) {
+    try {
+      // Find user by phone number
+      const users = await this.pb.collection('users').getList(1, 1, {
+        filter: `phone = "${phone}"`
+      });
+
+      if (users.items.length === 0) {
+        throw new Error('User not found');
+      }
+
+      const user = users.items[0];
+      
+      // Update password
+      await this.pb.collection('users').update(user.id, {
+        password: newPassword,
+        passwordConfirm: newPassword
+      });
+
+      return {
+        success: true,
+        message: 'Password updated successfully'
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error.message || 'Password reset failed'
+      };
+    }
   }
 
   async verifyOTP(phone, otp) {
-    // Will be implemented with PocketBase or external SMS service
+    // In a real implementation, you would verify the OTP with an external service
+    // For now, we'll simulate verification
     console.log('API: OTP verification', phone, otp);
-    throw new Error('PocketBase not yet implemented');
+    
+    // Simulate successful verification for testing
+    if (otp === '111111') {
+      return {
+        success: true,
+        message: 'OTP verified successfully'
+      };
+    }
+    
+    return {
+      success: false,
+      error: 'Invalid OTP'
+    };
   }
 
   async sendOTP(phone) {
-    // Will be implemented with external SMS service
+    // In a real implementation, you would integrate with an SMS service
     console.log('API: Send OTP to', phone);
-    throw new Error('PocketBase not yet implemented');
+    
+    // Simulate successful OTP sending
+    return {
+      success: true,
+      message: 'OTP sent successfully'
+    };
   }
 
   // User management
   async getCurrentUser() {
-    // Will be implemented with PocketBase
-    console.log('API: Get current user');
-    throw new Error('PocketBase not yet implemented');
+    try {
+      if (!this.pb.authStore.isValid) {
+        throw new Error('Not authenticated');
+      }
+
+      const user = await this.pb.collection('users').getOne(this.pb.authStore.model.id);
+      return {
+        success: true,
+        user: {
+          id: user.id,
+          email: user.email,
+          name: user.name,
+          role: user.account_type,
+          verified: user.verified,
+          phone: user.phone
+        }
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error.message || 'Failed to get current user'
+      };
+    }
   }
 
   async updateUser(userId, userData) {
-    // Will be implemented with PocketBase
-    console.log('API: Update user', userId, userData);
-    throw new Error('PocketBase not yet implemented');
+    try {
+      const record = await this.pb.collection('users').update(userId, userData);
+      return {
+        success: true,
+        user: record
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error.message || 'Failed to update user'
+      };
+    }
+  }
+
+  // Check if user is authenticated
+  isAuthenticated() {
+    return this.pb.authStore.isValid;
+  }
+
+  // Get auth token
+  getToken() {
+    return this.pb.authStore.token;
   }
 }
 

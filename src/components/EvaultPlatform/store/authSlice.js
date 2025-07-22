@@ -96,20 +96,18 @@ export const login = (credentials) => async (dispatch) => {
 			return false;
 		}
 
-		const user = users.find(
-			u => u.email === credentials.email && u.password === credentials.password
-		);
+		// Import API service dynamically to avoid circular imports
+		const { apiService } = await import('../../../services/api');
+		const result = await apiService.login(credentials);
 
-		if (user) {
+		if (result.success) {
 			dispatch(loginSuccess({ 
-				email: user.email, 
-				name: user.name, 
-				role: user.role,
-				loginTime: Date.now() // Add login timestamp
+				...result.user,
+				loginTime: Date.now()
 			}));
 			return true;
 		} else {
-			dispatch(loginFailure('Invalid email or password'));
+			dispatch(loginFailure(result.error));
 			return false;
 		}
 	} catch (error) {
@@ -119,15 +117,14 @@ export const login = (credentials) => async (dispatch) => {
 	}
 };
 
-// Thunk for handling signup (preparation for PocketBase)
+// Thunk for handling signup
 export const signup = (userData) => async (dispatch) => {
 	try {
-		// This will be replaced with PocketBase API call
-		console.log('Signup data:', userData);
+		// Import API service dynamically to avoid circular imports
+		const { apiService } = await import('../../../services/api');
+		const result = await apiService.signup(userData);
 		
-		// For now, just simulate success
-		// In PocketBase integration, this will create a new user
-		return { success: true, message: 'Account created successfully' };
+		return result;
 	} catch (error) {
 		console.error('Signup error:', error);
 		return { success: false, message: 'An error occurred during signup' };
