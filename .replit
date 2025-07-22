@@ -10,7 +10,7 @@ localPort = 8090
 externalPort = 3000
 
 [workflows]
-runButton = "Start PocketBase"
+runButton = "Start PocketBase Backend"
 
 [[workflows.workflow]]
 name = "Start PocketBase"
@@ -29,6 +29,15 @@ mode = "parallel"
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "npm run dev"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm run start:backend"
+
+[[workflows.workflow]]
+name = "Start PocketBase Backend"
+author = 45342669
+mode = "sequential"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"

@@ -529,7 +529,7 @@ export default function SignUp({ onCancel }) {
     setCurrentStep(Steps.DATA_INPUT);
   };
 
-  const handleDataSubmit = (data) => {
+  const handleDataSubmit = async (data) => {
     if (currentStep === Steps.DATA_INPUT) {
       setUserData((prev) => ({ ...prev, ...data }));
       setCurrentStep(Steps.OTP_VERIFICATION);
@@ -537,10 +537,43 @@ export default function SignUp({ onCancel }) {
       setUserData((prev) => ({ ...prev, ...data }));
       setCurrentStep(Steps.PASSWORD_INPUT);
     } else if (currentStep === Steps.PASSWORD_INPUT) {
-      setUserData((prev) => ({ ...prev, ...data }));
-      setCurrentStep(Steps.SUCCESS);
-      // Here you would typically make an API call to create the account
-      console.log("Account creation data:", { ...userData, ...data });
+      const completeUserData = { ...userData, ...data };
+      setUserData(completeUserData);
+      
+      // Make API call to create the account
+      console.log("Account creation data:", completeUserData);
+      
+      try {
+        const { apiService } = await import('../../../services/api.js');
+        
+        // Prepare data for API
+        const signupData = {
+          email: completeUserData.email,
+          password: completeUserData.password,
+          confirmPassword: completeUserData.confirmPassword,
+          accountType: accountType,
+          phone: completeUserData.phone,
+          firstname: completeUserData.firstname,
+          lastname: completeUserData.lastname,
+          businessName: completeUserData.businessName,
+          rcNumber: completeUserData.rcNumber,
+          nin: completeUserData.nin,
+          referralCode: completeUserData.referralCode
+        };
+        
+        const result = await apiService.signup(signupData);
+        
+        if (result.success) {
+          console.log('Account created successfully:', result);
+          setCurrentStep(Steps.SUCCESS);
+        } else {
+          console.error('Signup failed:', result.error);
+          alert('Signup failed: ' + result.error);
+        }
+      } catch (error) {
+        console.error('Signup error:', error);
+        alert('Signup failed. Please try again.');
+      }
     }
   };
 
