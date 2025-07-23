@@ -585,6 +585,22 @@ export default function SignUp({ onCancel }) {
       try {
         const { apiService } = await import("../../../services/api.js");
 
+        // Validate required fields before API call
+        if (!completeUserData.email || !completeUserData.password) {
+          alert('Email and password are required');
+          return;
+        }
+
+        if (accountType === 'Personal' && (!completeUserData.firstname || !completeUserData.lastname)) {
+          alert('First name and last name are required for personal accounts');
+          return;
+        }
+
+        if (accountType === 'Business' && !completeUserData.businessName) {
+          alert('Business name is required for business accounts');
+          return;
+        }
+
         // Prepare data for API
         const signupData = {
           email: completeUserData.email,
