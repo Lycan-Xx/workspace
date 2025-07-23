@@ -161,8 +161,15 @@ function OTPVerificationStep({ onSubmit, onBack }) {
     // In a real app, you would verify the OTP with an API
     console.log(`Verifying OTP: ${otpValue}`);
 
-    // If verification is successful, proceed to the next step
-    onSubmit({ phone: `${countryCode}${phoneNumber}`, otp: otpValue });
+    // If verification is successful, proceed to the next step with phone data
+    const phoneData = {
+      phone: `${countryCode}${phoneNumber}`,
+      otp: otpValue,
+      phoneVerified: true
+    };
+    
+    console.log("OTP verification data:", phoneData);
+    onSubmit(phoneData);
   };
 
   return (
@@ -332,8 +339,10 @@ function DataInputStep({ accountType, step, onSubmit, onBack }) {
     e.preventDefault();
     const newErrors = step === 1 ? validateStep1() : validateStep4();
     if (Object.keys(newErrors).length === 0) {
+      console.log(`Step ${step} form data:`, formData);
       onSubmit(formData);
     } else {
+      console.log(`Step ${step} validation errors:`, newErrors);
       setErrors(newErrors);
     }
   };
@@ -570,12 +579,19 @@ export default function SignUp({ onCancel }) {
 
   const handleDataSubmit = async (data) => {
     if (currentStep === Steps.DATA_INPUT) {
-      setUserData((prev) => ({ ...prev, ...data }));
+      // Store the initial form data (personal/business details)
+      const updatedUserData = { ...userData, ...data };
+      setUserData(updatedUserData);
+      console.log("Step 1 data stored:", updatedUserData);
       setCurrentStep(Steps.OTP_VERIFICATION);
     } else if (currentStep === Steps.OTP_VERIFICATION) {
-      setUserData((prev) => ({ ...prev, ...data }));
+      // Store the phone verification data
+      const updatedUserData = { ...userData, ...data };
+      setUserData(updatedUserData);
+      console.log("Step 2 data stored:", updatedUserData);
       setCurrentStep(Steps.PASSWORD_INPUT);
     } else if (currentStep === Steps.PASSWORD_INPUT) {
+      // Merge all data including password and referral code
       const completeUserData = { ...userData, ...data };
       setUserData(completeUserData);
 
@@ -615,6 +631,8 @@ export default function SignUp({ onCancel }) {
           nin: completeUserData.nin,
           referralCode: completeUserData.referralCode,
         };
+
+        console.log("Final signup data being sent:", signupData);
 
         const result = await apiService.signup(signupData);
 
