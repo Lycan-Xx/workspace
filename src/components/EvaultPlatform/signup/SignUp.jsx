@@ -283,18 +283,18 @@ function OTPVerificationStep({ onSubmit, onBack }) {
 }
 
 // Data Input Step Component
-function DataInputStep({ accountType, step, onSubmit, onBack }) {
+function DataInputStep({ accountType, step, onSubmit, onBack, userData = {} }) {
   const [formData, setFormData] = useState({
-    firstname: "",
-    lastname: "",
-    email: "",
-    businessName: "",
-    rcNumber: "",
-    nin: "",
-    password: "",
-    confirmPassword: "",
-    vaultPhrase: "",
-    referralCode: "",
+    firstname: userData.firstname || "",
+    lastname: userData.lastname || "",
+    email: userData.email || "",
+    businessName: userData.businessName || "",
+    rcNumber: userData.rcNumber || "",
+    nin: userData.nin || "",
+    password: userData.password || "",
+    confirmPassword: userData.confirmPassword || "",
+    vaultPhrase: userData.vaultPhrase || "",
+    referralCode: userData.referralCode || "",
   });
 
   const [errors, setErrors] = useState({});
@@ -578,58 +578,58 @@ export default function SignUp({ onCancel }) {
   };
 
   const handleDataSubmit = async (data) => {
+    let updatedUserData = {};
+
     if (currentStep === Steps.DATA_INPUT) {
       // Store the initial form data (personal/business details)
-      const updatedUserData = { ...userData, ...data };
+      updatedUserData = { ...userData, ...data };
       setUserData(updatedUserData);
       console.log("Step 1 data stored:", updatedUserData);
       setCurrentStep(Steps.OTP_VERIFICATION);
     } else if (currentStep === Steps.OTP_VERIFICATION) {
-      // Store the phone verification data
-      const updatedUserData = { ...userData, ...data };
+      // Store the phone verification data while preserving previous data
+      updatedUserData = { ...userData, ...data };
       setUserData(updatedUserData);
       console.log("Step 2 data stored:", updatedUserData);
       setCurrentStep(Steps.PASSWORD_INPUT);
     } else if (currentStep === Steps.PASSWORD_INPUT) {
       // Merge all data including password and referral code
-      const completeUserData = { ...userData, ...data };
-      setUserData(completeUserData);
-
-      // Make API call to create the account
-      console.log("Account creation data:", completeUserData);
+      updatedUserData = { ...userData, ...data };
+      setUserData(updatedUserData);
+      console.log("Account creation data:", updatedUserData);
 
       try {
         const { apiService } = await import("../../../services/api.js");
 
         // Validate required fields before API call
-        if (!completeUserData.email || !completeUserData.password) {
+        if (!updatedUserData.email || !updatedUserData.password) {
           alert('Email and password are required');
           return;
         }
 
-        if (accountType === 'Personal' && (!completeUserData.firstname || !completeUserData.lastname)) {
+        if (accountType === 'Personal' && (!updatedUserData.firstname || !updatedUserData.lastname)) {
           alert('First name and last name are required for personal accounts');
           return;
         }
 
-        if (accountType === 'Business' && !completeUserData.businessName) {
+        if (accountType === 'Business' && !updatedUserData.businessName) {
           alert('Business name is required for business accounts');
           return;
         }
 
         // Prepare data for API
         const signupData = {
-          email: completeUserData.email,
-          password: completeUserData.password,
-          confirmPassword: completeUserData.confirmPassword,
+          email: updatedUserData.email,
+          password: updatedUserData.password,
+          confirmPassword: updatedUserData.confirmPassword,
           accountType: accountType,
-          phone: completeUserData.phone,
-          firstname: completeUserData.firstname,
-          lastname: completeUserData.lastname,
-          businessName: completeUserData.businessName,
-          rcNumber: completeUserData.rcNumber,
-          nin: completeUserData.nin,
-          referralCode: completeUserData.referralCode,
+          phone: updatedUserData.phone,
+          firstname: updatedUserData.firstname,
+          lastname: updatedUserData.lastname,
+          businessName: updatedUserData.businessName,
+          rcNumber: updatedUserData.rcNumber,
+          nin: updatedUserData.nin,
+          referralCode: updatedUserData.referralCode,
         };
 
         console.log("Final signup data being sent:", signupData);
@@ -683,6 +683,7 @@ export default function SignUp({ onCancel }) {
             step={1}
             onSubmit={handleDataSubmit}
             onBack={handleBack}
+            userData={userData} // Pass the userData
           />
         )}
         {currentStep === Steps.OTP_VERIFICATION && (
@@ -697,6 +698,7 @@ export default function SignUp({ onCancel }) {
             step={4}
             onSubmit={handleDataSubmit}
             onBack={handleBack}
+            userData={userData} // Pass the userData
           />
         )}
         {currentStep === Steps.SUCCESS && (
