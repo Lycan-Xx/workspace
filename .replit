@@ -10,7 +10,7 @@ localPort = 8090
 externalPort = 3000
 
 [workflows]
-runButton = "Start PocketBase Backend"
+runButton = "Start PocketBase"
 
 [[workflows.workflow]]
 name = "Start PocketBase"
