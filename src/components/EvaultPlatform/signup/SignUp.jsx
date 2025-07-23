@@ -1,10 +1,18 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from 'react-router-dom';
-import { UserPlus, Mail, Check, PhoneCall, EyeOff, Eye, Lock } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import {
+  UserPlus,
+  Mail,
+  Check,
+  PhoneCall,
+  EyeOff,
+  Eye,
+  Lock,
+} from "lucide-react";
 
 // Progressive Line Component
 function ProgressiveLine({ currentStep, totalSteps }) {
-  const progressPercentage = ((currentStep - 1) / (totalSteps - 1)) * 100 
+  const progressPercentage = ((currentStep - 1) / (totalSteps - 1)) * 100;
 
   return (
     <div className="w-full bg-gray-300 rounded-full h-2.5 mb-6">
@@ -91,7 +99,7 @@ function OTPVerificationStep({ onSubmit, onBack }) {
     if (value.length > 1) {
       value = value.charAt(0);
     }
-    
+
     if (value && !/^\d+$/.test(value)) {
       return;
     }
@@ -121,14 +129,14 @@ function OTPVerificationStep({ onSubmit, onBack }) {
       setErrors({ phone: "Phone number is required" });
       return;
     }
-    
+
     // Simulate OTP sending
     setIsPhoneVerified(true);
     setCountdown(60);
-    
+
     // In a real app, you would call an API to send OTP
     console.log(`Sending OTP to ${countryCode}${phoneNumber}`);
-    
+
     // Clear any errors
     setErrors({});
   };
@@ -148,11 +156,11 @@ function OTPVerificationStep({ onSubmit, onBack }) {
       setErrors({ otp: "Please enter the complete 6-digit OTP" });
       return;
     }
-    
+
     // Simulate OTP verification
     // In a real app, you would verify the OTP with an API
     console.log(`Verifying OTP: ${otpValue}`);
-    
+
     // If verification is successful, proceed to the next step
     onSubmit({ phone: `${countryCode}${phoneNumber}`, otp: otpValue });
   };
@@ -189,8 +197,10 @@ function OTPVerificationStep({ onSubmit, onBack }) {
             />
           </div>
         </div>
-        {errors.phone && <p className="text-red-500 text-sm mt-1">{errors.phone}</p>}
-        
+        {errors.phone && (
+          <p className="text-red-500 text-sm mt-1">{errors.phone}</p>
+        )}
+
         {!isPhoneVerified ? (
           <button
             onClick={handleVerifyPhone}
@@ -202,10 +212,13 @@ function OTPVerificationStep({ onSubmit, onBack }) {
           <>
             <div className="flex justify-between items-center">
               <p className="text-sm text-gray-600">
-                Enter the 6-digit code sent to {countryCode}{phoneNumber}
+                Enter the 6-digit code sent to {countryCode}
+                {phoneNumber}
               </p>
               {countdown > 0 ? (
-                <span className="text-sm text-gray-500">Resend in {countdown}s</span>
+                <span className="text-sm text-gray-500">
+                  Resend in {countdown}s
+                </span>
               ) : (
                 <button
                   onClick={handleResendOTP}
@@ -215,7 +228,7 @@ function OTPVerificationStep({ onSubmit, onBack }) {
                 </button>
               )}
             </div>
-            
+
             <div className="flex justify-between gap-2 my-4">
               {otp.map((digit, index) => (
                 <input
@@ -230,10 +243,12 @@ function OTPVerificationStep({ onSubmit, onBack }) {
                 />
               ))}
             </div>
-            {errors.otp && <p className="text-red-500 text-sm mt-1">{errors.otp}</p>}
+            {errors.otp && (
+              <p className="text-red-500 text-sm mt-1">{errors.otp}</p>
+            )}
           </>
         )}
-        
+
         <div className="flex flex-col sm:flex-row justify-between gap-4 pt-4">
           <button
             type="button"
@@ -294,7 +309,8 @@ function DataInputStep({ accountType, step, onSubmit, onBack }) {
       if (!formData.lastname) newErrors.lastname = "Last name is required.";
       if (!formData.email) newErrors.email = "Email is required.";
     } else if (accountType === "Business") {
-      if (!formData.businessName) newErrors.businessName = "Business name is required.";
+      if (!formData.businessName)
+        newErrors.businessName = "Business name is required.";
       if (!formData.email) newErrors.email = "Email is required.";
       if (!formData.rcNumber) newErrors.rcNumber = "RC number is required.";
       if (!formData.nin) newErrors.nin = "NIN is required.";
@@ -305,7 +321,8 @@ function DataInputStep({ accountType, step, onSubmit, onBack }) {
   const validateStep4 = () => {
     const newErrors = {};
     if (!formData.password) newErrors.password = "Password is required.";
-    if (formData.password && formData.password.length < 6) newErrors.password = "Password must be at least 6 characters.";
+    if (formData.password && formData.password.length < 6)
+      newErrors.password = "Password must be at least 6 characters.";
     if (formData.password !== formData.confirmPassword)
       newErrors.confirmPassword = "Passwords do not match.";
     return newErrors;
@@ -329,8 +346,8 @@ function DataInputStep({ accountType, step, onSubmit, onBack }) {
             ? "Personal Details"
             : "Set Your Password"
           : step === 1
-          ? "Business Details"
-          : "Set Your Password"}
+            ? "Business Details"
+            : "Set Your Password"}
       </h3>
       <form className="space-y-4">
         {step === 1 && accountType === "Personal" && (
@@ -345,7 +362,11 @@ function DataInputStep({ accountType, step, onSubmit, onBack }) {
                   onChange={handleChange}
                   className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-[#025798] focus:ring-2 focus:ring-[#025798]/20 transition-all outline-none"
                 />
-                {errors.firstname && <p className="text-red-500 text-sm mt-1">{errors.firstname}</p>}
+                {errors.firstname && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {errors.firstname}
+                  </p>
+                )}
               </div>
               <div className="flex-1">
                 <input
@@ -356,7 +377,9 @@ function DataInputStep({ accountType, step, onSubmit, onBack }) {
                   onChange={handleChange}
                   className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-[#025798] focus:ring-2 focus:ring-[#025798]/20 transition-all outline-none"
                 />
-                {errors.lastname && <p className="text-red-500 text-sm mt-1">{errors.lastname}</p>}
+                {errors.lastname && (
+                  <p className="text-red-500 text-sm mt-1">{errors.lastname}</p>
+                )}
               </div>
             </div>
             <input
@@ -367,7 +390,9 @@ function DataInputStep({ accountType, step, onSubmit, onBack }) {
               onChange={handleChange}
               className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-[#025798] focus:ring-2 focus:ring-[#025798]/20 transition-all outline-none"
             />
-            {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
+            {errors.email && (
+              <p className="text-red-500 text-sm mt-1">{errors.email}</p>
+            )}
           </>
         )}
         {step === 1 && accountType === "Business" && (
@@ -380,7 +405,9 @@ function DataInputStep({ accountType, step, onSubmit, onBack }) {
               onChange={handleChange}
               className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-[#025798] focus:ring-2 focus:ring-[#025798]/20 transition-all outline-none"
             />
-            {errors.businessName && <p className="text-red-500 text-sm mt-1">{errors.businessName}</p>}
+            {errors.businessName && (
+              <p className="text-red-500 text-sm mt-1">{errors.businessName}</p>
+            )}
             <input
               type="email"
               name="email"
@@ -389,7 +416,9 @@ function DataInputStep({ accountType, step, onSubmit, onBack }) {
               onChange={handleChange}
               className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-[#025798] focus:ring-2 focus:ring-[#025798]/20 transition-all outline-none"
             />
-            {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
+            {errors.email && (
+              <p className="text-red-500 text-sm mt-1">{errors.email}</p>
+            )}
             <input
               type="text"
               name="rcNumber"
@@ -398,7 +427,9 @@ function DataInputStep({ accountType, step, onSubmit, onBack }) {
               onChange={handleChange}
               className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-[#025798] focus:ring-2 focus:ring-[#025798]/20 transition-all outline-none"
             />
-            {errors.rcNumber && <p className="text-red-500 text-sm mt-1">{errors.rcNumber}</p>}
+            {errors.rcNumber && (
+              <p className="text-red-500 text-sm mt-1">{errors.rcNumber}</p>
+            )}
             <input
               type="text"
               name="nin"
@@ -407,7 +438,9 @@ function DataInputStep({ accountType, step, onSubmit, onBack }) {
               onChange={handleChange}
               className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-[#025798] focus:ring-2 focus:ring-[#025798]/20 transition-all outline-none"
             />
-            {errors.nin && <p className="text-red-500 text-sm mt-1">{errors.nin}</p>}
+            {errors.nin && (
+              <p className="text-red-500 text-sm mt-1">{errors.nin}</p>
+            )}
           </>
         )}
         {step === 4 && (
@@ -433,7 +466,9 @@ function DataInputStep({ accountType, step, onSubmit, onBack }) {
                 )}
               </button>
             </div>
-            {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password}</p>}
+            {errors.password && (
+              <p className="text-red-500 text-sm mt-1">{errors.password}</p>
+            )}
             <div className="relative">
               <input
                 type={showConfirmPassword ? "text" : "password"}
@@ -456,7 +491,11 @@ function DataInputStep({ accountType, step, onSubmit, onBack }) {
               </button>
             </div>
 
-            {errors.confirmPassword && <p className="text-red-500 text-sm mt-1">{errors.confirmPassword}</p>}
+            {errors.confirmPassword && (
+              <p className="text-red-500 text-sm mt-1">
+                {errors.confirmPassword}
+              </p>
+            )}
             <input
               type="text"
               name="referralCode"
@@ -529,7 +568,7 @@ export default function SignUp({ onCancel }) {
     setCurrentStep(Steps.DATA_INPUT);
   };
 
-  const handleDataSubmit = (data) => {
+  const handleDataSubmit = async (data) => {
     if (currentStep === Steps.DATA_INPUT) {
       setUserData((prev) => ({ ...prev, ...data }));
       setCurrentStep(Steps.OTP_VERIFICATION);
@@ -537,10 +576,43 @@ export default function SignUp({ onCancel }) {
       setUserData((prev) => ({ ...prev, ...data }));
       setCurrentStep(Steps.PASSWORD_INPUT);
     } else if (currentStep === Steps.PASSWORD_INPUT) {
-      setUserData((prev) => ({ ...prev, ...data }));
-      setCurrentStep(Steps.SUCCESS);
-      // Here you would typically make an API call to create the account
-      console.log("Account creation data:", { ...userData, ...data });
+      const completeUserData = { ...userData, ...data };
+      setUserData(completeUserData);
+
+      // Make API call to create the account
+      console.log("Account creation data:", completeUserData);
+
+      try {
+        const { apiService } = await import("../../../services/api.js");
+
+        // Prepare data for API
+        const signupData = {
+          email: completeUserData.email,
+          password: completeUserData.password,
+          confirmPassword: completeUserData.confirmPassword,
+          accountType: accountType,
+          phone: completeUserData.phone,
+          firstname: completeUserData.firstname,
+          lastname: completeUserData.lastname,
+          businessName: completeUserData.businessName,
+          rcNumber: completeUserData.rcNumber,
+          nin: completeUserData.nin,
+          referralCode: completeUserData.referralCode,
+        };
+
+        const result = await apiService.signup(signupData);
+
+        if (result.success) {
+          console.log("Account created successfully:", result);
+          setCurrentStep(Steps.SUCCESS);
+        } else {
+          console.error("Signup failed:", result.error);
+          alert("Signup failed: " + result.error);
+        }
+      } catch (error) {
+        console.error("Signup error:", error);
+        alert("Signup failed. Please try again.");
+      }
     }
   };
 
@@ -555,7 +627,7 @@ export default function SignUp({ onCancel }) {
   };
 
   const handleSignIn = () => {
-    navigate('/sign-in');
+    navigate("/sign-in");
   };
 
   return (

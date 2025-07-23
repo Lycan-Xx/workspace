@@ -60,34 +60,36 @@ class ApiService {
 
   async signup(userData) {
     try {
-      // Prepare user data for PocketBase
+      // Prepare user data for PocketBase using correct field names
       const pbUserData = {
         email: userData.email,
         password: userData.password,
         passwordConfirm: userData.confirmPassword,
-        account_type: userData.accountType?.toLowerCase() || 'personal',
+        accountType: userData.accountType?.toLowerCase() || 'personal',
         phone: userData.phone,
-        verified: false,
-        created: new Date().toISOString()
+        isVerified: false
       };
 
-      // Add account-type specific fields
+      // Add account-type specific fields using correct field names from migration
       if (userData.accountType === 'Personal') {
-        pbUserData.firstname = userData.firstname;
-        pbUserData.lastname = userData.lastname;
+        pbUserData.firstName = userData.firstname;
+        pbUserData.lastName = userData.lastname;
         pbUserData.name = `${userData.firstname} ${userData.lastname}`;
       } else if (userData.accountType === 'Business') {
-        pbUserData.business_name = userData.businessName;
-        pbUserData.rc_number = userData.rcNumber;
-        pbUserData.nin = userData.nin;
+        pbUserData.firstName = userData.businessName;
+        pbUserData.lastName = '';
         pbUserData.name = userData.businessName;
+        // Add business-specific fields if they exist in your collection
+        if (userData.rcNumber) pbUserData.rcNumber = userData.rcNumber;
+        if (userData.nin) pbUserData.nin = userData.nin;
       }
 
       // Add optional fields
       if (userData.referralCode) {
-        pbUserData.referral_code = userData.referralCode;
+        pbUserData.referralCode = userData.referralCode;
       }
 
+      console.log('Sending to PocketBase:', pbUserData);
       const record = await this.pb.collection('users').create(pbUserData);
 
       return {
@@ -96,6 +98,7 @@ class ApiService {
         user: record
       };
     } catch (error) {
+      console.error('PocketBase signup error:', error);
       return {
         success: false,
         error: error.message || 'Signup failed'

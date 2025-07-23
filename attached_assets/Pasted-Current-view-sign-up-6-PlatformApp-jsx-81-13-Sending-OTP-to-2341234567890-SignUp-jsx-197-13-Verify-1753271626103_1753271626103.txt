@@ -1,0 +1,38 @@
+Current view: sign-up 6 PlatformApp.jsx:81:13
+Sending OTP to +2341234567890 SignUp.jsx:197:13
+Verifying OTP: 111111 SignUp.jsx:212:13
+Account creation data: 
+Object { firstname: "", lastname: "", email: "", businessName: "", rcNumber: "", nin: "", password: "1234567890", confirmPassword: "1234567890", vaultPhrase: "", referralCode: "refre them to me", … }
+SignUp.jsx:954:15
+Sending to PocketBase: 
+Object { email: "", password: "1234567890", passwordConfirm: "1234567890", accountType: "personal", phone: "+2341234567890", isVerified: false, firstName: "", lastName: "", name: " ", referralCode: "refre them to me" }
+api.js:92:15
+Cross-Origin Request Blocked: The Same Origin Policy disallows reading the remote resource at https://2qa041l1jexey.replit.dev-8090.replit.dev/api/health. (Reason: CORS request did not succeed). Status code: (null).
+Cross-Origin Request Blocked: The Same Origin Policy disallows reading the remote resource at https://2qa041l1jexey.replit.dev-8090.replit.dev/api/collections/users/records. (Reason: CORS request did not succeed). Status code: (null).
+Cross-Origin Request Blocked: The Same Origin Policy disallows reading the remote resource at https://2qa041l1jexey.replit.dev-8090.replit.dev/api/health. (Reason: CORS request did not succeed). Status code: (null).
+PocketBase connection failed: ClientResponseError 0: Something went wrong.
+    _ClientResponseError ClientResponseError.ts:13
+    send Client.ts:447
+    promise callback*send Client.ts:445
+    check HealthService.ts:24
+    checkConnection api.js:26
+    ApiService api.js:21
+    <anonymous> api.js:232
+Caused by: TypeError: NetworkError when attempting to fetch resource.
+api.js:29:15
+Make sure PocketBase is running at: https://2qa041l1jexey.replit.dev-8090.replit.dev api.js:30:15
+Cross-Origin Request Blocked: The Same Origin Policy disallows reading the remote resource at https://2qa041l1jexey.replit.dev-8090.replit.dev/api/collections/users/records. (Reason: CORS request did not succeed). Status code: (null).
+PocketBase signup error: ClientResponseError 0: Something went wrong.
+    _ClientResponseError ClientResponseError.ts:13
+    send Client.ts:447
+    promise callback*send Client.ts:445
+    create CrudService.ts:189
+    create RecordService.ts:252
+    signup api.js:93
+    handleDataSubmit SignUp.jsx:603
+    handleContinue SignUp.jsx:335
+    React 23
+    <anonymous> main.jsx:6
+Caused by: TypeError: NetworkError when attempting to fetch resource.
+api.js:101:15
+Signup failed: Something went wrong. SignUp.jsx:975:19

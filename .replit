@@ -34,6 +34,15 @@ args = "npm run dev"
 task = "shell.exec"
 args = "npm run start:backend"
 
+[[workflows.workflow]]
+name = "Start PocketBase Backend"
+author = 45342669
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm run start:backend"
+
 [nix]
 packages = ["unzip"]
 channel = "stable-24_05"
