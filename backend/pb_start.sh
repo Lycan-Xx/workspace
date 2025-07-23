@@ -14,6 +14,15 @@ fi
 # Make sure pocketbase is executable
 chmod +x ./pocketbase
 
-# Start PocketBase server
+# Start PocketBase server with CORS enabled
 echo "Starting PocketBase server from $SCRIPT_DIR..."
-./pocketbase serve --http=0.0.0.0:8090
+
+# Get the Replit frontend domain from environment or use wildcard for development
+if [ -n "$REPL_SLUG" ]; then
+    FRONTEND_DOMAIN="https://$REPL_SLUG-00-$REPL_ID.janeway.replit.dev"
+    echo "Setting CORS for frontend domain: $FRONTEND_DOMAIN"
+    ./pocketbase serve --http=0.0.0.0:8090 --origins="$FRONTEND_DOMAIN,https://*.replit.dev"
+else
+    echo "Development mode - allowing all origins"
+    ./pocketbase serve --http=0.0.0.0:8090 --origins="*"
+fi

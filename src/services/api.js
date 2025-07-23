@@ -2,14 +2,20 @@ import PocketBase from 'pocketbase';
 
 // PocketBase configuration
 const getPocketBaseUrl = () => {
+  // Check for environment variable first (production)
+  if (import.meta.env.VITE_POCKETBASE_URL) {
+    return import.meta.env.VITE_POCKETBASE_URL;
+  }
+
   if (typeof window === 'undefined') return 'http://localhost:8090';
 
   if (window.location.hostname.includes('replit.dev')) {
-    // Replit environment
+    // Replit environment - PocketBase is on port 3000 externally
     const hostname = window.location.hostname;
-    return `https://${hostname.replace(/^.*?-00-/, '').replace('.janeway', '')}-8090.${hostname.split('.').slice(-2).join('.')}`;
+    return `https://${hostname}:3000`;
   }
 
+  // Local development
   return 'http://localhost:8090';
 };
 
