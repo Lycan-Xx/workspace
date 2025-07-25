@@ -44,14 +44,17 @@ class ApiService {
         credentials.email, 
         credentials.password
       );
+      
+      // Correctly map the PocketBase fields to our expected format
       return {
         success: true,
         user: {
           id: authData.record.id,
           email: authData.record.email,
-          name: authData.record.name || `${authData.record.firstname} ${authData.record.lastname}`,
-          role: authData.record.account_type,
-          verified: authData.record.verified,
+          // Use the correct field names from PocketBase
+          name: authData.record.name || `${authData.record.firstName} ${authData.record.lastName}`,
+          role: authData.record.accountType, // Changed from account_type
+          verified: authData.record.isVerified, // Changed from verified
           phone: authData.record.phone
         },
         token: authData.token
@@ -66,34 +69,20 @@ class ApiService {
 
   async signup(userData) {
     try {
-      // Prepare user data for PocketBase using correct field names
       const pbUserData = {
         email: userData.email,
         password: userData.password,
         passwordConfirm: userData.confirmPassword,
         accountType: userData.accountType?.toLowerCase() || 'personal',
         phone: userData.phone,
-        isVerified: false
+        isVerified: false,
+        // Ensure consistent naming
+        firstName: userData.accountType === 'Business' ? userData.businessName : userData.firstname,
+        lastName: userData.accountType === 'Business' ? '' : userData.lastname,
+        name: userData.accountType === 'Business' 
+          ? userData.businessName 
+          : `${userData.firstname} ${userData.lastname}`
       };
-
-      // Add account-type specific fields using correct field names from migration
-      if (userData.accountType === 'Personal') {
-        pbUserData.firstName = userData.firstname;
-        pbUserData.lastName = userData.lastname;
-        pbUserData.name = `${userData.firstname} ${userData.lastname}`;
-      } else if (userData.accountType === 'Business') {
-        pbUserData.firstName = userData.businessName;
-        pbUserData.lastName = '';
-        pbUserData.name = userData.businessName;
-        // Add business-specific fields if they exist in your collection
-        if (userData.rcNumber) pbUserData.rcNumber = userData.rcNumber;
-        if (userData.nin) pbUserData.nin = userData.nin;
-      }
-
-      // Add optional fields
-      if (userData.referralCode) {
-        pbUserData.referralCode = userData.referralCode;
-      }
 
       console.log('Sending to PocketBase:', pbUserData);
       const record = await this.pb.collection('users').create(pbUserData);
@@ -101,7 +90,14 @@ class ApiService {
       return {
         success: true,
         message: 'Account created successfully',
-        user: record
+        user: {
+          id: record.id,
+          email: record.email,
+          name: record.name,
+          role: record.accountType,
+          verified: record.isVerified,
+          phone: record.phone
+        }
       };
     } catch (error) {
       console.error('PocketBase signup error:', error);
@@ -196,8 +192,8 @@ class ApiService {
           id: user.id,
           email: user.email,
           name: user.name,
-          role: user.account_type,
-          verified: user.verified,
+          role: user.accountType, // Changed from account_type
+          verified: user.isVerified, // Changed from verified
           phone: user.phone
         }
       };
