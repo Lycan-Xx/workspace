@@ -5,17 +5,17 @@ import AdminPage from "./portfolio-settings/AdminPage";
 import HistoryList from "./portfolio-settings/HistoryList";
 import Services from "./portfolio-settings/Services/Services";
 import { AccountsProvider } from './portfolio-settings/Services/AccountsContext';
-import PinVerificationModal from '../../common/PinVerificationModal';
+// import PinVerificationModal from '../../common/PinVerificationModal';
 
 const Portfolio = () => {
   const [currentView, setCurrentView] = useState("info");
-  const [isPinVerified, setIsPinVerified] = useState(false);
-  const [showPinModal, setShowPinModal] = useState(true);
+  // const [isPinVerified, setIsPinVerified] = useState(false);
+  // const [showPinModal, setShowPinModal] = useState(true);
 
-  const handlePinVerification = () => {
-    setIsPinVerified(true);
-    setShowPinModal(false);
-  };
+  // const handlePinVerification = () => {
+  //   setIsPinVerified(true);
+  //   setShowPinModal(false);
+  // };
 
   const renderContent = () => {
     switch (currentView) {
@@ -45,15 +45,13 @@ const Portfolio = () => {
   return (
     <AccountsProvider>
       <div className="portfolio min-w-0 w-full">
-        <PinVerificationModal
+        {/* <PinVerificationModal
           isOpen={showPinModal}
           onClose={() => setShowPinModal(false)}
           onVerify={handlePinVerification}
-        />
+        /> */}
         
-        <div className={`max-w-7xl mx-auto px-2 sm:px-4 md:px-8 overflow-x-hidden transition-all duration-300 ${
-          !isPinVerified ? 'blur-md pointer-events-none' : ''
-        }`}>
+        <div className={`max-w-7xl mx-auto px-2 sm:px-4 md:px-8 overflow-x-hidden transition-all duration-300`}>
           <div className="w-full">
             <TabNavigation 
               currentView={currentView} 
