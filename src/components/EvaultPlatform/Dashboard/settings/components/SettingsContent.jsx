@@ -131,38 +131,39 @@ export const SettingsContent = ({ setting, onBack }) => {
   }, [location.state, navigate]);
 
   const [formState, setFormState] = useState({
-    // Account & Biodata
-    profilePicture:
-      "https://images.unsplash.com/photo-1633332755192-727a05c4013d?auto=format&fit=crop&q=80&w=200&h=200",
-    fullName: "",
-    email: "",
-    phone: "",
-    dateOfBirth: "",
-    gender: "prefer-not-to-say",
-    address: "",
-    state: "",
-    country: "",
-    bvnVerified: false,
-    ninVerified: true,
-    // Security
-    currentPassword: "",
-    newPassword: "",
-    twoFactor: false,
-    // Notifications
-    emailNotifications: true,
-    pushNotifications: false,
-    marketingEmails: false,
-    // Payment
-    paymentMethod: "card",
-    // Accessibility
-    fontSize: "medium",
-    highContrast: false,
-    reducedMotion: false,
-    // Account Upgrade Fields
-    businessName: "",
-    businessEmail: "",
-    upgradeTermsAccepted: false,
+    firstname: '',
+    lastname: '',
+    email: '',
+    phone: '',
+    dateOfBirth: '',
+    gender: 'prefer-not-to-say',
+    country: '',
   });
+
+  // Fetch user data from PocketBase on mount
+  useEffect(() => {
+    async function fetchUser() {
+      try {
+        const { apiService } = await import('../../../../../services/api');
+        const res = await apiService.getCurrentUser();
+        if (res.success && res.user) {
+          setFormState((prev) => ({
+            ...prev,
+            firstname: res.user.firstname || '',
+            lastname: res.user.lastname || '',
+            email: res.user.email || '',
+            phone: res.user.phone || '',
+            dateOfBirth: res.user.dateOfBirth || '',
+            gender: res.user.gender || 'prefer-not-to-say',
+            country: res.user.country || '',
+          }));
+        }
+      } catch (e) {
+        // handle error
+      }
+    }
+    fetchUser();
+  }, []);
 
   const handleChange = (field, value) => {
     setFormState((prev) => ({ ...prev, [field]: value }));
@@ -238,28 +239,6 @@ export const SettingsContent = ({ setting, onBack }) => {
   const renderHeader = () => (
     <div className="flex justify-between items-center mb-6">
       <h2 className="text-2xl font-bold text-gray-900">{setting.title}</h2>
-      {setting.id === "account" && (
-        <button
-          onClick={() => (isEditing ? handleSave() : setIsEditing(true))}
-          className={`flex items-center px-4 py-2 rounded-lg ${
-            isEditing
-              ? "bg-green-600 hover:bg-green-700 text-white"
-              : "bg-blue-600 hover:bg-blue-700 text-white"
-          }`}
-        >
-          {isEditing ? (
-            <>
-              <Save className="w-4 h-4 mr-2" />
-              Save Changes
-            </>
-          ) : (
-            <>
-              <Edit2 className="w-4 h-4 mr-2" />
-              Edit Profile
-            </>
-          )}
-        </button>
-      )}
     </div>
   );
 
@@ -268,160 +247,66 @@ export const SettingsContent = ({ setting, onBack }) => {
       case "account":
         return (
           <div className="space-y-6">
-            {/* Profile Picture Section */}
-            <div className="p-4">
-              <label className="block text-sm font-medium text-gray-700 mb-4">
-                Profile Picture
-              </label>
-              <div className="flex items-center space-x-6">
-                <div className="relative">
-                  <img
-                    src={formState.profilePicture}
-                    alt="Profile"
-                    className="w-32 h-32 rounded-full object-cover border-4 border-white shadow-lg"
-                  />
-                  <button
-                    onClick={() => fileInputRef.current?.click()}
-                    className="absolute bottom-0 right-0 p-2 bg-blue-600 rounded-full text-white hover:bg-blue-700 transition-colors"
-                  >
-                    <Upload className="w-4 h-4" />
-                  </button>
-                  <input
-                    type="file"
-                    ref={fileInputRef}
-                    onChange={handleImageUpload}
-                    accept="image/*"
-                    className="hidden"
-                  />
-                </div>
-                <div className="flex-1">
-                  <p className="text-sm text-gray-600">
-                    Upload a new profile picture. Recommended size: 200x200px.
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Personal Information */}
             <FormField
-              label="Full Name"
+              label="First Name"
               type="text"
-              value={formState.fullName}
-              onChange={(value) => handleChange("fullName", value)}
-              placeholder="Enter your full name"
-              disabled={!isEditing}
+              value={formState.firstname}
+              onChange={() => {}}
+              placeholder="First Name"
+              disabled={true}
+            />
+            <FormField
+              label="Last Name"
+              type="text"
+              value={formState.lastname}
+              onChange={() => {}}
+              placeholder="Last Name"
+              disabled={true}
             />
             <FormField
               label="Email Address"
               type="email"
               value={formState.email}
-              onChange={(value) => handleChange("email", value)}
-              placeholder="Enter your email"
-              disabled={!isEditing}
+              onChange={() => {}}
+              placeholder="Email Address"
+              disabled={true}
             />
             <FormField
               label="Phone Number"
               type="tel"
               value={formState.phone}
-              onChange={(value) => handleChange("phone", value)}
-              placeholder="Enter your phone number"
-              disabled={!isEditing}
+              onChange={() => {}}
+              placeholder="Phone Number"
+              disabled={true}
             />
             <FormField
               label="Date of Birth"
               type="date"
               value={formState.dateOfBirth}
-              onChange={(value) => handleChange("dateOfBirth", value)}
-              disabled={!isEditing}
+              onChange={() => {}}
+              placeholder="Date of Birth"
+              disabled={true}
             />
             <FormField
               label="Gender"
               type="select"
               value={formState.gender}
-              onChange={(value) => handleChange("gender", value)}
+              onChange={() => {}}
               options={[
                 { label: "Male", value: "male" },
                 { label: "Female", value: "female" },
                 { label: "Prefer not to say", value: "prefer-not-to-say" },
               ]}
-              disabled={!isEditing}
-            />
-            <FormField
-              label="Address"
-              type="text"
-              value={formState.address}
-              onChange={(value) => handleChange("address", value)}
-              placeholder="Enter your address"
-              disabled={!isEditing}
+              disabled={true}
             />
             <FormField
               label="Country"
               type="select"
               value={formState.country}
-              onChange={(value) => {
-                handleChange("country", value);
-                handleChange("state", ""); // Reset state when country changes
-              }}
+              onChange={() => {}}
               options={westAfricanCountries}
-              disabled={!isEditing}
+              disabled={true}
             />
-            <FormField
-              label="State/Region"
-              type="select"
-              value={formState.state}
-              onChange={(value) => handleChange("state", value)}
-              options={statesByCountry[formState.country] || []}
-              disabled={!isEditing || !formState.country}
-            />
-
-            {/* ID Verification Status */}
-            <div className="p-4">
-              <h3 className="text-lg font-medium text-gray-900 mb-4">
-                ID Verification Status
-              </h3>
-              <div className="space-y-4">
-                <div
-                  className={clsx(
-                    "flex items-center justify-between p-4 rounded-lg",
-                    formState.bvnVerified ? "bg-green-50" : "bg-red-50",
-                  )}
-                >
-                  <div>
-                    <h4 className="font-medium text-gray-900">
-                      BVN Verification
-                    </h4>
-                    <p className="text-sm text-gray-600">
-                      Bank Verification Number status
-                    </p>
-                  </div>
-                  {formState.bvnVerified ? (
-                    <CheckCircle className="w-6 h-6 text-green-600" />
-                  ) : (
-                    <XCircle className="w-6 h-6 text-red-600" />
-                  )}
-                </div>
-                <div
-                  className={clsx(
-                    "flex items-center justify-between p-4 rounded-lg",
-                    formState.ninVerified ? "bg-green-50" : "bg-red-50",
-                  )}
-                >
-                  <div>
-                    <h4 className="font-medium text-gray-900">
-                      NIN Verification
-                    </h4>
-                    <p className="text-sm text-gray-600">
-                      National Identity Number status
-                    </p>
-                  </div>
-                  {formState.ninVerified ? (
-                    <CheckCircle className="w-6 h-6 text-green-600" />
-                  ) : (
-                    <XCircle className="w-6 h-6 text-red-600" />
-                  )}
-                </div>
-              </div>
-            </div>
           </div>
         );
 

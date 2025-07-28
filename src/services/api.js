@@ -69,38 +69,67 @@ class ApiService {
 
   async signup(userData) {
     try {
-      const pbUserData = {
+      // Base data that's common to both account types
+      let pbUserData = {
         email: userData.email,
         password: userData.password,
         passwordConfirm: userData.confirmPassword,
-        accountType: userData.accountType?.toLowerCase() || 'personal',
         phone: userData.phone,
         isVerified: false,
-        // Ensure consistent naming
-        firstName: userData.accountType === 'Business' ? userData.businessName : userData.firstname,
-        lastName: userData.accountType === 'Business' ? '' : userData.lastname,
-        name: userData.accountType === 'Business' 
-          ? userData.businessName 
-          : `${userData.firstname} ${userData.lastname}`
+        accountType: userData.accountType?.toLowerCase() || 'personal'
       };
+
+      if (userData.accountType === 'Business') {
+        // Business account data only
+        Object.assign(pbUserData, {
+          businessName: userData.businessName,
+          rcNumber: userData.rcNumber,
+          nin: userData.nin,
+          name: userData.businessName,
+          // Set required fields with empty values for business accounts
+          firstName: ' ',  // Space instead of empty string
+          lastName: ' '    // Space instead of empty string
+        });
+      } else {
+        // Personal account data only
+        Object.assign(pbUserData, {
+          firstName: userData.firstname,
+          lastName: userData.lastname,
+          name: `${userData.firstname} ${userData.lastname}`,
+          // Set business fields as empty
+          businessName: '',
+          rcNumber: '',
+          nin: ''
+        });
+      }
 
       console.log('Sending to PocketBase:', pbUserData);
       const record = await this.pb.collection('users').create(pbUserData);
 
       return {
         success: true,
-        message: 'Account created successfully',
         user: {
           id: record.id,
           email: record.email,
           name: record.name,
           role: record.accountType,
           verified: record.isVerified,
-          phone: record.phone
-        }
+          phone: record.phone,
+          ...(record.accountType === 'business' ? {
+            businessName: record.businessName,
+            rcNumber: record.rcNumber,
+            nin: record.nin
+          } : {
+            firstName: record.firstName,
+            lastName: record.lastName
+          })
+        },
+        message: 'Account created successfully'
       };
     } catch (error) {
       console.error('PocketBase signup error:', error);
+      // Log the full error details for debugging
+      console.log('Error details:', JSON.stringify(error, null, 2));
       return {
         success: false,
         error: error.message || 'Signup failed'
@@ -192,9 +221,14 @@ class ApiService {
           id: user.id,
           email: user.email,
           name: user.name,
+          firstname: user.firstName, // <-- add this
+          lastname: user.lastName,   // <-- add this
           role: user.accountType, // Changed from account_type
           verified: user.isVerified, // Changed from verified
-          phone: user.phone
+          phone: user.phone,
+          dateOfBirth: user.dateOfBirth,
+          gender: user.gender,
+          country: user.country
         }
       };
     } catch (error) {
