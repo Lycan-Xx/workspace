@@ -6,7 +6,6 @@ import SignUp from "./signup/SignUp";
 import SignIn from "./signin/SignIn";
 import ConfigureSecurity from "./authentication/security/ConfigureSecurity";
 import Dashboard from "./Dashboard/Dashboard";
-import VendorDetails from "./InstantPayments/VendorDetails";
 import Databundles from "./Dashboard/Services/Databundles";
 import Airtime from "./Dashboard/Services/Airtime";
 import Electricity from "./Dashboard/Services/Electricity";
@@ -82,13 +81,7 @@ function App({ initialView = "instant-payments", onBack }) {
         return <SignUp onCancel={() => handleNavigation("instant-payments")} />;
       case "configure-security":
         return <ConfigureSecurity />;
-      case "vendor-details":
-        return (
-          <VendorDetails
-            vendor={selectedVendor}
-            onBack={() => handleNavigation("instant-payments")}
-          />
-        );
+
       case "dashboard":
         return <Dashboard />;
       case "databundles":
