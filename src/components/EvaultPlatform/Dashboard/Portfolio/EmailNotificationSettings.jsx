@@ -1,5 +1,3 @@
-"use client"
-
 import { useState } from "react"
 import { Mail, Settings, Bell, Check, AlertCircle } from "lucide-react"
 
