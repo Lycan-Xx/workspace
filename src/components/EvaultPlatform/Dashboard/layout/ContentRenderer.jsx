@@ -3,7 +3,7 @@ import React from 'react';
 import { useSpring, animated } from "react-spring";
 import Trade from '../Trade';
 import Vault from '../Vault/Vault';
-import Portfolio from '../Portfolio/Portfolio';
+import PortfolioWizard from '../Portfolio/PortfolioWizard';
 import Settings from '../SettingsApp';
 import DepositForm from '../TabContents/DepositForm';
 import TransferForm from '../TabContents/TransferForm';
@@ -22,7 +22,7 @@ const ContentRenderer = ({ selectedTab, selectedSetting }) => {
       case "Vault":
         return <Vault />;
       case "Portfolio":
-        return <Portfolio />;
+        return <PortfolioWizard />;
       case "Settings":
         return <Settings selectedSetting={selectedSetting} />;
       case "Vault Top Up":

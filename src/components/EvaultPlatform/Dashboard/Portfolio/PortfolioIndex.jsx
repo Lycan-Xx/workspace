@@ -2,9 +2,9 @@
 
 import { useState } from "react"
 import OnboardingFlow from "./OnboardingFlow"
-import BusinessProfileSetup from "./BusinessProfileSetup"
+import PortfolioSetupForm from "./PortfolioSetupForm"
 
-const Portfolio = () => {
+const PortfolioWizard = () => {
   const [portfolioType, setPortfolioType] = useState(null)
   const [showOnboarding, setShowOnboarding] = useState(true)
 
@@ -34,9 +34,9 @@ const Portfolio = () => {
         </button>
       </div>
 
-      <BusinessProfileSetup portfolioType={portfolioType} />
+      <PortfolioSetupForm portfolioType={portfolioType} />
     </div>
   )
 }
 
-export default Portfolio
+export default PortfolioWizard

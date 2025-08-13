@@ -46,7 +46,7 @@ const OnboardingFlow = ({ onSelectPortfolioType }) => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
+    <div className="min-h-screen bg-[#e5e5e5] p-4">
       <div className="max-w-4xl mx-auto space-y-8">
         {/* Header */}
         <div className="text-center py-8">
