@@ -548,21 +548,7 @@ const PortfolioSetupForm = ({ portfolioType }) => {
                 </div>
               </div>
               
-              <div className="flex justify-end mt-8 pt-6 border-t border-gray-200">
-                <button
-                  onClick={() => {
-                    if (validateBusinessInfo()) {
-                      setActiveTab("services");
-                    }
-                  }}
-                  className="flex items-center gap-2 px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
-                >
-                  Continue to {serviceLabelPlural}
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
-                </button>
-              </div>
+              <div className="flex justify-end mt-8 pt-6 border-t border-gray-200"></div>
             </div>
           )}
 
@@ -656,26 +642,7 @@ const PortfolioSetupForm = ({ portfolioType }) => {
                 )}
               </div>
               
-              <div className="flex justify-between">
-                <button
-                  onClick={() => setActiveTab("info")}
-                  className="flex items-center gap-2 px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium"
-                >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                  </svg>
-                  Back
-                </button>
-                <button
-                  onClick={() => setActiveTab("notifications")}
-                  className="flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
-                >
-                  Continue to Notifications
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
-                </button>
-              </div>
+              <div className="flex justify-between"></div>
             </div>
           )}
 
@@ -769,17 +736,7 @@ const PortfolioSetupForm = ({ portfolioType }) => {
                 </div>
               </div>
               
-              <div className="flex justify-between">
-                <button
-                  onClick={() => setActiveTab("services")}
-                  className="flex items-center gap-2 px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium"
-                >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                  </svg>
-                  Back
-                </button>
-                
+              <div className="flex justify-end">
                 <button
                   onClick={handleSubmit}
                   className="flex items-center gap-2 px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
