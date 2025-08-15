@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
 import { 
   Building2, GraduationCap, Save, Upload, Plus, Trash2, Mail, 
   Phone, MapPin, CreditCard, Banknote, User, Globe, Edit3, 
-  CheckCircle, AlertCircle, Bookmark, Clock, DollarSign, BookOpen,
+  CheckCircle, AlertCircle, Bookmark, Clock, BookOpen,
   Users, Calendar, FileText, Bell, Settings
 } from "lucide-react";
 
@@ -19,6 +20,30 @@ const PortfolioSetupForm = ({ portfolioType }) => {
     bannerPreview: "",
     logoPreview: "",
   });
+
+  // Fetch business/school data from PocketBase on mount
+  useEffect(() => {
+    async function fetchBusinessData() {
+      try {
+        const { apiService } = await import('../../../../services/api');
+        const res = await apiService.getCurrentUser();
+        if (res.success && res.user) {
+          setBusinessInfo(prev => ({
+            ...prev,
+            businessName: res.user.businessName || '',
+            email: res.user.email || '',
+            phone: res.user.phone || '',
+            website: res.user.website || '',
+            address: res.user.address || '',
+            description: res.user.description || ''
+          }));
+        }
+      } catch (e) {
+        console.error("Error fetching business data:", e);
+      }
+    }
+    fetchBusinessData();
+  }, []);
 
   const [services, setServices] = useState([]);
   const [activeService, setActiveService] = useState(null);
@@ -216,15 +241,15 @@ const PortfolioSetupForm = ({ portfolioType }) => {
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              {isSchool ? "Annual Fee" : "Price"} *
+              {isSchool ? "Annual Fee (₦)" : "Price (₦)"} *
             </label>
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <DollarSign className="h-5 w-5 text-gray-400" />
+                <span className="text-gray-400">₦</span>
               </div>
               <input
                 type="number"
-                placeholder="0.00"
+                placeholder="0.00 ₦"
                 value={newService.price}
                 onChange={(e) => updateService(newService.id, 'price', e.target.value)}
                 className={`w-full pl-10 px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors
@@ -626,7 +651,7 @@ const PortfolioSetupForm = ({ portfolioType }) => {
                           
                           <div className="flex justify-between items-center">
                             <div className="flex items-center text-green-600 font-semibold">
-                              <DollarSign className="h-4 w-4 mr-1" />
+                              <span className="mr-1">₦</span>
                               <span>{service.price}</span>
                             </div>
                             {isSchool && service.duration && (

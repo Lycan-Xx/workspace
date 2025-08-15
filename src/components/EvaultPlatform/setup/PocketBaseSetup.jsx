@@ -2,6 +2,8 @@
 import React, { useState, useEffect } from 'react';
 import { CheckCircle, XCircle, Clock, ExternalLink } from 'lucide-react';
 
+const POCKETBASE_URL = import.meta.env.VITE_POCKETBASE_URL;
+
 const PocketBaseSetup = () => {
   const [checks, setChecks] = useState({
     connection: 'checking',
@@ -16,7 +18,7 @@ const PocketBaseSetup = () => {
 
   const checkPocketBaseConnection = async () => {
     try {
-      const response = await fetch('http://localhost:8090/api/health');
+      const response = await fetch(`${POCKETBASE_URL}/api/health`);
       if (response.ok) {
         setChecks(prev => ({ ...prev, connection: 'completed' }));
       } else {
@@ -53,7 +55,7 @@ const PocketBaseSetup = () => {
       title: 'Admin Account Setup',
       description: 'Create admin account in PocketBase',
       status: checks.admin,
-      link: 'http://localhost:8090/_/',
+      link: `${POCKETBASE_URL}/_/`,
       action: 'Open PocketBase Admin Panel'
     },
     {
@@ -110,8 +112,8 @@ const PocketBaseSetup = () => {
       <div className="mt-6 p-4 bg-blue-50 rounded-lg">
         <h4 className="font-semibold text-blue-800 mb-2">Quick Start:</h4>
         <ol className="text-sm text-blue-700 space-y-1">
-          <li>1. Run <code className="bg-blue-100 px-1 rounded">npm run start:backend</code></li>
-          <li>2. Open <a href="http://localhost:8090/_/" target="_blank" rel="noopener noreferrer" className="underline">PocketBase Admin</a></li>
+          <li>1. Open <a href={`${POCKETBASE_URL}/_/`} target="_blank" rel="noopener noreferrer" className="underline">PocketBase Admin</a></li>
+          <li>2. Create admin account</li>
           <li>3. Create admin account</li>
           <li>4. Set up collections per the guide</li>
         </ol>
