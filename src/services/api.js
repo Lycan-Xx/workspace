@@ -1,65 +1,85 @@
-import PocketBase from 'pocketbase';
 
-// PocketBase configuration
-const getPocketBaseUrl = () => {
-  // Check for environment variable first (production)
-  if (import.meta.env.VITE_POCKETBASE_URL) {
-    return import.meta.env.VITE_POCKETBASE_URL;
+import { createClient } from '@supabase/supabase-js';
+
+// Supabase configuration
+const getSupabaseUrl = () => {
+  if (import.meta.env.VITE_SUPABASE_URL) {
+    return import.meta.env.VITE_SUPABASE_URL;
+  }
+  // Fallback for development
+  return 'https://your-project-id.supabase.co';
+};
+
+const getSupabaseAnonKey = () => {
+  if (import.meta.env.VITE_SUPABASE_ANON_KEY) {
+    return import.meta.env.VITE_SUPABASE_ANON_KEY;
+  }
+  return 'your-anon-key-here';
+};
+
+// Backend API URL
+const getBackendUrl = () => {
+  if (import.meta.env.VITE_BACKEND_URL) {
+    return import.meta.env.VITE_BACKEND_URL;
   }
 
-  if (typeof window === 'undefined') return 'http://localhost:8090';
+  if (typeof window === 'undefined') return 'http://localhost:5000';
 
   if (window.location.hostname.includes('replit.dev')) {
-    // Replit environment - PocketBase is on port 3000 externally
+    // Replit environment - Backend is on port 5000
     const hostname = window.location.hostname;
-    return `https://${hostname}:3000`;
+    return `https://${hostname.replace('-00-', '-01-')}`;
   }
 
   // Local development
-  return 'http://localhost:8090';
+  return 'http://localhost:5000';
 };
 
-const pb = new PocketBase(getPocketBaseUrl());
+const supabase = createClient(getSupabaseUrl(), getSupabaseAnonKey());
+const BACKEND_URL = getBackendUrl();
 
 class ApiService {
   constructor() {
-    this.pb = pb;
+    this.supabase = supabase;
+    this.backendUrl = BACKEND_URL;
     this.checkConnection();
   }
 
   async checkConnection() {
     try {
-      await this.pb.health.check();
-      console.log('PocketBase connection established');
+      const response = await fetch(`${this.backendUrl}/api/health`);
+      if (response.ok) {
+        console.log('Backend connection established');
+      } else {
+        console.error('Backend connection failed');
+      }
     } catch (error) {
-      console.error('PocketBase connection failed:', error);
-      console.log('Make sure PocketBase is running at:', getPocketBaseUrl());
+      console.error('Backend connection failed:', error);
+      console.log('Make sure backend is running at:', this.backendUrl);
     }
   }
 
   // Authentication methods
   async login(credentials) {
     try {
-      const authData = await this.pb.collection('users').authWithPassword(
-        credentials.email, 
-        credentials.password
-      );
-      
-      // Correctly map the PocketBase fields to our expected format
-      return {
-        success: true,
-        user: {
-          id: authData.record.id,
-          email: authData.record.email,
-          // Use the correct field names from PocketBase
-          name: authData.record.name || `${authData.record.firstName} ${authData.record.lastName}`,
-          role: authData.record.accountType, // Changed from account_type
-          verified: authData.record.isVerified, // Changed from verified
-          phone: authData.record.phone
+      const response = await fetch(`${this.backendUrl}/api/auth/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
         },
-        token: authData.token
-      };
+        body: JSON.stringify(credentials)
+      });
+
+      const result = await response.json();
+      
+      if (result.success && result.session) {
+        // Set the session in Supabase client
+        await this.supabase.auth.setSession(result.session);
+      }
+
+      return result;
     } catch (error) {
+      console.error('Login error:', error);
       return {
         success: false,
         error: error.message || 'Login failed'
@@ -69,67 +89,19 @@ class ApiService {
 
   async signup(userData) {
     try {
-      // Base data that's common to both account types
-      let pbUserData = {
-        email: userData.email,
-        password: userData.password,
-        passwordConfirm: userData.confirmPassword,
-        phone: userData.phone,
-        isVerified: false,
-        accountType: userData.accountType?.toLowerCase() || 'personal'
-      };
-
-      if (userData.accountType === 'Business') {
-        // Business account data only
-        Object.assign(pbUserData, {
-          businessName: userData.businessName,
-          rcNumber: userData.rcNumber,
-          nin: userData.nin,
-          name: userData.businessName,
-          // Set required fields with empty values for business accounts
-          firstName: ' ',  // Space instead of empty string
-          lastName: ' '    // Space instead of empty string
-        });
-      } else {
-        // Personal account data only
-        Object.assign(pbUserData, {
-          firstName: userData.firstname,
-          lastName: userData.lastname,
-          name: `${userData.firstname} ${userData.lastname}`,
-          // Set business fields as empty
-          businessName: '',
-          rcNumber: '',
-          nin: ''
-        });
-      }
-
-      console.log('Sending to PocketBase:', pbUserData);
-      const record = await this.pb.collection('users').create(pbUserData);
-
-      return {
-        success: true,
-        user: {
-          id: record.id,
-          email: record.email,
-          name: record.name,
-          role: record.accountType,
-          verified: record.isVerified,
-          phone: record.phone,
-          ...(record.accountType === 'business' ? {
-            businessName: record.businessName,
-            rcNumber: record.rcNumber,
-            nin: record.nin
-          } : {
-            firstName: record.firstName,
-            lastName: record.lastName
-          })
+      const response = await fetch(`${this.backendUrl}/api/auth/signup`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
         },
-        message: 'Account created successfully'
-      };
+        body: JSON.stringify(userData)
+      });
+
+      const result = await response.json();
+      console.log('Signup result:', result);
+      return result;
     } catch (error) {
-      console.error('PocketBase signup error:', error);
-      // Log the full error details for debugging
-      console.log('Error details:', JSON.stringify(error, null, 2));
+      console.error('Signup error:', error);
       return {
         success: false,
         error: error.message || 'Signup failed'
@@ -139,36 +111,34 @@ class ApiService {
 
   async logout() {
     try {
-      this.pb.authStore.clear();
+      // Logout from Supabase
+      await this.supabase.auth.signOut();
+      
+      // Also notify backend
+      await fetch(`${this.backendUrl}/api/auth/logout`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      });
+
       return { success: true };
     } catch (error) {
       return { success: false, error: error.message };
     }
   }
 
-  async resetPassword(phone, newPassword) {
+  async resetPassword(email) {
     try {
-      // Find user by phone number
-      const users = await this.pb.collection('users').getList(1, 1, {
-        filter: `phone = "${phone}"`
+      const response = await fetch(`${this.backendUrl}/api/auth/reset-password`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email })
       });
 
-      if (users.items.length === 0) {
-        throw new Error('User not found');
-      }
-
-      const user = users.items[0];
-
-      // Update password
-      await this.pb.collection('users').update(user.id, {
-        password: newPassword,
-        passwordConfirm: newPassword
-      });
-
-      return {
-        success: true,
-        message: 'Password updated successfully'
-      };
+      return await response.json();
     } catch (error) {
       return {
         success: false,
@@ -178,59 +148,60 @@ class ApiService {
   }
 
   async verifyOTP(phone, otp) {
-    // In a real implementation, you would verify the OTP with an external service
-    // For now, we'll simulate verification
-    console.log('API: OTP verification', phone, otp);
+    try {
+      const response = await fetch(`${this.backendUrl}/api/auth/verify-otp`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ phone, otp })
+      });
 
-    // Simulate successful verification for testing
-    if (otp === '111111') {
+      return await response.json();
+    } catch (error) {
       return {
-        success: true,
-        message: 'OTP verified successfully'
+        success: false,
+        error: error.message || 'OTP verification failed'
       };
     }
-
-    return {
-      success: false,
-      error: 'Invalid OTP'
-    };
   }
 
   async sendOTP(phone) {
-    // In a real implementation, you would integrate with an SMS service
-    console.log('API: Send OTP to', phone);
+    try {
+      const response = await fetch(`${this.backendUrl}/api/auth/send-otp`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ phone })
+      });
 
-    // Simulate successful OTP sending
-    return {
-      success: true,
-      message: 'OTP sent successfully'
-    };
+      return await response.json();
+    } catch (error) {
+      return {
+        success: false,
+        error: error.message || 'Failed to send OTP'
+      };
+    }
   }
 
   // User management
   async getCurrentUser() {
     try {
-      if (!this.pb.authStore.isValid) {
+      const { data: { session } } = await this.supabase.auth.getSession();
+      
+      if (!session) {
         throw new Error('Not authenticated');
       }
 
-      const user = await this.pb.collection('users').getOne(this.pb.authStore.model.id);
-      return {
-        success: true,
-        user: {
-          id: user.id,
-          email: user.email,
-          name: user.name,
-          firstname: user.firstName, // <-- add this
-          lastname: user.lastName,   // <-- add this
-          role: user.accountType, // Changed from account_type
-          verified: user.isVerified, // Changed from verified
-          phone: user.phone,
-          dateOfBirth: user.dateOfBirth,
-          gender: user.gender,
-          country: user.country
+      const response = await fetch(`${this.backendUrl}/api/user/${session.user.id}`, {
+        headers: {
+          'Authorization': `Bearer ${session.access_token}`,
+          'Content-Type': 'application/json',
         }
-      };
+      });
+
+      return await response.json();
     } catch (error) {
       return {
         success: false,
@@ -241,11 +212,18 @@ class ApiService {
 
   async updateUser(userId, userData) {
     try {
-      const record = await this.pb.collection('users').update(userId, userData);
-      return {
-        success: true,
-        user: record
-      };
+      const { data: { session } } = await this.supabase.auth.getSession();
+      
+      const response = await fetch(`${this.backendUrl}/api/user/${userId}`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${session?.access_token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(userData)
+      });
+
+      return await response.json();
     } catch (error) {
       return {
         success: false,
@@ -254,14 +232,68 @@ class ApiService {
     }
   }
 
+  // Get user accounts
+  async getUserAccounts(userId) {
+    try {
+      const { data: { session } } = await this.supabase.auth.getSession();
+      
+      const response = await fetch(`${this.backendUrl}/api/user/${userId}/accounts`, {
+        headers: {
+          'Authorization': `Bearer ${session?.access_token}`,
+          'Content-Type': 'application/json',
+        }
+      });
+
+      return await response.json();
+    } catch (error) {
+      return {
+        success: false,
+        error: error.message || 'Failed to get user accounts'
+      };
+    }
+  }
+
+  // Get user transactions
+  async getUserTransactions(userId, limit = 50) {
+    try {
+      const { data: { session } } = await this.supabase.auth.getSession();
+      
+      const response = await fetch(`${this.backendUrl}/api/user/${userId}/transactions?limit=${limit}`, {
+        headers: {
+          'Authorization': `Bearer ${session?.access_token}`,
+          'Content-Type': 'application/json',
+        }
+      });
+
+      return await response.json();
+    } catch (error) {
+      return {
+        success: false,
+        error: error.message || 'Failed to get transactions'
+      };
+    }
+  }
+
   // Check if user is authenticated
   isAuthenticated() {
-    return this.pb.authStore.isValid;
+    const { data: { session } } = this.supabase.auth.getSession();
+    return !!session;
   }
 
   // Get auth token
   getToken() {
-    return this.pb.authStore.token;
+    const { data: { session } } = this.supabase.auth.getSession();
+    return session?.access_token || null;
+  }
+
+  // Get current session
+  async getSession() {
+    return await this.supabase.auth.getSession();
+  }
+
+  // Listen to auth changes
+  onAuthStateChange(callback) {
+    return this.supabase.auth.onAuthStateChange(callback);
   }
 }
 
