@@ -57,6 +57,17 @@ const authSlice = createSlice({
 			state.lastLoginTime = null;
 			localStorage.removeItem('auth'); // Remove state from localStorage on logout
 		},
+		logoutSuccess: (state) => {
+			state.user = null;
+			state.isAuthenticated = false;
+			state.securityVerified = false;
+			state.error = null;
+			state.lastLoginTime = null;
+			localStorage.removeItem('auth');
+		},
+		logoutFailure: (state, action) => {
+			state.error = action.payload;
+		},
 		setSecurityVerified: (state, action) => {
 			state.securityVerified = action.payload;
 			saveState(state); // Save state to localStorage on security verification
@@ -68,7 +79,7 @@ const authSlice = createSlice({
 	}
 });
 
-export const { loginSuccess, loginFailure, logout, setSecurityVerified, clearError } = authSlice.actions;
+export const { loginSuccess, loginFailure, logout, logoutSuccess, logoutFailure, setSecurityVerified, clearError } = authSlice.actions;
 
 // Add token expiration check
 export const checkTokenExpiration = () => (dispatch, getState) => {
@@ -80,6 +91,27 @@ export const checkTokenExpiration = () => (dispatch, getState) => {
 		return false;
 	}
 	return true;
+};
+
+// Thunk for handling logout
+export const logoutUser = () => async (dispatch) => {
+	try {
+		// Import API service dynamically to avoid circular imports
+		const { apiService } = await import('../../../services/api');
+		const result = await apiService.logout();
+		
+		if (result.success) {
+			dispatch(logoutSuccess());
+			return true;
+		} else {
+			dispatch(logoutFailure(result.error));
+			return false;
+		}
+	} catch (error) {
+		console.error('Logout error:', error);
+		dispatch(logoutFailure('An error occurred during logout'));
+		return false;
+	}
 };
 
 // Thunk for handling login
@@ -116,14 +148,86 @@ export const signup = (userData) => async (dispatch) => {
 	try {
 		dispatch(clearError());
 		
+		// Validate required fields
+		if (!userData.email || !userData.password) {
+			return { 
+				success: false, 
+				error: 'Email and password are required' 
+			};
+		}
+
+		if (userData.password !== userData.confirmPassword) {
+			return { 
+				success: false, 
+				error: 'Passwords do not match' 
+			};
+		}
+
+		// Validate account type specific fields
+		if (userData.account_type === 'personal') {
+			if (!userData.first_name || !userData.last_name) {
+				return { 
+					success: false, 
+					error: 'First name and last name are required for personal accounts' 
+				};
+			}
+		} else if (userData.account_type === 'business') {
+			if (!userData.business_name) {
+				return { 
+					success: false, 
+					error: 'Business name is required for business accounts' 
+				};
+			}
+		}
+		
 		// Import API service dynamically to avoid circular imports
 		const { apiService } = await import('../../../services/api');
 		const result = await apiService.signup(userData);
 		
-		return result;
+		if (result.success) {
+			console.log('Signup successful:', result);
+			
+			// If user is created but needs email confirmation, don't log them in yet
+			if (result.requiresEmailConfirmation) {
+				return {
+					success: true,
+					message: result.message,
+					requiresEmailConfirmation: true
+				};
+			}
+			
+			// If user is fully created and has a session, log them in
+			if (result.session && result.user) {
+				const userForStore = {
+					id: result.user.id,
+					email: result.user.email,
+					name: result.user.user_metadata?.display_name || result.user.email,
+					role: result.user.user_metadata?.account_type || 'personal',
+					tier: result.user.user_metadata?.tier || 1,
+					phone: result.user.user_metadata?.phone,
+					first_name: result.user.user_metadata?.first_name,
+					last_name: result.user.user_metadata?.last_name,
+					business_name: result.user.user_metadata?.business_name,
+					rc_number: result.user.user_metadata?.rc_number,
+					nin: result.user.user_metadata?.nin,
+					phone_verified: result.user.user_metadata?.phone_verified,
+					loginTime: Date.now()
+				};
+				
+				dispatch(loginSuccess(userForStore));
+			}
+			
+			return result;
+		} else {
+			return result;
+		}
+		
 	} catch (error) {
 		console.error('Signup error:', error);
-		return { success: false, message: 'An error occurred during signup' };
+		return { 
+			success: false, 
+			error: error.message || 'An error occurred during signup' 
+		};
 	}
 };
 
@@ -151,4 +255,5 @@ export const initializeAuth = () => async (dispatch) => {
 		return false;
 	}
 };
+
 export default authSlice.reducer;

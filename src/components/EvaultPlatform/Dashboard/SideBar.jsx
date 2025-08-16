@@ -13,7 +13,7 @@ import {
 } from "react-icons/fa";
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { logout } from '../store/authSlice';
+import { logoutUser } from '../store/authSlice';
 
 const Sidebar = ({ user, selectedTab, setSelectedTab, setIsSidebarCollapsed }) => {
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -48,10 +48,11 @@ const Sidebar = ({ user, selectedTab, setSelectedTab, setIsSidebarCollapsed }) =
     setIsSidebarCollapsed(newCollapsedState);
   };
 
-  const handleLogout = () => {
-    dispatch(logout());
-    // Clear any other state or storage if needed
-    navigate('/sign-in', { replace: true }); // Using replace to prevent going back to dashboard
+  const handleLogout = async () => {
+    const success = await dispatch(logoutUser());
+    if (success) {
+      navigate('/sign-in', { replace: true }); // Using replace to prevent going back to dashboard
+    }
   };
 
   const SidebarContent = () => (

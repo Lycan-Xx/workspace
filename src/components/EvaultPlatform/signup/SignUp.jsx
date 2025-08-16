@@ -35,7 +35,7 @@ function AccountTypeStep({ onSelect }) {
       </h3>
       <div className="flex flex-col sm:flex-row justify-center gap-4 sm:gap-6">
         <button
-          onClick={() => onSelect("Personal")}
+          onClick={() => onSelect("personal")}
           className="p-6 w-full sm:w-[180px] border-2 border-gray-300 rounded-lg hover:border-[#025798] focus:outline-none focus:ring-2 focus:ring-[#025798]/20 transition-all flex flex-col items-center"
         >
           <UserPlus className="mb-3" size={40} strokeWidth={1.5} />
@@ -45,7 +45,7 @@ function AccountTypeStep({ onSelect }) {
           </p>
         </button>
         <button
-          onClick={() => onSelect("Business")}
+          onClick={() => onSelect("business")}
           className="p-6 w-full sm:w-[180px] border-2 border-gray-300 rounded-lg hover:border-[#025798] focus:outline-none focus:ring-2 focus:ring-[#025798]/20 transition-all flex flex-col items-center"
         >
           <Mail className="mb-3" size={40} strokeWidth={1.5} />
@@ -167,7 +167,7 @@ function OTPVerificationStep({ onSubmit, onBack }) {
     const phoneData = {
       phone: `${countryCode}${phoneNumber}`,
       otp: otpValue,
-      phoneVerified: true
+      phone_verified: true
     };
     
     console.log("OTP verification data:", phoneData);
@@ -287,16 +287,16 @@ function OTPVerificationStep({ onSubmit, onBack }) {
 // Data Input Step Component
 function DataInputStep({ accountType, step, onSubmit, onBack, userData = {} }) {
   const [formData, setFormData] = useState({
-    firstname: userData.firstname || "",
-    lastname: userData.lastname || "",
+    first_name: userData.first_name || "",
+    last_name: userData.last_name || "",
     email: userData.email || "",
-    businessName: userData.businessName || "",
-    rcNumber: userData.rcNumber || "",
+    business_name: userData.business_name || "",
+    rc_number: userData.rc_number || "",
     nin: userData.nin || "",
     password: userData.password || "",
     confirmPassword: userData.confirmPassword || "",
-    vaultPhrase: userData.vaultPhrase || "",
-    referralCode: userData.referralCode || "",
+    vault_phrase: userData.vault_phrase || "",
+    referral_code: userData.referral_code || "",
   });
 
   const [errors, setErrors] = useState({});
@@ -313,15 +313,15 @@ function DataInputStep({ accountType, step, onSubmit, onBack, userData = {} }) {
 
   const validateStep1 = () => {
     const newErrors = {};
-    if (accountType === "Personal") {
-      if (!formData.firstname) newErrors.firstname = "First name is required.";
-      if (!formData.lastname) newErrors.lastname = "Last name is required.";
+    if (accountType === "personal") {
+      if (!formData.first_name) newErrors.first_name = "First name is required.";
+      if (!formData.last_name) newErrors.last_name = "Last name is required.";
       if (!formData.email) newErrors.email = "Email is required.";
-    } else if (accountType === "Business") {
-      if (!formData.businessName)
-        newErrors.businessName = "Business name is required.";
+    } else if (accountType === "business") {
+      if (!formData.business_name)
+        newErrors.business_name = "Business name is required.";
       if (!formData.email) newErrors.email = "Email is required.";
-      if (!formData.rcNumber) newErrors.rcNumber = "RC number is required.";
+      if (!formData.rc_number) newErrors.rc_number = "RC number is required.";
       if (!formData.nin) newErrors.nin = "NIN is required.";
     }
     return newErrors;
@@ -352,7 +352,7 @@ function DataInputStep({ accountType, step, onSubmit, onBack, userData = {} }) {
   return (
     <div>
       <h3 className="text-lg font-bold text-center text-gray-700 mb-6">
-        {accountType === "Personal"
+        {accountType === "personal"
           ? step === 1
             ? "Personal Details"
             : "Set Your Password"
@@ -361,35 +361,35 @@ function DataInputStep({ accountType, step, onSubmit, onBack, userData = {} }) {
             : "Set Your Password"}
       </h3>
       <form className="space-y-4">
-        {step === 1 && accountType === "Personal" && (
+        {step === 1 && accountType === "personal" && (
           <>
             <div className="flex flex-col sm:flex-row gap-4">
               <div className="flex-1">
                 <input
                   type="text"
-                  name="firstname"
+                  name="first_name"
                   placeholder="First Name"
-                  value={formData.firstname}
+                  value={formData.first_name}
                   onChange={handleChange}
                   className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-[#025798] focus:ring-2 focus:ring-[#025798]/20 transition-all outline-none"
                 />
-                {errors.firstname && (
+                {errors.first_name && (
                   <p className="text-red-500 text-sm mt-1">
-                    {errors.firstname}
+                    {errors.first_name}
                   </p>
                 )}
               </div>
               <div className="flex-1">
                 <input
                   type="text"
-                  name="lastname"
+                  name="last_name"
                   placeholder="Last Name"
-                  value={formData.lastname}
+                  value={formData.last_name}
                   onChange={handleChange}
                   className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-[#025798] focus:ring-2 focus:ring-[#025798]/20 transition-all outline-none"
                 />
-                {errors.lastname && (
-                  <p className="text-red-500 text-sm mt-1">{errors.lastname}</p>
+                {errors.last_name && (
+                  <p className="text-red-500 text-sm mt-1">{errors.last_name}</p>
                 )}
               </div>
             </div>
@@ -406,18 +406,18 @@ function DataInputStep({ accountType, step, onSubmit, onBack, userData = {} }) {
             )}
           </>
         )}
-        {step === 1 && accountType === "Business" && (
+        {step === 1 && accountType === "business" && (
           <>
             <input
               type="text"
-              name="businessName"
+              name="business_name"
               placeholder="Business Name"
-              value={formData.businessName}
+              value={formData.business_name}
               onChange={handleChange}
               className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-[#025798] focus:ring-2 focus:ring-[#025798]/20 transition-all outline-none"
             />
-            {errors.businessName && (
-              <p className="text-red-500 text-sm mt-1">{errors.businessName}</p>
+            {errors.business_name && (
+              <p className="text-red-500 text-sm mt-1">{errors.business_name}</p>
             )}
             <input
               type="email"
@@ -432,14 +432,14 @@ function DataInputStep({ accountType, step, onSubmit, onBack, userData = {} }) {
             )}
             <input
               type="text"
-              name="rcNumber"
+              name="rc_number"
               placeholder="RC Number"
-              value={formData.rcNumber}
+              value={formData.rc_number}
               onChange={handleChange}
               className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-[#025798] focus:ring-2 focus:ring-[#025798]/20 transition-all outline-none"
             />
-            {errors.rcNumber && (
-              <p className="text-red-500 text-sm mt-1">{errors.rcNumber}</p>
+            {errors.rc_number && (
+              <p className="text-red-500 text-sm mt-1">{errors.rc_number}</p>
             )}
             <input
               type="text"
@@ -509,9 +509,9 @@ function DataInputStep({ accountType, step, onSubmit, onBack, userData = {} }) {
             )}
             <input
               type="text"
-              name="referralCode"
+              name="referral_code"
               placeholder="Referral Code (Optional)"
-              value={formData.referralCode}
+              value={formData.referral_code}
               onChange={handleChange}
               className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-[#025798] focus:ring-2 focus:ring-[#025798]/20 transition-all outline-none"
             />
@@ -587,11 +587,11 @@ export default function SignUp({ onCancel }) {
       // Store the initial form data (personal/business details)
       updatedUserData = {
         ...userData,
-        firstname: data.firstname || userData.firstname,
-        lastname: data.lastname || userData.lastname,
+        first_name: data.first_name || userData.first_name,
+        last_name: data.last_name || userData.last_name,
         email: data.email || userData.email,
-        businessName: data.businessName || userData.businessName,
-        rcNumber: data.rcNumber || userData.rcNumber,
+        business_name: data.business_name || userData.business_name,
+        rc_number: data.rc_number || userData.rc_number,
         nin: data.nin || userData.nin
       };
       setUserData(updatedUserData);
@@ -603,7 +603,7 @@ export default function SignUp({ onCancel }) {
         ...userData,
         phone: data.phone || userData.phone,
         otp: data.otp || userData.otp,
-        phoneVerified: data.phoneVerified || userData.phoneVerified
+        phone_verified: data.phone_verified || userData.phone_verified
       };
       setUserData(updatedUserData);
       console.log("Step 2 data stored:", updatedUserData);
@@ -614,8 +614,8 @@ export default function SignUp({ onCancel }) {
         ...userData,
         password: data.password || userData.password,
         confirmPassword: data.confirmPassword || userData.confirmPassword,
-        vaultPhrase: data.vaultPhrase || userData.vaultPhrase,
-        referralCode: data.referralCode || userData.referralCode
+        vault_phrase: data.vault_phrase || userData.vault_phrase,
+        referral_code: data.referral_code || userData.referral_code
       };
       setUserData(updatedUserData);
       console.log("Account creation data:", updatedUserData);
@@ -629,29 +629,30 @@ export default function SignUp({ onCancel }) {
           return;
         }
 
-        if (accountType === 'Personal' && (!updatedUserData.firstname || !updatedUserData.lastname)) {
+        if (accountType === 'personal' && (!updatedUserData.first_name || !updatedUserData.last_name)) {
           alert('First name and last name are required for personal accounts');
           return;
         }
 
-        if (accountType === 'Business' && !updatedUserData.businessName) {
+        if (accountType === 'business' && !updatedUserData.business_name) {
           alert('Business name is required for business accounts');
           return;
         }
 
-        // Prepare data for API
+        // Prepare data for API with correct field names
         const signupData = {
           email: updatedUserData.email,
           password: updatedUserData.password,
           confirmPassword: updatedUserData.confirmPassword,
-          accountType: accountType,
+          account_type: accountType, // Already lowercase from AccountTypeStep
           phone: updatedUserData.phone,
-          firstname: updatedUserData.firstname,
-          lastname: updatedUserData.lastname,
-          businessName: updatedUserData.businessName,
-          rcNumber: updatedUserData.rcNumber,
+          first_name: updatedUserData.first_name,
+          last_name: updatedUserData.last_name,
+          business_name: updatedUserData.business_name,
+          rc_number: updatedUserData.rc_number,
           nin: updatedUserData.nin,
-          referralCode: updatedUserData.referralCode,
+          referral_code: updatedUserData.referral_code,
+          phone_verified: updatedUserData.phone_verified,
         };
 
         console.log("Final signup data being sent:", signupData);
@@ -661,8 +662,6 @@ export default function SignUp({ onCancel }) {
 
         if (result.success) {
           console.log("Account created successfully:", result);
-          
-          // Skip email confirmation check in development
           setCurrentStep(Steps.SUCCESS);
         } else {
           console.error("Signup failed:", result.error);
@@ -708,7 +707,7 @@ export default function SignUp({ onCancel }) {
             step={1}
             onSubmit={handleDataSubmit}
             onBack={handleBack}
-            userData={userData} // Pass the userData
+            userData={userData}
           />
         )}
         {currentStep === Steps.OTP_VERIFICATION && (
@@ -723,7 +722,7 @@ export default function SignUp({ onCancel }) {
             step={4}
             onSubmit={handleDataSubmit}
             onBack={handleBack}
-            userData={userData} // Pass the userData
+            userData={userData}
           />
         )}
         {currentStep === Steps.SUCCESS && (

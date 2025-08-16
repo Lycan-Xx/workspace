@@ -1,4 +1,3 @@
-
 import { supabase, supabaseAdmin } from '../config.js';
 import bcrypt from 'bcrypt';
 
@@ -9,25 +8,56 @@ class AuthService {
       const {
         email,
         password,
-        accountType,
+        account_type,
         phone,
-        firstname,
-        lastname,
-        businessName,
-        rcNumber,
+        first_name,
+        last_name,
+        business_name,
+        rc_number,
         nin,
-        referralCode
+        referral_code
       } = userData;
 
-      // Create auth user first
+      // Validate required fields
+      if (!email || !password) {
+        throw new Error('Email and password are required');
+      }
+
+      if (account_type === 'personal' && (!first_name || !last_name)) {
+        throw new Error('First name and last name are required for personal accounts');
+      }
+
+      if (account_type === 'business' && !business_name) {
+        throw new Error('Business name is required for business accounts');
+      }
+
+      // Prepare user metadata with correct field names matching the trigger function
+      const userMetadata = {
+        account_type: account_type || 'personal',
+        phone: phone,
+        phone_verified: false,
+        referral_code: referral_code,
+        tier: 1
+      };
+
+      // Add account-specific metadata
+      if (account_type === 'personal') {
+        userMetadata.first_name = first_name;
+        userMetadata.last_name = last_name;
+        userMetadata.display_name = `${first_name} ${last_name}`.trim();
+      } else if (account_type === 'business') {
+        userMetadata.business_name = business_name;
+        userMetadata.rc_number = rc_number;
+        userMetadata.nin = nin;
+        userMetadata.display_name = business_name;
+      }
+
+      // Create auth user with Supabase
       const signUpOptions = {
         email,
         password,
         options: {
-          data: {
-            account_type: accountType?.toLowerCase() || 'personal',
-            display_name: accountType === 'Business' ? businessName : `${firstname} ${lastname}`
-          }
+          data: userMetadata
         }
       };
 
@@ -36,9 +66,12 @@ class AuthService {
         signUpOptions.options.emailRedirectTo = 'http://localhost:5173/confirmed';
       }
 
+      console.log('Creating user with metadata:', userMetadata);
+
       const { data: authData, error: authError } = await supabase.auth.signUp(signUpOptions);
 
       if (authError) {
+        console.error('Auth signup error:', authError);
         throw new Error(authError.message);
       }
 
@@ -46,129 +79,13 @@ class AuthService {
         throw new Error('User creation failed');
       }
 
-      // Update user profile with additional data
-      const profileData = {
-        id: authData.user.id,
-        email,
-        phone,
-        account_type: accountType?.toLowerCase() || 'personal',
-        display_name: accountType === 'Business' ? businessName : `${firstname} ${lastname}`,
-        phone_verified: false,
-        email_verified: process.env.NODE_ENV === 'development' // Auto-verify in dev
-      };
+      console.log('User created successfully:', authData.user.id);
 
-      if (accountType === 'Business') {
-        profileData.business_name = businessName;
-        profileData.rc_number = rcNumber;
-        profileData.nin = nin;
-      } else {
-        profileData.first_name = firstname;
-        profileData.last_name = lastname;
-      }
+      // The trigger function will handle creating the user profile and account
+      // Wait a moment for the trigger to complete
+      await new Promise(resolve => setTimeout(resolve, 1000));
 
-      if (referralCode) {
-        // Find referrer
-        const { data: referrer } = await supabaseAdmin
-          .from('users')
-          .select('id')
-          .eq('referral_code', referralCode)
-          .single();
-        
-        if (referrer) {
-          profileData.referred_by = referrer.id;
-        }
-      }
-
-      // Generate unique referral code for new user
-      const newReferralCode = this.generateReferralCode(email);
-      profileData.referral_code = newReferralCode;
-
-      const { data: profile, error: profileError } = await supabaseAdmin
-        .from('users')
-        .upsert(profileData)
-        .select()
-        .single();
-
-      if (profileError) {
-        console.error('Profile creation error:', profileError);
-        // Clean up auth user if profile creation fails
-        await supabaseAdmin.auth.admin.deleteUser(authData.user.id);
-        throw new Error('Profile creation failed');
-      }
-
-      return {
-        success: true,
-        user: {
-          id: profile.id,
-          email: profile.email,
-          name: profile.display_name,
-          role: profile.account_type,
-          verified: profile.is_verified,
-          phone: profile.phone,
-          ...(profile.account_type === 'business' ? {
-            businessName: profile.business_name,
-            rcNumber: profile.rc_number,
-            nin: profile.nin
-          } : {
-            firstName: profile.first_name,
-            lastName: profile.last_name
-          })
-        },
-        message: 'Account created successfully. Please check your email for verification.'
-      };
-    } catch (error) {
-      console.error('Signup error:', error);
-      return {
-        success: false,
-        error: error.message || 'Signup failed'
-      };
-    }
-  }
-
-  // Sign in user
-  async login(credentials) {
-    try {
-      const { email, password } = credentials;
-
-      // First try normal login
-      let { data: authData, error: authError } = await supabase.auth.signInWithPassword({
-        email,
-        password
-      });
-
-      // If login fails due to unverified email in development, auto-verify and retry
-      if (authError && process.env.NODE_ENV === 'development' &&
-          authError.message.includes('Email not confirmed')) {
-        // Get user ID
-        const { data: { users } } = await supabaseAdmin.auth.admin.listUsers();
-        const user = users.find(u => u.email === email);
-        
-        if (user) {
-          // Auto-confirm the email
-          await supabaseAdmin.auth.admin.updateUserById(
-            user.id,
-            { email_confirm: true }
-          );
-          
-          // Update profile email_verified status
-          await supabaseAdmin
-            .from('users')
-            .update({ email_verified: true })
-            .eq('email', email);
-            
-          // Retry login
-          ({ data: authData, error: authError } = await supabase.auth.signInWithPassword({
-            email,
-            password
-          }));
-        }
-      }
-
-      if (authError) {
-        throw new Error(authError.message);
-      }
-
-      // Get user profile
+      // Verify the user profile was created
       const { data: profile, error: profileError } = await supabaseAdmin
         .from('users')
         .select(`
@@ -184,6 +101,117 @@ class AuthService {
         .single();
 
       if (profileError) {
+        console.error('Profile verification error:', profileError);
+        // Clean up auth user if profile creation failed
+        await supabaseAdmin.auth.admin.deleteUser(authData.user.id);
+        throw new Error('Profile creation failed');
+      }
+
+      return {
+        success: true,
+        user: {
+          id: profile.id,
+          email: profile.email,
+          name: profile.display_name,
+          role: profile.account_type,
+          verified: profile.is_verified,
+          phone: profile.phone,
+          phone_verified: profile.phone_verified,
+          tier: profile.tier,
+          accounts: profile.accounts,
+          ...(profile.account_type === 'business' ? {
+            business_name: profile.business_name,
+            rc_number: profile.rc_number,
+            nin: profile.nin
+          } : {
+            first_name: profile.first_name,
+            last_name: profile.last_name
+          })
+        },
+        session: authData.session,
+        message: authData.session 
+          ? 'Account created successfully'
+          : 'Account created successfully. Please check your email for verification.'
+      };
+    } catch (error) {
+      console.error('Signup error:', error);
+      return {
+        success: false,
+        error: error.message || 'Signup failed'
+      };
+    }
+  }
+
+  // Sign in user
+  async login(credentials) {
+    try {
+      const { email, password } = credentials;
+
+      if (!email || !password) {
+        throw new Error('Email and password are required');
+      }
+
+      // First try normal login
+      let { data: authData, error: authError } = await supabase.auth.signInWithPassword({
+        email,
+        password
+      });
+
+      // If login fails due to unverified email in development, auto-verify and retry
+      if (authError && process.env.NODE_ENV === 'development' &&
+          authError.message.includes('Email not confirmed')) {
+        
+        console.log('Auto-confirming email in development mode');
+        
+        // Get user ID
+        const { data: { users } } = await supabaseAdmin.auth.admin.listUsers();
+        const user = users.find(u => u.email === email);
+        
+        if (user) {
+          // Auto-confirm the email
+          await supabaseAdmin.auth.admin.updateUserById(
+            user.id,
+            { email_confirm: true }
+          );
+          
+          // Update profile email_verified status
+          await supabaseAdmin
+            .from('users')
+            .update({ 
+              email_verified: true,
+              status: 'active'
+            })
+            .eq('email', email);
+            
+          // Retry login
+          ({ data: authData, error: authError } = await supabase.auth.signInWithPassword({
+            email,
+            password
+          }));
+        }
+      }
+
+      if (authError) {
+        throw new Error(authError.message);
+      }
+
+      // Get user profile with accounts
+      const { data: profile, error: profileError } = await supabaseAdmin
+        .from('users')
+        .select(`
+          *,
+          accounts (
+            id,
+            account_number,
+            balance,
+            currency
+          )
+        `)
+        .eq('id', authData.user.id)
+        .single();
+
+      if (profileError) {
+        console.error('Profile fetch error:', profileError);
         throw new Error('Failed to fetch user profile');
       }
 
@@ -193,14 +221,16 @@ class AuthService {
           id: profile.id,
           email: profile.email,
           name: profile.display_name,
-          firstname: profile.first_name,
-          lastname: profile.last_name,
+          first_name: profile.first_name,
+          last_name: profile.last_name,
+          business_name: profile.business_name,
           role: profile.account_type,
           verified: profile.is_verified,
           phone: profile.phone,
+          phone_verified: profile.phone_verified,
           tier: profile.tier,
           accounts: profile.accounts,
-          dateOfBirth: profile.date_of_birth,
+          date_of_birth: profile.date_of_birth,
           gender: profile.gender,
           country: profile.country
         },
@@ -255,14 +285,16 @@ class AuthService {
           id: profile.id,
           email: profile.email,
           name: profile.display_name,
-          firstname: profile.first_name,
-          lastname: profile.last_name,
+          first_name: profile.first_name,
+          last_name: profile.last_name,
+          business_name: profile.business_name,
           role: profile.account_type,
           verified: profile.is_verified,
           phone: profile.phone,
+          phone_verified: profile.phone_verified,
           tier: profile.tier,
           accounts: profile.accounts,
-          dateOfBirth: profile.date_of_birth,
+          date_of_birth: profile.date_of_birth,
           gender: profile.gender,
           country: profile.country
         }
@@ -278,21 +310,64 @@ class AuthService {
   // Update user profile
   async updateUser(userId, userData) {
     try {
-      const { data: profile, error } = await supabaseAdmin
-        .from('users')
-        .update(userData)
-        .eq('id', userId)
-        .select()
-        .single();
+      // Separate auth metadata from profile data
+      const profileData = {};
+      const metadataUpdates = {};
 
-      if (error) {
-        throw new Error(error.message);
+      // Fields that go to the users table
+      const profileFields = [
+        'first_name', 'last_name', 'business_name', 'rc_number', 'nin',
+        'phone', 'date_of_birth', 'gender', 'country', 'state', 'city', 
+        'address', 'display_name'
+      ];
+
+      // Fields that go to auth metadata
+      const metadataFields = [
+        'first_name', 'last_name', 'business_name', 'rc_number', 'nin',
+        'phone', 'display_name', 'phone_verified'
+      ];
+
+      // Split the data
+      Object.keys(userData).forEach(key => {
+        if (profileFields.includes(key)) {
+          profileData[key] = userData[key];
+        }
+        if (metadataFields.includes(key)) {
+          metadataUpdates[key] = userData[key];
+        }
+      });
+
+      // Update auth metadata if needed
+      if (Object.keys(metadataUpdates).length > 0) {
+        const { error: metadataError } = await supabaseAdmin.auth.admin.updateUserById(
+          userId,
+          { user_metadata: metadataUpdates }
+        );
+        if (metadataError) {
+          console.error('Metadata update error:', metadataError);
+        }
       }
 
-      return {
-        success: true,
-        user: profile
-      };
+      // Update profile data
+      if (Object.keys(profileData).length > 0) {
+        const { data: profile, error: profileError } = await supabaseAdmin
+          .from('users')
+          .update(profileData)
+          .eq('id', userId)
+          .select()
+          .single();
+
+        if (profileError) {
+          throw new Error(profileError.message);
+        }
+
+        return {
+          success: true,
+          user: profile
+        };
+      }
+
+      return { success: true };
     } catch (error) {
       return {
         success: false,
@@ -304,7 +379,11 @@ class AuthService {
   // Reset password
   async resetPassword(email) {
     try {
-      const { error } = await supabase.auth.resetPasswordForEmail(email);
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: process.env.NODE_ENV === 'development' 
+          ? 'http://localhost:5173/reset-password'
+          : `${process.env.FRONTEND_URL}/reset-password`
+      });
       if (error) throw error;
 
       return {

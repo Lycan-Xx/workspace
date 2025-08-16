@@ -43,11 +43,33 @@ class ApiService {
         };
       }
 
-      // Prepare user metadata based on account type
+      // Validate account type specific fields
+      if (userData.account_type === 'personal') {
+        if (!userData.first_name || !userData.last_name) {
+          const error = 'First name and last name are required for personal accounts';
+          console.error('Validation error:', error);
+          return {
+            success: false,
+            error
+          };
+        }
+      } else if (userData.account_type === 'business') {
+        if (!userData.business_name) {
+          const error = 'Business name is required for business accounts';
+          console.error('Validation error:', error);
+          return {
+            success: false,
+            error
+          };
+        }
+      }
+
+      // Prepare user metadata with correct field names matching database schema
       const userMetadata = {
-        account_type: userData.accountType || 'Personal',
+        account_type: userData.account_type,
         phone: userData.phone,
-        referral_code: userData.referralCode,
+        phone_verified: userData.phone_verified || false,
+        referral_code: userData.referral_code,
         tier: 1, // Default tier
         kyc_status: {
           bvn_verified: false,
@@ -56,26 +78,20 @@ class ApiService {
         }
       };
 
-      // Add account-specific metadata
-      if (userData.accountType === 'Personal') {
-        userMetadata.first_name = userData.firstname;
-        userMetadata.last_name = userData.lastname;
-        userMetadata.full_name = `${userData.firstname} ${userData.lastname}`.trim();
-      } else if (userData.accountType === 'Business') {
-        userMetadata.business_name = userData.businessName;
-        userMetadata.rc_number = userData.rcNumber;
+      // Add account-specific metadata with correct field names
+      if (userData.account_type === 'personal') {
+        userMetadata.first_name = userData.first_name;
+        userMetadata.last_name = userData.last_name;
+        userMetadata.display_name = `${userData.first_name} ${userData.last_name}`.trim();
+      } else if (userData.account_type === 'business') {
+        userMetadata.business_name = userData.business_name;
+        userMetadata.rc_number = userData.rc_number;
         userMetadata.nin = userData.nin;
-        userMetadata.full_name = userData.businessName;
+        userMetadata.display_name = userData.business_name;
       }
 
       // Sign up user with Supabase
-      console.log('Calling Supabase auth.signUp with:', {
-        email: userData.email,
-        password: '***', // Mask password in logs
-        options: {
-          data: userMetadata
-        }
-      });
+      console.log('Calling Supabase auth.signUp with metadata:', userMetadata);
       
       const { data, error } = await this.supabase.auth.signUp({
         email: userData.email,
@@ -118,7 +134,8 @@ class ApiService {
       return {
         success: true,
         user: data.user,
-        session: data.session
+        session: data.session,
+        message: 'Account created successfully'
       };
 
     } catch (error) {
@@ -142,12 +159,10 @@ class ApiService {
         };
       }
 
-      // Sign in with Supabase (bypass email verification)
+      // Sign in with Supabase
       const { data, error } = await this.supabase.auth.signInWithPassword({
         email: credentials.email,
         password: credentials.password
-      }, {
-        shouldVerifyEmail: false
       });
 
       if (error) {
@@ -166,10 +181,16 @@ class ApiService {
         user: {
           id: data.user.id,
           email: data.user.email,
-          name: data.user.user_metadata?.full_name || data.user.email,
-          role: data.user.user_metadata?.account_type?.toLowerCase() || 'personal',
+          name: data.user.user_metadata?.display_name || data.user.email,
+          role: data.user.user_metadata?.account_type || 'personal',
           tier: data.user.user_metadata?.tier || 1,
           phone: data.user.user_metadata?.phone,
+          first_name: data.user.user_metadata?.first_name,
+          last_name: data.user.user_metadata?.last_name,
+          business_name: data.user.user_metadata?.business_name,
+          rc_number: data.user.user_metadata?.rc_number,
+          nin: data.user.user_metadata?.nin,
+          phone_verified: data.user.user_metadata?.phone_verified,
           loginTime: Date.now()
         },
         session: data.session
@@ -274,16 +295,17 @@ class ApiService {
         user: {
           id: user.id,
           email: user.email,
-          name: user.user_metadata?.full_name || user.email,
-          role: user.user_metadata?.account_type?.toLowerCase() || 'personal',
+          name: user.user_metadata?.display_name || user.email,
+          role: user.user_metadata?.account_type || 'personal',
           tier: user.user_metadata?.tier || 1,
           phone: user.user_metadata?.phone,
-          firstname: user.user_metadata?.first_name,
-          lastname: user.user_metadata?.last_name,
-          businessName: user.user_metadata?.business_name,
-          rcNumber: user.user_metadata?.rc_number,
+          first_name: user.user_metadata?.first_name,
+          last_name: user.user_metadata?.last_name,
+          business_name: user.user_metadata?.business_name,
+          rc_number: user.user_metadata?.rc_number,
           nin: user.user_metadata?.nin,
-          kycStatus: user.user_metadata?.kyc_status
+          phone_verified: user.user_metadata?.phone_verified,
+          kyc_status: user.user_metadata?.kyc_status
         }
       };
     } catch (error) {
