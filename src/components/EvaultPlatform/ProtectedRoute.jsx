@@ -1,16 +1,27 @@
 import React, { useEffect } from "react";
 import { Navigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { checkTokenExpiration } from "./store/authSlice";
+import { checkTokenExpiration, initializeAuth } from "./store/authSlice";
 
 const ProtectedRoute = ({ children }) => {
   const dispatch = useDispatch();
   const { isAuthenticated } = useSelector((state) => state.auth);
 
   useEffect(() => {
-    if (isAuthenticated) {
-      dispatch(checkTokenExpiration());
-    }
+    // Always check for valid session on protected route access
+    const checkAuth = async () => {
+      if (isAuthenticated) {
+        const isValid = dispatch(checkTokenExpiration());
+        if (!isValid) {
+          return;
+        }
+      } else {
+        // Try to initialize auth from Supabase session
+        await dispatch(initializeAuth());
+      }
+    };
+    
+    checkAuth();
   }, [dispatch, isAuthenticated]);
 
   if (!isAuthenticated) {

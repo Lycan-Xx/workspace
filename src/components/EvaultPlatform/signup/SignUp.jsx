@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { signup } from '../store/authSlice';
 import {
   UserPlus,
   Mail,
@@ -560,6 +562,7 @@ function SuccessStep({ accountType, onSignIn }) {
 // Main SignUp Component
 export default function SignUp({ onCancel }) {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const Steps = {
     ACCOUNT_TYPE: 1,
     DATA_INPUT: 2,
@@ -634,14 +637,23 @@ export default function SignUp({ onCancel }) {
 
         console.log("Final signup data being sent:", signupData);
 
-        const result = await apiService.signup(signupData);
+        // Use the signup thunk from Redux store
+        const result = await dispatch(signup(signupData));
 
         if (result.success) {
           console.log("Account created successfully:", result);
-          setCurrentStep(Steps.SUCCESS);
+          
+          if (result.requiresEmailConfirmation) {
+            // Show email confirmation message
+            alert("Please check your email to confirm your account before signing in.");
+            setCurrentStep(Steps.SUCCESS);
+          } else {
+            // User is automatically signed in
+            setCurrentStep(Steps.SUCCESS);
+          }
         } else {
           console.error("Signup failed:", result.error);
-          alert("Signup failed: " + result.error);
+          alert("Signup failed: " + (result.error || result.message));
         }
       } catch (error) {
         console.error("Signup error:", error);

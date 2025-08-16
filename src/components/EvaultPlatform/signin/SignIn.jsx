@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from 'react-redux';
-import { login } from '../store/authSlice';
+import { login, clearError } from '../store/authSlice';
 import { Eye, EyeOff, Mail, Lock } from "lucide-react";
 import { useNavigate } from 'react-router-dom';
 import ForgotPassword from './ForgotPassword'; // Import the ForgotPassword component
@@ -11,10 +11,15 @@ export default function SignIn({ onSignUp }) {
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState({});
   const [showForgotPassword, setShowForgotPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const error = useSelector(state => state.auth.error);
 
+  // Clear any existing errors when component mounts
+  React.useEffect(() => {
+    dispatch(clearError());
+  }, [dispatch]);
   const validateForm = () => {
     const newErrors = {};
     if (!email.trim() || !/\S+@\S+\.\S+/.test(email))
@@ -32,14 +37,23 @@ export default function SignIn({ onSignUp }) {
     }
 
     setErrors({});
+    setIsLoading(true);
+    
     try {
-      const success = await dispatch(login({ email, password }));
-      if (success) {
+      const resultAction = await dispatch(login({ email, password }));
+      
+      if (resultAction) {
         // Navigate to dashboard on successful login
         navigate('/dashboard');
+      } else {
+        // Error is already set in Redux state, will be displayed
+        console.log('Login failed');
       }
     } catch (error) {
+      console.error('Login error:', error);
       setErrors({ general: 'An error occurred during login' });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -137,9 +151,21 @@ export default function SignIn({ onSignUp }) {
           <div className="flex flex-col sm:flex-row justify-between gap-4 pt-4">
             <button
               type="submit"
-              className="px-6 py-3 bg-[#025798] text-white rounded-lg font-medium hover:bg-[#025798]/90 transition duration-300 flex-1"
+              disabled={isLoading}
+              className={`px-6 py-3 rounded-lg font-medium transition duration-300 flex-1 flex items-center justify-center gap-2 ${
+                isLoading 
+                  ? 'bg-gray-400 cursor-not-allowed' 
+                  : 'bg-[#025798] text-white hover:bg-[#025798]/90'
+              }`}
             >
-              Sign In
+              {isLoading ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  Signing In...
+                </>
+              ) : (
+                'Sign In'
+              )}
             </button>
           </div>
         </form>
