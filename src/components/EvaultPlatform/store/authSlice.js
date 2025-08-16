@@ -1,14 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-const users = [
-	// Personal Account Users
-	{ email: 'green@mail.com', password: 'root', name: 'Green User', role: 'personal' },
-	{ email: 'blue@mail.com', password: 'cool', name: 'Blue User', role: 'personal' },
-	// Business Account Users
-	{ email: 'red@mail.com', password: 'pass', name: 'Red Enterprise', role: 'business' },
-	{ email: 'yellow@mail.com', password: 'word', name: 'Yellow Corp', role: 'business' }
-];
-
 // Function to get the stored state from localStorage
 const getStoredState = () => {
   try {
@@ -48,14 +39,14 @@ const authSlice = createSlice({
 			state.user = action.payload;
 			state.isAuthenticated = true;
 			state.error = null;
-			// use loginTime from payload if available for persistence
-			state.lastLoginTime = action.payload.loginTime || Date.now();
+			state.lastLoginTime = Date.now();
 			saveState(state); // Save state to localStorage on login
 		},
 		loginFailure: (state, action) => {
 			state.user = null;
 			state.isAuthenticated = false;
 			state.error = action.payload;
+			state.lastLoginTime = null;
 			saveState(state); // Save state to localStorage on login failure
 		},
 		logout: (state) => {
@@ -69,16 +60,20 @@ const authSlice = createSlice({
 		setSecurityVerified: (state, action) => {
 			state.securityVerified = action.payload;
 			saveState(state); // Save state to localStorage on security verification
+		},
+		clearError: (state) => {
+			state.error = null;
+			saveState(state);
 		}
 	}
 });
 
-export const { loginSuccess, loginFailure, logout, setSecurityVerified } = authSlice.actions;
+export const { loginSuccess, loginFailure, logout, setSecurityVerified, clearError } = authSlice.actions;
 
 // Add token expiration check
 export const checkTokenExpiration = () => (dispatch, getState) => {
 	const { lastLoginTime } = getState().auth;
-	const expirationTime = 24 * 60 * 60 * 1000; // 24 hours
+	const expirationTime = 7 * 24 * 60 * 60 * 1000; // 7 days (Supabase default)
 	
 	if (lastLoginTime && Date.now() - lastLoginTime > expirationTime) {
 		dispatch(logout());
@@ -90,6 +85,8 @@ export const checkTokenExpiration = () => (dispatch, getState) => {
 // Thunk for handling login
 export const login = (credentials) => async (dispatch) => {
 	try {
+		dispatch(clearError());
+		
 		// Basic validation
 		if (!credentials.email || !credentials.password) {
 			dispatch(loginFailure('Email and password are required'));
@@ -101,10 +98,7 @@ export const login = (credentials) => async (dispatch) => {
 		const result = await apiService.login(credentials);
 
 		if (result.success) {
-			dispatch(loginSuccess({ 
-				...result.user,
-				loginTime: Date.now()
-			}));
+			dispatch(loginSuccess(result.user));
 			return true;
 		} else {
 			dispatch(loginFailure(result.error));
@@ -120,6 +114,8 @@ export const login = (credentials) => async (dispatch) => {
 // Thunk for handling signup
 export const signup = (userData) => async (dispatch) => {
 	try {
+		dispatch(clearError());
+		
 		// Import API service dynamically to avoid circular imports
 		const { apiService } = await import('../../../services/api');
 		const result = await apiService.signup(userData);
@@ -131,4 +127,28 @@ export const signup = (userData) => async (dispatch) => {
 	}
 };
 
+// Thunk for initializing auth state from Supabase session
+export const initializeAuth = () => async (dispatch) => {
+	try {
+		const { apiService } = await import('../../../services/api');
+		const sessionResult = await apiService.getSession();
+		
+		if (sessionResult.success && sessionResult.session) {
+			const userResult = await apiService.getCurrentUser();
+			
+			if (userResult.success) {
+				dispatch(loginSuccess(userResult.user));
+				return true;
+			}
+		}
+		
+		// No valid session found
+		dispatch(logout());
+		return false;
+	} catch (error) {
+		console.error('Auth initialization error:', error);
+		dispatch(logout());
+		return false;
+	}
+};
 export default authSlice.reducer;

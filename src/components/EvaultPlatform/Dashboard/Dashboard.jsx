@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useSelector } from "react-redux";
 import DashboardLayout from "./layout/DashboardLayout";
 import HomeContent from "./layout/HomeContent";
 import ContentRenderer from "./layout/ContentRenderer";
@@ -22,6 +23,8 @@ import Remita from "./Services/Remita";
 import Cable from "./Services/Cable";
 
 const Dashboard = () => {
+  const user = useSelector((state) => state.auth.user);
+  
   // State management
   const [selectedTab, setSelectedTab] = useState("Dashboard");
   const [selectedService, setSelectedService] = useState(null);
@@ -33,11 +36,11 @@ const Dashboard = () => {
   // Card data state
   const [cardData, setCardData] = useState([
     {
-      name: "Monie Point",
+      name: "eVault Card",
       balance: "₦45,450.00",
       cardNumber: "**** **** **** 5678",
       expiry: "06/26",
-      cardholder: "Jane Doe",
+      cardholder: user?.name || "Account Holder",
     },
   ]);
 

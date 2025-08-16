@@ -54,7 +54,10 @@ function PhoneNumberStep({ onSubmit, onBack }) {
     }
 
     setErrors({});
-    onSubmit({ phone: `${countryCode}${phoneNumber}` });
+    // For now, we'll use email-based password reset with Supabase
+    // In a real implementation, you'd need to implement phone-based reset
+    alert("Password reset via phone is not yet implemented. Please use email-based reset from the sign-in page.");
+    onBack();
   };
 
   const maskedNumber = phoneNumber ? `*****${phoneNumber.slice(-3)}` : "+234*****789";

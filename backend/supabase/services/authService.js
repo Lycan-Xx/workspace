@@ -130,10 +130,39 @@ class AuthService {
     try {
       const { email, password } = credentials;
 
-      const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
+      // First try normal login
+      let { data: authData, error: authError } = await supabase.auth.signInWithPassword({
         email,
         password
       });
+
+      // If login fails due to unverified email in development, auto-verify and retry
+      if (authError && process.env.NODE_ENV === 'development' &&
+          authError.message.includes('Email not confirmed')) {
+        // Get user ID
+        const { data: { users } } = await supabaseAdmin.auth.admin.listUsers();
+        const user = users.find(u => u.email === email);
+        
+        if (user) {
+          // Auto-confirm the email
+          await supabaseAdmin.auth.admin.updateUserById(
+            user.id,
+            { email_confirm: true }
+          );
+          
+          // Update profile email_verified status
+          await supabaseAdmin
+            .from('users')
+            .update({ email_verified: true })
+            .eq('email', email);
+            
+          // Retry login
+          ({ data: authData, error: authError } = await supabase.auth.signInWithPassword({
+            email,
+            password
+          }));
+        }
+      }
 
       if (authError) {
         throw new Error(authError.message);

@@ -13,7 +13,6 @@ import Cable from "./Dashboard/Services/Cable";
 import InstantPayments from "./InstantPayments/InstantPayments";
 import MainLayout from "./layout/MainLayout";
 import Footer from "./Footer";
-import PocketBaseSetup from "./setup/PocketBaseSetup";
 // Remove store and persistor imports
 
 function LoadingScreen() {
@@ -96,8 +95,7 @@ function App({ initialView = "instant-payments", onBack }) {
         );
       case "cable":
         return <Cable onBack={() => handleNavigation("instant-payments")} />;
-      case "pocketbase-setup":
-        return <PocketBaseSetup />;
+
       default:
         return (
           <InstantPayments

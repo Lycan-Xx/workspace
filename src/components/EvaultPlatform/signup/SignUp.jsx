@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { signup } from '../store/authSlice';
 import {
   UserPlus,
   Mail,
@@ -560,6 +562,7 @@ function SuccessStep({ accountType, onSignIn }) {
 // Main SignUp Component
 export default function SignUp({ onCancel }) {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const Steps = {
     ACCOUNT_TYPE: 1,
     DATA_INPUT: 2,
@@ -582,19 +585,38 @@ export default function SignUp({ onCancel }) {
 
     if (currentStep === Steps.DATA_INPUT) {
       // Store the initial form data (personal/business details)
-      updatedUserData = { ...userData, ...data };
+      updatedUserData = {
+        ...userData,
+        firstname: data.firstname || userData.firstname,
+        lastname: data.lastname || userData.lastname,
+        email: data.email || userData.email,
+        businessName: data.businessName || userData.businessName,
+        rcNumber: data.rcNumber || userData.rcNumber,
+        nin: data.nin || userData.nin
+      };
       setUserData(updatedUserData);
       console.log("Step 1 data stored:", updatedUserData);
       setCurrentStep(Steps.OTP_VERIFICATION);
     } else if (currentStep === Steps.OTP_VERIFICATION) {
       // Store the phone verification data while preserving previous data
-      updatedUserData = { ...userData, ...data };
+      updatedUserData = {
+        ...userData,
+        phone: data.phone || userData.phone,
+        otp: data.otp || userData.otp,
+        phoneVerified: data.phoneVerified || userData.phoneVerified
+      };
       setUserData(updatedUserData);
       console.log("Step 2 data stored:", updatedUserData);
       setCurrentStep(Steps.PASSWORD_INPUT);
     } else if (currentStep === Steps.PASSWORD_INPUT) {
       // Merge all data including password and referral code
-      updatedUserData = { ...userData, ...data };
+      updatedUserData = {
+        ...userData,
+        password: data.password || userData.password,
+        confirmPassword: data.confirmPassword || userData.confirmPassword,
+        vaultPhrase: data.vaultPhrase || userData.vaultPhrase,
+        referralCode: data.referralCode || userData.referralCode
+      };
       setUserData(updatedUserData);
       console.log("Account creation data:", updatedUserData);
 
@@ -634,14 +656,17 @@ export default function SignUp({ onCancel }) {
 
         console.log("Final signup data being sent:", signupData);
 
-        const result = await apiService.signup(signupData);
+        // Use the signup thunk from Redux store
+        const result = await dispatch(signup(signupData));
 
         if (result.success) {
           console.log("Account created successfully:", result);
+          
+          // Skip email confirmation check in development
           setCurrentStep(Steps.SUCCESS);
         } else {
           console.error("Signup failed:", result.error);
-          alert("Signup failed: " + result.error);
+          alert("Signup failed: " + (result.error || result.message));
         }
       } catch (error) {
         console.error("Signup error:", error);

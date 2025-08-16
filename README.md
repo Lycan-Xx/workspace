@@ -31,15 +31,55 @@ eVault is a cutting-edge digital financial management platform designed to empow
 
 ## Getting Started
 
-To get started with eVault:
+### Prerequisites
+- Node.js (v18.0.0 or later)
+- npm (v8.0.0 or later)
+- Supabase account
 
-1. Visit our website at [https://www.evault.com.ng](https://www.evault.com.ng)
-2. Create an account through [Sign up](https://app.evault.com.ng/mobile/register/)
-3. Sign in to your existing account at [Sign in](https://app.evault.com.ng/mobile/login/)
-4. Click on the "Get Started" button to start
-5. Follow the registration process to create your account
-6. Verify your email address
-7. Log in to your new eVault account
+### Setup Instructions
+
+1. **Clone the repository:**
+   ```bash
+   git clone <repository-url>
+   cd evault
+   ```
+
+2. **Install dependencies:**
+   ```bash
+   npm install
+   ```
+
+3. **Set up Supabase:**
+   - Create a new project at [https://supabase.com](https://supabase.com)
+   - Copy your project URL and anon key
+   - Update the `.env` file with your Supabase credentials:
+     ```
+     VITE_SUPABASE_URL=your_supabase_project_url
+     VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+     ```
+
+4. **Run database migrations:**
+   - In your Supabase dashboard, go to the SQL Editor
+   - Run the migration files in order:
+     - `supabase/migrations/create_user_profiles.sql`
+     - `supabase/migrations/create_accounts_table.sql`
+     - `supabase/migrations/create_transactions_table.sql`
+
+5. **Configure Supabase Authentication:**
+   - In your Supabase dashboard, go to Authentication > Settings
+   - Disable "Enable email confirmations" for development (optional)
+   - Configure your site URL and redirect URLs as needed
+
+6. **Start the development server:**
+   ```bash
+   npm run dev
+   ```
+
+7. **Test the application:**
+   - Navigate to the signup page
+   - Create a new account (Personal or Business)
+   - Sign in with your credentials
+   - Access the dashboard
 
 ## Usage
 
