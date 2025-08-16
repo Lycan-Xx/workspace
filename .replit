@@ -11,3 +11,15 @@ exposeLocalhost = true
 
 [nix]
 channel = "stable-25_05"
+
+[workflows]
+runButton = "Start Backend"
+
+[[workflows.workflow]]
+name = "Start Backend"
+author = 45816143
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd backend && npm install && npm run dev"

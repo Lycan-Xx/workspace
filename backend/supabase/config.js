@@ -17,7 +17,13 @@ export const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey, {
   auth: {
     autoRefreshToken: false,
     persistSession: false
-  }
+  },
+  // Auto-confirm emails in development
+  ...(process.env.NODE_ENV === 'development' && {
+    auth: {
+      autoConfirm: true
+    }
+  })
 });
 
 // Regular client for client-side operations

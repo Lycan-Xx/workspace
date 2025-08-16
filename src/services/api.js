@@ -1,4 +1,3 @@
-
 import { createClient } from '@supabase/supabase-js';
 
 // Supabase configuration
@@ -31,7 +30,7 @@ const getBackendUrl = () => {
     return `https://${hostname.replace('-00-', '-01-')}`;
   }
 
-  // Local development
+  // Local development - explicitly use localhost
   return 'http://localhost:5000';
 };
 

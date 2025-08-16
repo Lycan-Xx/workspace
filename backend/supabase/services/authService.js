@@ -20,7 +20,7 @@ class AuthService {
       } = userData;
 
       // Create auth user first
-      const { data: authData, error: authError } = await supabase.auth.signUp({
+      const signUpOptions = {
         email,
         password,
         options: {
@@ -29,7 +29,14 @@ class AuthService {
             display_name: accountType === 'Business' ? businessName : `${firstname} ${lastname}`
           }
         }
-      });
+      };
+
+      // Auto-confirm emails in development
+      if (process.env.NODE_ENV === 'development') {
+        signUpOptions.options.emailRedirectTo = 'http://localhost:5173/confirmed';
+      }
+
+      const { data: authData, error: authError } = await supabase.auth.signUp(signUpOptions);
 
       if (authError) {
         throw new Error(authError.message);
@@ -47,7 +54,7 @@ class AuthService {
         account_type: accountType?.toLowerCase() || 'personal',
         display_name: accountType === 'Business' ? businessName : `${firstname} ${lastname}`,
         phone_verified: false,
-        email_verified: false
+        email_verified: process.env.NODE_ENV === 'development' // Auto-verify in dev
       };
 
       if (accountType === 'Business') {
