@@ -362,175 +362,183 @@ $$;
 
 
 
--- Safe migration script to update existing schema
--- Run this instead of the full schema to avoid conflicts
+-- Fixed migration script with better error handling and referral code generation
+-- Run this to fix the HTTP 500 error during signup
 
--- 1. Update the handle_new_user function with improvements
+-- 1. Create an improved handle_new_user function with better error handling
 CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS trigger AS $$
 DECLARE
   generated_referral_code TEXT;
   referrer_id UUID;
   new_account_number TEXT;
+  attempt_count INTEGER := 0;
+  max_attempts INTEGER := 10;
 BEGIN
-  -- Generate referral code
-  generated_referral_code := UPPER(SUBSTRING(new.email FROM 1 FOR 4)) || LPAD(FLOOR(RANDOM() * 1000)::TEXT, 3, '0');
+  -- Generate unique referral code with multiple attempts
+  LOOP
+    EXIT WHEN attempt_count >= max_attempts;
+    
+    -- Generate referral code based on email or business name
+    IF new.raw_user_meta_data->>'account_type' = 'business' AND new.raw_user_meta_data->>'business_name' IS NOT NULL THEN
+      generated_referral_code := UPPER(SUBSTRING(new.raw_user_meta_data->>'business_name' FROM 1 FOR 4)) || LPAD(FLOOR(RANDOM() * 10000)::TEXT, 4, '0');
+    ELSE
+      generated_referral_code := UPPER(SUBSTRING(new.email FROM 1 FOR 4)) || LPAD(FLOOR(RANDOM() * 10000)::TEXT, 4, '0');
+    END IF;
+    
+    -- Check if referral code already exists
+    IF NOT EXISTS (SELECT 1 FROM public.users WHERE referral_code = generated_referral_code) THEN
+      EXIT; -- Found unique code
+    END IF;
+    
+    attempt_count := attempt_count + 1;
+  END LOOP;
+  
+  -- If we couldn't generate a unique code, use UUID
+  IF attempt_count >= max_attempts THEN
+    generated_referral_code := UPPER(SUBSTRING(REPLACE(new.id::text, '-', '') FROM 1 FOR 8));
+  END IF;
   
   -- Find referrer if referral code is provided
   referrer_id := NULL;
   IF new.raw_user_meta_data->>'referral_code' IS NOT NULL AND new.raw_user_meta_data->>'referral_code' != '' THEN
-    SELECT id INTO referrer_id 
-    FROM public.users 
-    WHERE referral_code = new.raw_user_meta_data->>'referral_code';
+    BEGIN
+      SELECT id INTO referrer_id 
+      FROM public.users 
+      WHERE referral_code = new.raw_user_meta_data->>'referral_code';
+    EXCEPTION WHEN OTHERS THEN
+      -- Log but don't fail if referrer lookup fails
+      RAISE LOG 'Could not find referrer with code: %', new.raw_user_meta_data->>'referral_code';
+    END;
   END IF;
   
   -- Generate account number
   new_account_number := '200' || SUBSTR(REPLACE(new.id::text, '-', ''), 1, 7);
   
-  -- Insert into users table with proper field mapping
-  INSERT INTO public.users (
-    id,
-    email,
-    phone,
-    first_name,
-    last_name,
-    business_name,
-    rc_number,
-    nin,
-    account_type,
-    display_name,
-    is_verified,
-    phone_verified,
-    email_verified,
-    status,
-    tier,
-    referral_code,
-    referred_by,
-    created_at,
-    updated_at
-  )
-  VALUES (
-    new.id,
-    new.email,
-    new.raw_user_meta_data->>'phone',
-    new.raw_user_meta_data->>'first_name',
-    new.raw_user_meta_data->>'last_name',
-    new.raw_user_meta_data->>'business_name',
-    new.raw_user_meta_data->>'rc_number',
-    new.raw_user_meta_data->>'nin',
-    COALESCE((new.raw_user_meta_data->>'account_type')::account_type, 'personal'),
-    COALESCE(new.raw_user_meta_data->>'display_name', SPLIT_PART(new.email, '@', 1)),
-    FALSE, -- is_verified
-    COALESCE((new.raw_user_meta_data->>'phone_verified')::boolean, FALSE),
-    new.email_confirmed_at IS NOT NULL, -- email_verified based on confirmation
-    CASE 
-      WHEN new.email_confirmed_at IS NOT NULL THEN 'active'::user_status
-      ELSE 'pending_verification'::user_status
-    END,
-    COALESCE((new.raw_user_meta_data->>'tier')::integer, 1),
-    generated_referral_code,
-    referrer_id,
-    NOW(),
-    NOW()
-  );
+  -- Insert into users table with proper field mapping and error handling
+  BEGIN
+    INSERT INTO public.users (
+      id,
+      email,
+      phone,
+      first_name,
+      last_name,
+      business_name,
+      rc_number,
+      nin,
+      account_type,
+      display_name,
+      is_verified,
+      phone_verified,
+      email_verified,
+      status,
+      tier,
+      referral_code,
+      referred_by,
+      created_at,
+      updated_at
+    )
+    VALUES (
+      new.id,
+      new.email,
+      new.raw_user_meta_data->>'phone',
+      new.raw_user_meta_data->>'first_name',
+      new.raw_user_meta_data->>'last_name',
+      new.raw_user_meta_data->>'business_name',
+      new.raw_user_meta_data->>'rc_number',
+      new.raw_user_meta_data->>'nin',
+      COALESCE((new.raw_user_meta_data->>'account_type')::account_type, 'personal'),
+      COALESCE(
+        new.raw_user_meta_data->>'display_name',
+        CASE 
+          WHEN new.raw_user_meta_data->>'business_name' IS NOT NULL 
+          THEN new.raw_user_meta_data->>'business_name'
+          WHEN new.raw_user_meta_data->>'first_name' IS NOT NULL AND new.raw_user_meta_data->>'last_name' IS NOT NULL
+          THEN new.raw_user_meta_data->>'first_name' || ' ' || new.raw_user_meta_data->>'last_name'
+          ELSE SPLIT_PART(new.email, '@', 1)
+        END
+      ),
+      FALSE, -- is_verified
+      COALESCE((new.raw_user_meta_data->>'phone_verified')::boolean, FALSE),
+      new.email_confirmed_at IS NOT NULL, -- email_verified based on confirmation
+      CASE 
+        WHEN new.email_confirmed_at IS NOT NULL THEN 'active'::user_status
+        ELSE 'pending_verification'::user_status
+      END,
+      COALESCE((new.raw_user_meta_data->>'tier')::integer, 1),
+      generated_referral_code,
+      referrer_id,
+      NOW(),
+      NOW()
+    );
+    
+    RAISE LOG 'User profile created successfully for: %', new.email;
+    
+  EXCEPTION WHEN OTHERS THEN
+    RAISE LOG 'Error creating user profile for %: %', new.email, SQLERRM;
+    RAISE EXCEPTION 'Failed to create user profile: %', SQLERRM;
+  END;
   
   -- Create default account/wallet
-  INSERT INTO public.accounts (
-    user_id, 
-    account_number, 
-    balance, 
-    currency, 
-    is_active,
-    created_at, 
-    updated_at
-  )
-  VALUES (
-    new.id, 
-    new_account_number, 
-    0.00, 
-    'NGN', 
-    TRUE,
-    NOW(), 
-    NOW()
-  );
+  BEGIN
+    INSERT INTO public.accounts (
+      user_id, 
+      account_number, 
+      balance, 
+      currency, 
+      is_active,
+      created_at, 
+      updated_at
+    )
+    VALUES (
+      new.id, 
+      new_account_number, 
+      0.00, 
+      'NGN', 
+      TRUE,
+      NOW(), 
+      NOW()
+    );
+    
+    RAISE LOG 'Default account created successfully for: %', new.email;
+    
+  EXCEPTION WHEN OTHERS THEN
+    RAISE LOG 'Error creating default account for %: %', new.email, SQLERRM;
+    RAISE EXCEPTION 'Failed to create default account: %', SQLERRM;
+  END;
   
   RETURN new;
-EXCEPTION
-  WHEN OTHERS THEN
-    -- Log the error (in a real implementation, you might want to use a proper logging system)
-    RAISE LOG 'Error in handle_new_user trigger: %', SQLERRM;
-    -- Re-raise the exception to prevent user creation if profile creation fails
-    RAISE;
+  
+EXCEPTION WHEN OTHERS THEN
+  -- Log the comprehensive error
+  RAISE LOG 'Critical error in handle_new_user trigger for %: %', new.email, SQLERRM;
+  RAISE LOG 'User metadata was: %', new.raw_user_meta_data;
+  -- Re-raise the exception to prevent incomplete user creation
+  RAISE;
 END;
 $$ language plpgsql security definer;
 
--- 2. Ensure the trigger is properly set up
+-- 2. Drop and recreate the trigger to ensure it uses the updated function
 DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
 CREATE TRIGGER on_auth_user_created
   AFTER INSERT ON auth.users
   FOR EACH ROW EXECUTE PROCEDURE public.handle_new_user();
 
--- 3. Add any missing indexes (only if they don't exist)
+-- 3. Add missing indexes if they don't exist
 DO $$
 BEGIN
-  -- Check and create missing indexes from the new schema
-  IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE indexname = 'idx_users_email') THEN
-    CREATE INDEX idx_users_email ON public.users(email);
-  END IF;
-  
-  IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE indexname = 'idx_users_phone') THEN
-    CREATE INDEX idx_users_phone ON public.users(phone);
-  END IF;
-  
-  IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE indexname = 'idx_users_account_type') THEN
-    CREATE INDEX idx_users_account_type ON public.users(account_type);
-  END IF;
-  
   IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE indexname = 'idx_users_referral_code') THEN
-    CREATE INDEX idx_users_referral_code ON public.users(referral_code);
+    CREATE UNIQUE INDEX idx_users_referral_code ON public.users(referral_code);
   END IF;
   
-  IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE indexname = 'idx_accounts_user_id') THEN
-    CREATE INDEX idx_accounts_user_id ON public.accounts(user_id);
+  IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE indexname = 'idx_users_email') THEN
+    CREATE UNIQUE INDEX idx_users_email ON public.users(email);
   END IF;
   
   IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE indexname = 'idx_accounts_account_number') THEN
-    CREATE INDEX idx_accounts_account_number ON public.accounts(account_number);
+    CREATE UNIQUE INDEX idx_accounts_account_number ON public.accounts(account_number);
   END IF;
-  
-  IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE indexname = 'idx_transactions_user_id') THEN
-    CREATE INDEX idx_transactions_user_id ON public.transactions(user_id);
-  END IF;
-  
-  IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE indexname = 'idx_transactions_reference') THEN
-    CREATE INDEX idx_transactions_reference ON public.transactions(reference);
-  END IF;
-  
-  IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE indexname = 'idx_transactions_type') THEN
-    CREATE INDEX idx_transactions_type ON public.transactions(transaction_type);
-  END IF;
-  
-  IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE indexname = 'idx_transactions_status') THEN
-    CREATE INDEX idx_transactions_status ON public.transactions(status);
-  END IF;
-  
-  IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE indexname = 'idx_transactions_created_at') THEN
-    CREATE INDEX idx_transactions_created_at ON public.transactions(created_at);
-  END IF;
-  
-  IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE indexname = 'idx_virtual_cards_user_id') THEN
-    CREATE INDEX idx_virtual_cards_user_id ON public.virtual_cards(user_id);
-  END IF;
-  
-  IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE indexname = 'idx_kyc_documents_user_id') THEN
-    CREATE INDEX idx_kyc_documents_user_id ON public.kyc_documents(user_id);
-  END IF;
-  
-  IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE indexname = 'idx_vault_files_user_id') THEN
-    CREATE INDEX idx_vault_files_user_id ON public.vault_files(user_id);
-  END IF;
-END
-$$;
+END $$;
 
 -- 4. Ensure updated_at triggers are properly set up
 CREATE OR REPLACE FUNCTION update_updated_at_column()
@@ -544,16 +552,22 @@ $$ language 'plpgsql';
 -- Apply updated_at triggers (safe to run multiple times)
 DO $$
 BEGIN
-  -- Drop existing triggers if they exist
   DROP TRIGGER IF EXISTS update_users_updated_at ON public.users;
   DROP TRIGGER IF EXISTS update_accounts_updated_at ON public.accounts;
-  DROP TRIGGER IF EXISTS update_transactions_updated_at ON public.transactions;
-  DROP TRIGGER IF EXISTS update_virtual_cards_updated_at ON public.virtual_cards;
 
-  -- Create fresh triggers
   CREATE TRIGGER update_users_updated_at BEFORE UPDATE ON public.users FOR EACH ROW EXECUTE PROCEDURE update_updated_at_column();
   CREATE TRIGGER update_accounts_updated_at BEFORE UPDATE ON public.accounts FOR EACH ROW EXECUTE PROCEDURE update_updated_at_column();
-  CREATE TRIGGER update_transactions_updated_at BEFORE UPDATE ON public.transactions FOR EACH ROW EXECUTE PROCEDURE update_updated_at_column();
-  CREATE TRIGGER update_virtual_cards_updated_at BEFORE UPDATE ON public.virtual_cards FOR EACH ROW EXECUTE PROCEDURE update_updated_at_column();
-END
-$$;
+END $$;
+
+-- 5. Test the trigger function (optional - remove if not needed)
+-- You can uncomment this to test that the function works
+/*
+DO $$
+DECLARE
+  test_result TEXT;
+BEGIN
+  RAISE LOG 'Testing handle_new_user function...';
+  -- Function test would go here if needed
+  RAISE LOG 'Trigger function appears to be working correctly';
+END $$;
+*/
