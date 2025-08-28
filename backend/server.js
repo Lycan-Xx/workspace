@@ -2,12 +2,31 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import fs from 'fs';
+
+// Import services and routes
 import apiService from './supabase/services/apiService.js';
+import AuthMiddleware from './middleware/auth.js';
+import kycRoutes from './routes/kyc.routes.js';
+import transactionRoutes from './routes/transactions.routes.js';
+import accountRoutes from './routes/accounts.routes.js';
+
+// ES6 module path resolution
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+
+// Create uploads directory if it doesn't exist
+const uploadsDir = path.join(__dirname, 'uploads', 'kyc');
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir, { recursive: true });
+}
 
 // Middleware
 app.use(cors({
@@ -19,17 +38,33 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
+// Serve uploaded files
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
   res.json({ 
     status: 'OK', 
-    message: 'Supabase Backend Server Running',
-    timestamp: new Date().toISOString()
+    message: 'eVault Backend Server Running',
+    timestamp: new Date().toISOString(),
+    version: '2.0.0',
+    environment: process.env.NODE_ENV || 'development',
+    services: {
+      authentication: 'active',
+      kyc: 'active',
+      transactions: 'active',
+      accounts: 'active'
+    }
   });
 });
+
+// API Routes
+app.use('/api/kyc', kycRoutes);
+app.use('/api/transactions', transactionRoutes);
+app.use('/api/accounts', accountRoutes);
 
 // Authentication routes
 app.post('/api/auth/signup', async (req, res) => {
@@ -184,9 +219,23 @@ app.use((req, res) => {
 });
 
 app.listen(PORT, 'localhost', () => {
-  console.log(`🚀 Supabase Backend Server running on port ${PORT}`);
+  console.log(`🚀 eVault Backend Server running on port ${PORT}`);
   console.log(`📡 Health check: http://localhost:${PORT}/api/health`);
+  console.log(`🔐 Authentication: Supabase JWT integration`);
+  console.log(`💳 Services: KYC, Transactions, Accounts, Payments`);
   console.log(`🌐 Server accessible at: https://${process.env.REPL_SLUG || 'your-repl'}.${process.env.REPL_OWNER || 'your-username'}.replit.dev`);
+  
+  if (process.env.NODE_ENV === 'development') {
+    console.log(`\n📋 Available Endpoints:`);
+    console.log(`   GET  /api/health - Server health check`);
+    console.log(`   POST /api/auth/* - Authentication endpoints`);
+    console.log(`   GET  /api/kyc/status - KYC status`);
+    console.log(`   POST /api/kyc/bvn - Update BVN`);
+    console.log(`   POST /api/transactions - Create transaction`);
+    console.log(`   GET  /api/transactions - Get transactions`);
+    console.log(`   GET  /api/accounts - Get user accounts`);
+    console.log(`   GET  /api/accounts/primary/balance - Get balance`);
+  }
 });
 
 export default app;

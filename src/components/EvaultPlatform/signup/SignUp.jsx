@@ -26,6 +26,36 @@ function ProgressiveLine({ currentStep, totalSteps }) {
   );
 }
 
+// Simple Error Message Component
+function ErrorMessage({ message, onDismiss }) {
+  if (!message) return null;
+  
+  return (
+    <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-4 flex justify-between items-center">
+      <span className="text-sm">{message}</span>
+      {onDismiss && (
+        <button 
+          onClick={onDismiss}
+          className="text-red-500 hover:text-red-700 ml-2"
+        >
+          ×
+        </button>
+      )}
+    </div>
+  );
+}
+
+// Simple Success Message Component
+function SuccessMessage({ message }) {
+  if (!message) return null;
+  
+  return (
+    <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg mb-4">
+      <span className="text-sm">{message}</span>
+    </div>
+  );
+}
+
 // Account Type Step Component
 function AccountTypeStep({ onSelect }) {
   return (
@@ -135,42 +165,32 @@ function OTPVerificationStep({ onSubmit, onBack }) {
     // Simulate OTP sending
     setIsPhoneVerified(true);
     setCountdown(60);
-
-    // In a real app, you would call an API to send OTP
     console.log(`Sending OTP to ${countryCode}${phoneNumber}`);
-
-    // Clear any errors
     setErrors({});
   };
 
   const handleResendOTP = () => {
     if (countdown === 0) {
-      // Resend OTP logic
       setCountdown(60);
       console.log(`Resending OTP to ${countryCode}${phoneNumber}`);
     }
   };
 
   const handleContinue = () => {
-    // Check if OTP is complete
     const otpValue = otp.join("");
     if (otpValue.length !== 6) {
       setErrors({ otp: "Please enter the complete 6-digit OTP" });
       return;
     }
 
-    // Simulate OTP verification
-    // In a real app, you would verify the OTP with an API
     console.log(`Verifying OTP: ${otpValue}`);
-
-    // If verification is successful, proceed to the next step with phone data
+    
     const phoneData = {
       phone: `${countryCode}${phoneNumber}`,
       otp: otpValue,
       phone_verified: true
     };
     
-    console.log("OTP verification data:", phoneData);
     onSubmit(phoneData);
   };
 
@@ -285,66 +305,187 @@ function OTPVerificationStep({ onSubmit, onBack }) {
 }
 
 // Data Input Step Component
-function DataInputStep({ accountType, step, onSubmit, onBack, userData = {} }) {
+function DataInputStep({ accountType, step, onSubmit, onBack, userData = {}, loading = false, error = null, onClearError }) {
   const [formData, setFormData] = useState({
-    first_name: userData.first_name || "",
-    last_name: userData.last_name || "",
+    firstname: userData.firstname || "",
+    lastname: userData.lastname || "",
     email: userData.email || "",
-    business_name: userData.business_name || "",
-    rc_number: userData.rc_number || "",
+    businessName: userData.businessName || "",
+    rcNumber: userData.rcNumber || "",
     nin: userData.nin || "",
     password: userData.password || "",
     confirmPassword: userData.confirmPassword || "",
-    vault_phrase: userData.vault_phrase || "",
-    referral_code: userData.referral_code || "",
+    vaultPhrase: userData.vaultPhrase || "",
+    referralCode: userData.referralCode || "",
   });
 
   const [errors, setErrors] = useState({});
+  const [fieldTouched, setFieldTouched] = useState({});
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
+  // Enhanced validation functions
+  const validateEmail = (email) => {
+    if (!email) return "Email is required";
+    const emailRegex = /^[^\s@]+@[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return "Please enter a valid email address";
+    }
+    return null;
+  };
+
+  const validateField = (name, value) => {
+    switch (name) {
+      case 'firstname':
+        if (!value.trim()) return "First name is required";
+        if (value.trim().length < 2) return "First name must be at least 2 characters";
+        return null;
+        
+      case 'lastname':
+        if (!value.trim()) return "Last name is required";
+        if (value.trim().length < 2) return "Last name must be at least 2 characters";
+        return null;
+        
+      case 'businessName':
+        if (!value.trim()) return "Business name is required";
+        if (value.trim().length < 2) return "Business name must be at least 2 characters";
+        return null;
+        
+      case 'email':
+        return validateEmail(value);
+        
+      case 'rcNumber':
+        if (accountType === 'business' && !value.trim()) return "RC number is required for business accounts";
+        if (value && value.trim().length < 6) return "RC number must be at least 6 characters";
+        return null;
+        
+      case 'nin':
+        if (accountType === 'business' && !value.trim()) return "NIN is required for business accounts";
+        if (value && value.trim().length !== 11) return "NIN must be exactly 11 digits";
+        if (value && !/^\d+$/.test(value.trim())) return "NIN must contain only numbers";
+        return null;
+        
+      case 'password':
+        if (!value) return "Password is required";
+        if (value.length < 6) return "Password must be at least 6 characters";
+        return null;
+        
+      case 'confirmPassword':
+        if (!value) return "Please confirm your password";
+        if (value !== formData.password) return "Passwords do not match";
+        return null;
+        
+      default:
+        return null;
+    }
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
+    
     setFormData((prev) => ({
       ...prev,
       [name]: value,
+    }));
+
+    // Clear error for this field when user starts typing
+    if (errors[name]) {
+      setErrors((prev) => ({
+        ...prev,
+        [name]: null
+      }));
+    }
+
+    // Real-time validation for touched fields
+    if (fieldTouched[name]) {
+      const fieldError = validateField(name, value);
+      if (fieldError) {
+        setErrors((prev) => ({
+          ...prev,
+          [name]: fieldError
+        }));
+      }
+    }
+
+    // Special case: validate confirmPassword when password changes
+    if (name === 'password' && fieldTouched.confirmPassword && formData.confirmPassword) {
+      const confirmError = validateField('confirmPassword', formData.confirmPassword);
+      setErrors((prev) => ({
+        ...prev,
+        confirmPassword: confirmError
+      }));
+    }
+  };
+
+  const handleBlur = (e) => {
+    const { name, value } = e.target;
+    
+    setFieldTouched((prev) => ({
+      ...prev,
+      [name]: true
+    }));
+
+    const fieldError = validateField(name, value);
+    setErrors((prev) => ({
+      ...prev,
+      [name]: fieldError
     }));
   };
 
   const validateStep1 = () => {
     const newErrors = {};
-    if (accountType === "personal") {
-      if (!formData.first_name) newErrors.first_name = "First name is required.";
-      if (!formData.last_name) newErrors.last_name = "Last name is required.";
-      if (!formData.email) newErrors.email = "Email is required.";
-    } else if (accountType === "business") {
-      if (!formData.business_name)
-        newErrors.business_name = "Business name is required.";
-      if (!formData.email) newErrors.email = "Email is required.";
-      if (!formData.rc_number) newErrors.rc_number = "RC number is required.";
-      if (!formData.nin) newErrors.nin = "NIN is required.";
-    }
+    const fieldsToValidate = accountType === "personal" 
+      ? ['firstname', 'lastname', 'email']
+      : ['businessName', 'email', 'rcNumber', 'nin'];
+
+    fieldsToValidate.forEach(field => {
+      const error = validateField(field, formData[field]);
+      if (error) {
+        newErrors[field] = error;
+      }
+    });
+
     return newErrors;
   };
 
   const validateStep4 = () => {
     const newErrors = {};
-    if (!formData.password) newErrors.password = "Password is required.";
-    if (formData.password && formData.password.length < 6)
-      newErrors.password = "Password must be at least 6 characters.";
-    if (formData.password !== formData.confirmPassword)
-      newErrors.confirmPassword = "Passwords do not match.";
+    const fieldsToValidate = ['password', 'confirmPassword'];
+
+    fieldsToValidate.forEach(field => {
+      const error = validateField(field, formData[field]);
+      if (error) {
+        newErrors[field] = error;
+      }
+    });
+
     return newErrors;
   };
 
   const handleContinue = (e) => {
     e.preventDefault();
+    
+    // Clear any previous global error
+    if (onClearError) onClearError();
+    
+    // Mark all relevant fields as touched
+    const fieldsToTouch = step === 1 
+      ? (accountType === "personal" ? ['firstname', 'lastname', 'email'] : ['businessName', 'email', 'rcNumber', 'nin'])
+      : ['password', 'confirmPassword'];
+    
+    const newTouched = {};
+    fieldsToTouch.forEach(field => {
+      newTouched[field] = true;
+    });
+    setFieldTouched(prev => ({ ...prev, ...newTouched }));
+
     const newErrors = step === 1 ? validateStep1() : validateStep4();
+    
     if (Object.keys(newErrors).length === 0) {
-      console.log(`Step ${step} form data:`, formData);
+      console.log(`Step ${step} form data validated`);
       onSubmit(formData);
     } else {
-      console.log(`Step ${step} validation errors:`, newErrors);
+      console.log(`Step ${step} validation failed`);
       setErrors(newErrors);
     }
   };
@@ -360,6 +501,11 @@ function DataInputStep({ accountType, step, onSubmit, onBack, userData = {} }) {
             ? "Business Details"
             : "Set Your Password"}
       </h3>
+
+      {error && step === 4 && (
+        <ErrorMessage message={error} onDismiss={onClearError} />
+      )}
+
       <form className="space-y-4">
         {step === 1 && accountType === "personal" && (
           <>
@@ -367,170 +513,237 @@ function DataInputStep({ accountType, step, onSubmit, onBack, userData = {} }) {
               <div className="flex-1">
                 <input
                   type="text"
-                  name="first_name"
+                  name="firstname"
                   placeholder="First Name"
-                  value={formData.first_name}
+                  value={formData.firstname}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-[#025798] focus:ring-2 focus:ring-[#025798]/20 transition-all outline-none"
+                  onBlur={handleBlur}
+                  className={`w-full px-4 py-3 border-2 rounded-lg focus:ring-2 focus:ring-[#025798]/20 transition-all outline-none ${
+                    errors.firstname 
+                      ? 'border-red-500 focus:border-red-500' 
+                      : 'border-gray-300 focus:border-[#025798]'
+                  }`}
                 />
-                {errors.first_name && (
-                  <p className="text-red-500 text-sm mt-1">
-                    {errors.first_name}
-                  </p>
+                {errors.firstname && (
+                  <p className="text-red-500 text-sm mt-1">{errors.firstname}</p>
                 )}
               </div>
               <div className="flex-1">
                 <input
                   type="text"
-                  name="last_name"
+                  name="lastname"
                   placeholder="Last Name"
-                  value={formData.last_name}
+                  value={formData.lastname}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-[#025798] focus:ring-2 focus:ring-[#025798]/20 transition-all outline-none"
+                  onBlur={handleBlur}
+                  className={`w-full px-4 py-3 border-2 rounded-lg focus:ring-2 focus:ring-[#025798]/20 transition-all outline-none ${
+                    errors.lastname 
+                      ? 'border-red-500 focus:border-red-500' 
+                      : 'border-gray-300 focus:border-[#025798]'
+                  }`}
                 />
-                {errors.last_name && (
-                  <p className="text-red-500 text-sm mt-1">{errors.last_name}</p>
+                {errors.lastname && (
+                  <p className="text-red-500 text-sm mt-1">{errors.lastname}</p>
                 )}
               </div>
             </div>
-            <input
-              type="email"
-              name="email"
-              placeholder="Email Address"
-              value={formData.email}
-              onChange={handleChange}
-              className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-[#025798] focus:ring-2 focus:ring-[#025798]/20 transition-all outline-none"
-            />
-            {errors.email && (
-              <p className="text-red-500 text-sm mt-1">{errors.email}</p>
-            )}
+            <div>
+              <input
+                type="email"
+                name="email"
+                placeholder="Email Address"
+                value={formData.email}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                className={`w-full px-4 py-3 border-2 rounded-lg focus:ring-2 focus:ring-[#025798]/20 transition-all outline-none ${
+                  errors.email 
+                    ? 'border-red-500 focus:border-red-500' 
+                    : 'border-gray-300 focus:border-[#025798]'
+                }`}
+              />
+              {errors.email && (
+                <p className="text-red-500 text-sm mt-1">{errors.email}</p>
+              )}
+            </div>
           </>
         )}
         {step === 1 && accountType === "business" && (
           <>
-            <input
-              type="text"
-              name="business_name"
-              placeholder="Business Name"
-              value={formData.business_name}
-              onChange={handleChange}
-              className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-[#025798] focus:ring-2 focus:ring-[#025798]/20 transition-all outline-none"
-            />
-            {errors.business_name && (
-              <p className="text-red-500 text-sm mt-1">{errors.business_name}</p>
-            )}
-            <input
-              type="email"
-              name="email"
-              placeholder="Email Address"
-              value={formData.email}
-              onChange={handleChange}
-              className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-[#025798] focus:ring-2 focus:ring-[#025798]/20 transition-all outline-none"
-            />
-            {errors.email && (
-              <p className="text-red-500 text-sm mt-1">{errors.email}</p>
-            )}
-            <input
-              type="text"
-              name="rc_number"
-              placeholder="RC Number"
-              value={formData.rc_number}
-              onChange={handleChange}
-              className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-[#025798] focus:ring-2 focus:ring-[#025798]/20 transition-all outline-none"
-            />
-            {errors.rc_number && (
-              <p className="text-red-500 text-sm mt-1">{errors.rc_number}</p>
-            )}
-            <input
-              type="text"
-              name="nin"
-              placeholder="NIN"
-              value={formData.nin}
-              onChange={handleChange}
-              className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-[#025798] focus:ring-2 focus:ring-[#025798]/20 transition-all outline-none"
-            />
-            {errors.nin && (
-              <p className="text-red-500 text-sm mt-1">{errors.nin}</p>
-            )}
+            <div>
+              <input
+                type="text"
+                name="businessName"
+                placeholder="Business Name"
+                value={formData.businessName}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                className={`w-full px-4 py-3 border-2 rounded-lg focus:ring-2 focus:ring-[#025798]/20 transition-all outline-none ${
+                  errors.businessName 
+                    ? 'border-red-500 focus:border-red-500' 
+                    : 'border-gray-300 focus:border-[#025798]'
+                }`}
+              />
+              {errors.businessName && (
+                <p className="text-red-500 text-sm mt-1">{errors.businessName}</p>
+              )}
+            </div>
+            <div>
+              <input
+                type="email"
+                name="email"
+                placeholder="Email Address"
+                value={formData.email}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                className={`w-full px-4 py-3 border-2 rounded-lg focus:ring-2 focus:ring-[#025798]/20 transition-all outline-none ${
+                  errors.email 
+                    ? 'border-red-500 focus:border-red-500' 
+                    : 'border-gray-300 focus:border-[#025798]'
+                }`}
+              />
+              {errors.email && (
+                <p className="text-red-500 text-sm mt-1">{errors.email}</p>
+              )}
+            </div>
+            <div>
+              <input
+                type="text"
+                name="rcNumber"
+                placeholder="RC Number"
+                value={formData.rcNumber}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                className={`w-full px-4 py-3 border-2 rounded-lg focus:ring-2 focus:ring-[#025798]/20 transition-all outline-none ${
+                  errors.rcNumber 
+                    ? 'border-red-500 focus:border-red-500' 
+                    : 'border-gray-300 focus:border-[#025798]'
+                }`}
+              />
+              {errors.rcNumber && (
+                <p className="text-red-500 text-sm mt-1">{errors.rcNumber}</p>
+              )}
+            </div>
+            <div>
+              <input
+                type="text"
+                name="nin"
+                placeholder="NIN (11 digits)"
+                value={formData.nin}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                maxLength="11"
+                className={`w-full px-4 py-3 border-2 rounded-lg focus:ring-2 focus:ring-[#025798]/20 transition-all outline-none ${
+                  errors.nin 
+                    ? 'border-red-500 focus:border-red-500' 
+                    : 'border-gray-300 focus:border-[#025798]'
+                }`}
+              />
+              {errors.nin && (
+                <p className="text-red-500 text-sm mt-1">{errors.nin}</p>
+              )}
+            </div>
           </>
         )}
         {step === 4 && (
           <>
-            <div className="relative">
-              <input
-                type={showPassword ? "text" : "password"}
-                name="password"
-                placeholder="Password"
-                value={formData.password}
-                onChange={handleChange}
-                className="w-full px-4 py-3 pr-12 border-2 border-gray-300 rounded-lg focus:border-[#025798] focus:ring-2 focus:ring-[#025798]/20 transition-all outline-none"
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
-              >
-                {showPassword ? (
-                  <EyeOff className="h-5 w-5" />
-                ) : (
-                  <Eye className="h-5 w-5" />
-                )}
-              </button>
+            <div>
+              <div className="relative">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  name="password"
+                  placeholder="Password (minimum 6 characters)"
+                  value={formData.password}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  className={`w-full px-4 py-3 pr-12 border-2 rounded-lg focus:ring-2 focus:ring-[#025798]/20 transition-all outline-none ${
+                    errors.password 
+                      ? 'border-red-500 focus:border-red-500' 
+                      : 'border-gray-300 focus:border-[#025798]'
+                  }`}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                >
+                  {showPassword ? (
+                    <EyeOff className="h-5 w-5" />
+                  ) : (
+                    <Eye className="h-5 w-5" />
+                  )}
+                </button>
+              </div>
+              {errors.password && (
+                <p className="text-red-500 text-sm mt-1">{errors.password}</p>
+              )}
             </div>
-            {errors.password && (
-              <p className="text-red-500 text-sm mt-1">{errors.password}</p>
-            )}
-            <div className="relative">
-              <input
-                type={showConfirmPassword ? "text" : "password"}
-                name="confirmPassword"
-                placeholder="Confirm Password"
-                value={formData.confirmPassword}
-                onChange={handleChange}
-                className="w-full px-4 py-3 pr-12 border-2 border-gray-300 rounded-lg focus:border-[#025798] focus:ring-2 focus:ring-[#025798]/20 transition-all outline-none"
-              />
-              <button
-                type="button"
-                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
-              >
-                {showConfirmPassword ? (
-                  <EyeOff className="h-5 w-5" />
-                ) : (
-                  <Eye className="h-5 w-5" />
-                )}
-              </button>
+            <div>
+              <div className="relative">
+                <input
+                  type={showConfirmPassword ? "text" : "password"}
+                  name="confirmPassword"
+                  placeholder="Confirm Password"
+                  value={formData.confirmPassword}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  className={`w-full px-4 py-3 pr-12 border-2 rounded-lg focus:ring-2 focus:ring-[#025798]/20 transition-all outline-none ${
+                    errors.confirmPassword 
+                      ? 'border-red-500 focus:border-red-500' 
+                      : 'border-gray-300 focus:border-[#025798]'
+                  }`}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                >
+                  {showConfirmPassword ? (
+                    <EyeOff className="h-5 w-5" />
+                  ) : (
+                    <Eye className="h-5 w-5" />
+                  )}
+                </button>
+              </div>
+              {errors.confirmPassword && (
+                <p className="text-red-500 text-sm mt-1">{errors.confirmPassword}</p>
+              )}
             </div>
-
-            {errors.confirmPassword && (
-              <p className="text-red-500 text-sm mt-1">
-                {errors.confirmPassword}
-              </p>
-            )}
-            <input
-              type="text"
-              name="referral_code"
-              placeholder="Referral Code (Optional)"
-              value={formData.referral_code}
-              onChange={handleChange}
-              className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-[#025798] focus:ring-2 focus:ring-[#025798]/20 transition-all outline-none"
-            />
+            <div>
+              <input
+                type="text"
+                name="referralCode"
+                placeholder="Referral Code (Optional)"
+                value={formData.referralCode}
+                onChange={handleChange}
+                className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-[#025798] focus:ring-2 focus:ring-[#025798]/20 transition-all outline-none"
+              />
+            </div>
           </>
         )}
+        
         <div className="flex flex-col sm:flex-row justify-between gap-4 pt-4">
           <button
             type="button"
             onClick={onBack}
-            className="px-6 py-3 bg-gray-300 text-gray-800 rounded-lg font-medium hover:bg-gray-400 transition duration-300"
+            disabled={loading}
+            className="px-6 py-3 bg-gray-300 text-gray-800 rounded-lg font-medium hover:bg-gray-400 transition duration-300 disabled:opacity-50"
           >
             Back
           </button>
           <button
             type="submit"
             onClick={handleContinue}
-            className="px-6 py-3 bg-[#025798] text-white rounded-lg font-medium hover:bg-[#025798]/90 transition duration-300"
+            disabled={loading}
+            className="px-6 py-3 bg-[#025798] text-white rounded-lg font-medium hover:bg-[#025798]/90 transition duration-300 disabled:opacity-50 min-w-[120px] flex items-center justify-center"
           >
-            {step === 4 ? "Submit" : "Continue"}
+            {loading ? (
+              <div className="flex items-center">
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                {step === 4 ? "Creating..." : "Processing..."}
+              </div>
+            ) : (
+              step === 4 ? "Create Account" : "Continue"
+            )}
           </button>
         </div>
       </form>
@@ -539,22 +752,33 @@ function DataInputStep({ accountType, step, onSubmit, onBack, userData = {} }) {
 }
 
 // Success Step Component
-function SuccessStep({ accountType, onSignIn }) {
+function SuccessStep({ accountType, onSignIn, isAuthenticated = false }) {
   return (
     <div className="text-center py-8">
       <Check className="mx-auto mb-6 text-green-500" size={64} />
       <h3 className="text-2xl font-bold text-gray-900 mb-2">
         Account Created Successfully!
       </h3>
-      <p className="text-gray-600 text-xl">
+      <p className="text-gray-600 text-xl mb-4">
         Your {accountType} account has been successfully created.
       </p>
-      <button
-        className="mt-8 px-6 py-3 bg-[#025798] text-white rounded-lg font-medium hover:bg-[#025798]/90 transition duration-300"
-        onClick={onSignIn}
-      >
-        Sign In
-      </button>
+      
+      {isAuthenticated ? (
+        <div className="space-y-4">
+          <SuccessMessage message="You are now logged in! Redirecting to dashboard..." />
+          <div className="flex items-center justify-center">
+            <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-[#025798] mr-2"></div>
+            <span className="text-gray-500 text-sm">Loading dashboard...</span>
+          </div>
+        </div>
+      ) : (
+        <button
+          className="mt-8 px-6 py-3 bg-[#025798] text-white rounded-lg font-medium hover:bg-[#025798]/90 transition duration-300"
+          onClick={onSignIn}
+        >
+          Sign In
+        </button>
+      )}
     </div>
   );
 }
@@ -574,10 +798,21 @@ export default function SignUp({ onCancel }) {
   const [currentStep, setCurrentStep] = useState(Steps.ACCOUNT_TYPE);
   const [accountType, setAccountType] = useState(null);
   const [userData, setUserData] = useState({});
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(null);
 
   const handleAccountTypeSelect = (type) => {
     setAccountType(type);
     setCurrentStep(Steps.DATA_INPUT);
+  };
+
+  const clearError = () => {
+    setError(null);
+  };
+
+  const clearSuccess = () => {
+    setSuccess(null);
   };
 
   const handleDataSubmit = async (data) => {
@@ -587,15 +822,15 @@ export default function SignUp({ onCancel }) {
       // Store the initial form data (personal/business details)
       updatedUserData = {
         ...userData,
-        first_name: data.first_name || userData.first_name,
-        last_name: data.last_name || userData.last_name,
+        firstname: data.firstname || userData.firstname,
+        lastname: data.lastname || userData.lastname,
         email: data.email || userData.email,
-        business_name: data.business_name || userData.business_name,
-        rc_number: data.rc_number || userData.rc_number,
+        businessName: data.businessName || userData.businessName,
+        rcNumber: data.rcNumber || userData.rcNumber,
         nin: data.nin || userData.nin
       };
       setUserData(updatedUserData);
-      console.log("Step 1 data stored:", updatedUserData);
+      console.log("Step 1 data stored");
       setCurrentStep(Steps.OTP_VERIFICATION);
     } else if (currentStep === Steps.OTP_VERIFICATION) {
       // Store the phone verification data while preserving previous data
@@ -606,7 +841,7 @@ export default function SignUp({ onCancel }) {
         phone_verified: data.phone_verified || userData.phone_verified
       };
       setUserData(updatedUserData);
-      console.log("Step 2 data stored:", updatedUserData);
+      console.log("Step 2 data stored");
       setCurrentStep(Steps.PASSWORD_INPUT);
     } else if (currentStep === Steps.PASSWORD_INPUT) {
       // Merge all data including password and referral code
@@ -614,67 +849,84 @@ export default function SignUp({ onCancel }) {
         ...userData,
         password: data.password || userData.password,
         confirmPassword: data.confirmPassword || userData.confirmPassword,
-        vault_phrase: data.vault_phrase || userData.vault_phrase,
-        referral_code: data.referral_code || userData.referral_code
+        vaultPhrase: data.vaultPhrase || userData.vaultPhrase,
+        referralCode: data.referralCode || userData.referralCode
       };
       setUserData(updatedUserData);
-      console.log("Account creation data:", updatedUserData);
+      console.log("Creating account...");
+
+      // Validate required fields before API call
+      if (!updatedUserData.email || !updatedUserData.password) {
+        setError('Email and password are required');
+        return;
+      }
+
+      if (accountType === 'personal' && (!updatedUserData.firstname || !updatedUserData.lastname)) {
+        setError('First name and last name are required for personal accounts');
+        return;
+      }
+
+      if (accountType === 'business' && !updatedUserData.businessName) {
+        setError('Business name is required for business accounts');
+        return;
+      }
+
+      // Prepare data for API with correct field names
+      const signupData = {
+        email: updatedUserData.email,
+        password: updatedUserData.password,
+        confirmPassword: updatedUserData.confirmPassword,
+        account_type: accountType,
+        phone: updatedUserData.phone,
+        referral_code: updatedUserData.referralCode,
+        phone_verified: updatedUserData.phone_verified,
+      };
+
+      // Add account-specific fields only if they have values
+      if (accountType === 'personal') {
+        if (updatedUserData.firstname) signupData.first_name = updatedUserData.firstname;
+        if (updatedUserData.lastname) signupData.last_name = updatedUserData.lastname;
+      } else if (accountType === 'business') {
+        if (updatedUserData.businessName) signupData.business_name = updatedUserData.businessName;
+        if (updatedUserData.rcNumber) signupData.rc_number = updatedUserData.rcNumber;
+        if (updatedUserData.nin) signupData.nin = updatedUserData.nin;
+      }
+
+      console.log("Sending signup request");
+      setLoading(true);
+      setError(null);
 
       try {
-        const { apiService } = await import("../../../services/api.js");
-
-        // Validate required fields before API call
-        if (!updatedUserData.email || !updatedUserData.password) {
-          alert('Email and password are required');
-          return;
-        }
-
-        if (accountType === 'personal' && (!updatedUserData.first_name || !updatedUserData.last_name)) {
-          alert('First name and last name are required for personal accounts');
-          return;
-        }
-
-        if (accountType === 'business' && !updatedUserData.business_name) {
-          alert('Business name is required for business accounts');
-          return;
-        }
-
-        // Prepare data for API with correct field names
-        const signupData = {
-          email: updatedUserData.email,
-          password: updatedUserData.password,
-          confirmPassword: updatedUserData.confirmPassword,
-          account_type: accountType, // Already lowercase from AccountTypeStep
-          phone: updatedUserData.phone,
-          first_name: updatedUserData.first_name,
-          last_name: updatedUserData.last_name,
-          business_name: updatedUserData.business_name,
-          rc_number: updatedUserData.rc_number,
-          nin: updatedUserData.nin,
-          referral_code: updatedUserData.referral_code,
-          phone_verified: updatedUserData.phone_verified,
-        };
-
-        console.log("Final signup data being sent:", signupData);
-
-        // Use the signup thunk from Redux store
         const result = await dispatch(signup(signupData));
 
         if (result.success) {
-          console.log("Account created successfully:", result);
-          setCurrentStep(Steps.SUCCESS);
+          console.log("Account created successfully");
+          
+          // Check if immediate authentication occurred
+          if (result.immediateAuth) {
+            console.log("User authenticated immediately, redirecting to dashboard");
+            setCurrentStep(Steps.SUCCESS);
+            setTimeout(() => {
+              navigate('/dashboard');
+            }, 2500);
+          } else {
+            setCurrentStep(Steps.SUCCESS);
+          }
         } else {
           console.error("Signup failed:", result.error);
-          alert("Signup failed: " + (result.error || result.message));
+          setError(result.error || 'Account creation failed. Please try again.');
         }
-      } catch (error) {
-        console.error("Signup error:", error);
-        alert("Signup failed. Please try again.");
+      } catch (err) {
+        console.error("Signup error:", err);
+        setError('Account creation failed. Please try again.');
+      } finally {
+        setLoading(false);
       }
     }
   };
 
   const handleBack = () => {
+    setError(null); // Clear errors when going back
     if (currentStep === Steps.DATA_INPUT) {
       setCurrentStep(Steps.ACCOUNT_TYPE);
     } else if (currentStep === Steps.OTP_VERIFICATION) {
@@ -685,7 +937,7 @@ export default function SignUp({ onCancel }) {
   };
 
   const handleSignIn = () => {
-    navigate("/sign-in");
+    navigate("/dashboard");
   };
 
   return (
@@ -723,10 +975,17 @@ export default function SignUp({ onCancel }) {
             onSubmit={handleDataSubmit}
             onBack={handleBack}
             userData={userData}
+            loading={loading}
+            error={error}
+            onClearError={clearError}
           />
         )}
         {currentStep === Steps.SUCCESS && (
-          <SuccessStep accountType={accountType} onSignIn={handleSignIn} />
+          <SuccessStep 
+            accountType={accountType} 
+            onSignIn={handleSignIn}
+            isAuthenticated={true}
+          />
         )}
       </div>
     </div>
